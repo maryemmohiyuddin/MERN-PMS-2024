@@ -39,9 +39,9 @@ module.exports = {
             };
         }
     },
-    getAllUsers: async (body) => {
+    getAllUsers: async (query) => {
         try {
-            const users = await userModel.getAllUsers(body.role);
+            const users = await userModel.getAllUsers(query.role);
             if (users.error) {
                 return {
                     error: users.error,

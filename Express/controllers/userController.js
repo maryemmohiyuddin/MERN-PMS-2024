@@ -76,7 +76,7 @@ module.exports = {
 
 
             // const validate = await paginationSchema.validateAsync(req.query);
-            const users = await userService.getAllUsers(req.body);
+            const users = await userService.getAllUsers(req.query);
             console.log(req.body)
             if (users.error) {
                 return res.send({

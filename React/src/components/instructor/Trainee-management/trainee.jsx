@@ -61,8 +61,10 @@ function Trainee() {
 
     const getAllTrainees = async () => {
         try {
-            const { data } = await axios.post("http://localhost:3000/user/getAllUsers", {
-                role: "trainee"
+            const { data } = await axios.get("http://localhost:3000/user/getAllUsers", {
+                params: {
+                    role: "trainee"
+                }
             });
             console.log(data)
             if (data.response) {
