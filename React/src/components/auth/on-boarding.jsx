@@ -18,7 +18,9 @@ function OnBoarding() {
   const getAllInstructors = async () => {
     const { data } = await axios.get(
       "http://localhost:3000/user/getAllUsers", {
-      role: "instructor"
+      params: {
+        role: "instructor"
+      }
     }
     );
     console.log("data", data.response)
