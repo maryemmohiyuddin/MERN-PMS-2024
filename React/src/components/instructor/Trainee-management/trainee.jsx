@@ -9,6 +9,7 @@ function Trainee() {
     const [isDimmed, setDimmed] = useState(false);
 
     const [selectedTraineeId, setSelectedTraineeId] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);  // default page is 1
 
 
 
@@ -59,11 +60,15 @@ function Trainee() {
     }
 
 
-    const getAllTrainees = async () => {
+    const getAllTrainees = async (pageNo) => {
         try {
+            console.log("pageNop", pageNo);
+            setCurrentPage(pageNo);  // Update the currentPage state
+
             const { data } = await axios.get("http://localhost:3000/user/getAllUsers", {
                 params: {
-                    role: "trainee"
+                    role: "trainee",
+                    pageNo: pageNo
                 }
             });
             console.log(data)
@@ -266,6 +271,23 @@ function Trainee() {
 
                                 </tbody>
                             </table>
+
+                        </div>
+                        <div className="flex justify-end me-28 space-x-1 mt-3 dark:text-gray-100">
+                            <button title="previous" type="button" className="bg-white inline-flex items-center justify-center w-8 h-8 py-0 border rounded-md shadow-md dark:bg-gray-900 dark:border-gray-800">
+                                <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="w-4">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
+                            </button>
+                            <button type="button" onClick={() => getAllTrainees(1)} title="Page 1" className="bg-white inline-flex items-center justify-center w-8 h-8 text-sm font-semibold border rounded shadow-md dark:bg-gray-900 dark:text-violet-400 dark:border-violet-400">1</button>
+                            <button type="button" onClick={() => getAllTrainees(2)} className="bg-white inline-flex items-center justify-center w-8 h-8 text-sm border rounded shadow-md dark:bg-gray-900 dark:border-gray-800" title="Page 2">2</button>
+                            <button type="button" onClick={() => getAllTrainees(3)} className="bg-white inline-flex items-center justify-center w-8 h-8 text-sm border rounded shadow-md dark:bg-gray-900 dark:border-gray-800" title="Page 3">3</button>
+                            <button type="button" onClick={() => getAllTrainees(4)} className="bg-white inline-flex items-center justify-center w-8 h-8 text-sm border rounded shadow-md dark:bg-gray-900 dark:border-gray-800" title="Page 4">4</button>
+                            <button title="next" type="button" className="bg-white inline-flex items-center justify-center w-8 h-8 py-0 border rounded-md shadow-md dark:bg-gray-900 dark:border-gray-800">
+                                <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="w-4">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>

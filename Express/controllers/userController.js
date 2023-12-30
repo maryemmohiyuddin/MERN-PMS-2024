@@ -34,10 +34,12 @@ const updateUserSchema = joi.object().keys({
 
 })
 const paginationSchema = joi.object().keys({
-    pageNo: joi.number().required().greater(0),
-    limit: joi.number().valid(5, 10),
-    sortValue: joi.string().valid("firstName", "lastName", "email"),
-    sortOrder: joi.string().valid("ASC", "DESC"),
+    pageNo: joi.number().greater(0).default(1),
+    limit: joi.number().valid(5, 10).default(5),
+    sortValue: joi
+        .string()
+        .valid("userId", "email", "role", "firstName", "lastName").default("firstName"),
+    sortOrder: joi.valid("ASC", "DESC").default("ASC"),
     firstName: joi.string(),
     lastName: joi.string(),
     email: joi.string(),
@@ -75,9 +77,9 @@ module.exports = {
         try {
 
 
-            // const validate = await paginationSchema.validateAsync(req.query);
-            const users = await userService.getAllUsers(req.query);
-            console.log(req.body)
+            const validate = await paginationSchema.validateAsync(req.query);
+            const users = await userService.getAllUsers(validate);
+            console.log(validate)
             if (users.error) {
                 return res.send({
                     error: users.error,

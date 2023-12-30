@@ -41,7 +41,9 @@ module.exports = {
     },
     getAllUsers: async (query) => {
         try {
-            const users = await userModel.getAllUsers(query.role);
+            const offset = (query.pageNo - 1) * query.limit;
+            console.log(offset)
+            const users = await userModel.getAllUsers(offset, query);
             if (users.error) {
                 return {
                     error: users.error,
