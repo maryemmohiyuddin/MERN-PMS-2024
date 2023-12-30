@@ -1,0 +1,30 @@
+.notification-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 300px; /* Adjust as needed */
+    background-color: #fff;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensure it's above other content */
+    transition: transform 0.3s ease;
+    transform: translateX(100%);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Dimmed effect */
+    z-index: 999; /* Below sidebar but above main content */
+    opacity: 0;
+    pointer-events: none; /* Prevents clicks on underlying content */
+    transition: opacity 0.3s ease;
+}
+
+.overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}

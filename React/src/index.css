@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@font-face {
+  font-family: 'Satoshi-Regular';
+  src: url('fonts/Satoshi-Regular.woff2') format('woff2'),
+       url('fonts/Satoshi-Regular.woff') format('woff'),
+       url('fonts/Satoshi-Regular.ttf') format('truetype');
+       font-weight: 400;
+       font-display: swap;
+       font-style: normal;
+}
+/* Assuming this is your custom CSS file or within a <style> tag */
+/* Adjust specificity as needed */
+.trainee-input{
+  width:400px;
+}
+
+.project-deadline:hover {
+  /* Add styles to display the project name on hover */
+}
+
+.css-jgls56-MuiButtonBase-root-MuiPickersDay-root.Mui-selected {
+      background-color: rgb(79 70 229) !important;
+
+    color: #fff; /* Optional: If you want to change the text color */
+}
+.icon{
+      height: 32px;
+    width: 30px;
+}
+.width{
+  width:1000px
+}
+.css-11a8txn-MuiStack-root>:not(style):not(style){
+  border-radius:10px
+}
+.event-indicator {
+  background-color: #f44336; /* or any color you prefer */
+  color: white;
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transform: translate(-50%, 50%);
+}
+
+:root {
+font-family: 'DM Sans', sans-serif;  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.padd{
+padding-left:11rem !important;
+padding-right:11rem !important;
+}
+a {
+  font-weight: 500;
+  color: rgb(156 163 175);
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+.dimmed {
+    opacity: 0.5; /* You can adjust the opacity value as needed */
+    pointer-events: none; /* This ensures that the dimmed content is not clickable */
+    transition: opacity 0.3s ease; /* Optional: Add a smooth transition effect */
+}
+.modal-container {
+    /* Add any specific styling for the modal here */
+    position: fixed;
+    
+    z-index: 101; /* Ensure modal appears above dimmed content */
+    background-color: white; /* This ensures modal's background is white, you can adjust if needed */
+}
+
+/* Adjust the dimmed content */
+.h-screen.w-screen.flex.justify-end.dimmed:not(.modal-container) {
+    opacity: 0.5;
+    pointer-events: none; /* This ensures the dimmed content is not clickable */
+    transition: opacity 0.3s ease;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+
+  button {
+    background-color: #f9f9f9;
+  }
+}

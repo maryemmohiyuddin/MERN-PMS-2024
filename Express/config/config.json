@@ -1,0 +1,13 @@
+{
+  "development": {
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "smss1311313",
+    "database": "LMS-2",
+    "dialect": "postgres"
+  },
+  "jwt": {
+    "secret": "T0hciF+3VD3ZBGCldndRpjLNdWASRTPfRoiHaRdUTP0/bIRlSarL38s423zecqnSVZV8CiEmSUzciEXxsXHShg=="
+  }
+}
