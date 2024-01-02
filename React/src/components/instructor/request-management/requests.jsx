@@ -2,15 +2,24 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../loader_component";
 
 function Request() {
 
     const [Requests, setRequests] = useState([]);
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
 
     const getAllRequests = async () => {
         try {
             const { data } = await axios.get("http://localhost:3000/user/getAllRequests");
+            setData(data);
+            setTimeout(() => {
+                setLoading(false);
+            }, 500);
+            console.log(data)
             if (data.response) {
                 const formattedRequests = data.response.map(item => ({
                     firstName: item.firstName,
@@ -22,8 +31,13 @@ function Request() {
             }
         } catch (error) {
             console.error("Error fetching requests:", error);
+            setLoading(false);
+
         }
     };
+        getAllRequests(1);
+
+    }, []); 
 
     const approveRequest = async (userId) => {
         try {
@@ -43,13 +57,13 @@ function Request() {
         }
     };
 
-    useEffect(() => {
-        void getAllRequests();
-    }, []);
+ 
 
     return (
         <>
-
+            <div className="app">
+                {loading ? <Loader /> : (
+                    <div className="data-container">
             <div className="h-screen w-screen flex justify-end ">
                 <div className=" ps-12 w-10/12 h-5/6">
                     <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
@@ -68,9 +82,9 @@ function Request() {
                     </nav>
                     <div className="mt-8">
                         <h4 className="font-semibold text-lg mb-4 ms-5">All Requests:</h4>
-                        <table className="mx-5 me-6 w-11/12 border-collapse border border-gray-300">
+                        <table className="mx-5 me-6 w-11/12 border-collapse border shadow-md border-gray-300">
                             <thead className="bg-white">
-                                <tr>
+                                <tr className="bg-indigo-500   text-sm text-white">
                                     <th className="border border-gray-300 px-4 py-2">First Name</th>
                                     <th className="border border-gray-300 px-4 py-2">Last Name</th>
                                     <th className="border border-gray-300 px-4 py-2">Email</th>
@@ -82,7 +96,8 @@ function Request() {
                             </thead>
                             <tbody>
                                 {Requests.map((request, index) => (
-                                    <tr key={index}>
+                                  
+                                    <tr key={index} >
                                         <td className="border border-gray-300 bg-white px-4 py-2">{request.firstName}</td>
                                         <td className="border border-gray-300  bg-white px-4 py-2">{request.lastName}</td>
                                         <td className="border border-gray-300  bg-white px-4 py-2">{request.email}</td>
@@ -97,6 +112,10 @@ function Request() {
 
                 </div>
             </div>
+                        <pre>{JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                )}
+            </div>  
         </>
     );
 }

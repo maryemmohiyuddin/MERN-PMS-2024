@@ -3,29 +3,24 @@ const { models } = require("./index");
 
 module.exports = {
     login: async (email) => {
-
         try {
             const user = await models.Users.findOne({
                 where: {
                     email: email,
                 },
-                attributes: {
-                    exclude: ["createdAt", "updatedAt", "deletedAt"],
-                },
-
             });
+            console.log("this user",user.dataValues)
 
             return {
                 response: user,
             };
-
         } catch (error) {
             return {
                 error: error,
             };
         }
-
     },
+
     logout: () => {
         try {
             return {
@@ -78,6 +73,22 @@ module.exports = {
         };
 
     },
+    getSession: async (userId) => {
+        try {
+            const session = await models.Sessions.findOne({
+                where: {
+                    userId: userId,
+                },
+            });
 
+            return {
+                response: session,
+            };
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
 
 };

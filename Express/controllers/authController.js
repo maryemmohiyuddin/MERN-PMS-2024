@@ -28,20 +28,22 @@ module.exports = {
                 return res.send({
                     error: loginResponse.error,
                 });
-
             }
 
-            res.cookie("auth", loginResponse.response)
+            res.cookie("auth", loginResponse.response, {
+                maxAge: 60 * 60 * 1000,
+            });
+
             return res.send({
                 response: loginResponse.response,
             });
-        }
-        catch (error) {
+        } catch (error) {
             return res.send({
                 error: error,
             });
-        };
+        }
     },
+
     logout: (req, res) => {
         try {
             const logoutResponse = authService.logout(req.body);
@@ -119,5 +121,22 @@ module.exports = {
             });
         };
     },
-
+    getSession: async (req, res) => {
+        try {
+            const userId = req.cookies.auth.userId;
+            const session = await authService.getSession(userId);
+            if (session.error) {
+                res.send({
+                    error: session.error,
+                });
+            }
+            res.send({
+                response: session.response,
+            });
+        } catch (error) {
+            res.send({
+                error: error,
+            });
+        }
+    },
 }

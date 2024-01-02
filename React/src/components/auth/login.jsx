@@ -8,23 +8,33 @@ function Login(updateState) {
   const [password, setPassword] = useState("");
 
   const login = async () => {
-    const { data } = await axios.post("http://localhost:3000/auth/login", {
-      email,
-      password,
-    });
+    const { data } = await axios.post(
+      "http://localhost:3000/auth/login",
+
+      {
+        email,
+        password,
+      },
+{
+  withCredentials:true
+}
+    );
 
     if (data.error) {
       return alert("Invalid Credentials");
     }
 
-    console.log("data ", data.response);
+    console.log("data ", data);
     console.log(data.response.isRequested);
+    if (data.response.role == "instructor") {
+      return navigate("instructor");
+    }
     if (data.response.isBlocked == true) {
       return alert("You are blocked");
 
     }
     if (data.response.isApproved == true) {
-      return navigate("/instructor");
+      return navigate("Instructor");
 
     }
     if (data.response.isRequested == true) {
@@ -32,12 +42,11 @@ function Login(updateState) {
 
     }
     if (data.response.isRequested == false) {
-      navigate("onboarding", { state: { userId: data.response.userId } });
+
+      navigate("onBoarding", { state: { userId: data.response.userId } });
     }
 
-    if (data.response.role == "instructor") {
-      return navigate("/instructor");
-    }
+   
 
 
   };

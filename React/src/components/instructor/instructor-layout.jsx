@@ -10,7 +10,7 @@ import Trainee from '../instructor/Trainee-management/trainee';
 import Request from './request-management/requests';
 import { useState } from 'react'
 
-function Layout() {
+function InstructorLayout() {
     const [component, setComponent] = useState("DASHBOARD");
     const updateState = (newState) => {
         setComponent(newState);
@@ -26,7 +26,7 @@ function Layout() {
       {!isLogin && <Signup updateState={updateState} />} */}
                 <Nav />
 
-                <Sidebar updateState={updateState} />
+                <Sidebar updateState={updateState} className={"shadow-xl"} />
                 {component == "DASHBOARD" && <Dashboard updateState={updateState} />}
                 {component == "STACKS" && <Stack updateState={updateState} />}
                 {component == "PROJECTS" && <Project updateState={updateState} />}
@@ -44,4 +44,4 @@ function Layout() {
     )
 }
 
-export default Layout
+export default InstructorLayout

@@ -1,23 +1,25 @@
-import React from "react";
-import "./index.css";
-import { dark } from '@clerk/themes';
-import { ClerkProvider } from "@clerk/clerk-react";
-
-if (!process.env.REACT_APP_CLERK_PUBLISHABLE_KEY) {
-    throw new Error("Missing Publishable Key")
-}
-const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
+import AuthLayout from "./components/auth/auth-layout";
+import OnBoarding from "./components/auth/on-boarding";
+import { Route, Routes } from "react-router-dom";
+import ProtectedRoute from "./middleware";
+import InstructorLayout from "./components/instructor/instructor-layout";
 
 function App() {
     return (
-        <ClerkProvider
-            appearance={{
-                baseTheme: dark
-            }}
-            publishableKey={clerkPubKey}
-        >
-            <div>Hello from clerk</div>
-        </ClerkProvider>
+        <Routes path="/">
+            <Route path="">
+                <Route index element={<AuthLayout />} />
+                <Route path="onBoarding" element={<OnBoarding />} />
+            </Route>
+            <Route
+                path="instructor"
+                element={
+                    <ProtectedRoute>
+                        <InstructorLayout />
+                    </ProtectedRoute>
+                }
+            ></Route>
+        </Routes>
     );
 }
 

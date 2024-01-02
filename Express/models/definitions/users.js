@@ -12,7 +12,7 @@ Users.init(
     {
         userId: {
             primaryKey: true,
-            type: DataTypes.STRING(60),
+            type: DataTypes.STRING(1000),
         },
         firstName: {
             type: DataTypes.STRING(60),

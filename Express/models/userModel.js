@@ -8,7 +8,7 @@ module.exports = {
                 userId,
                 ...body
             })
-            return {    
+            return {
                 response: user,
             };
 
@@ -39,9 +39,9 @@ module.exports = {
         }
 
     },
-    getAllUsers: async ( offset, query) => {
+    getAllUsers: async (offset, query) => {
         try {
-            console.log("model",offset, query)
+            console.log("model", offset, query)
 
             const users = await models.Users.findAll({
                 // attributes : ["firstName", "lastName", "role", "email"]
@@ -71,7 +71,7 @@ module.exports = {
                 order: [[query.sortValue, query.sortOrder]],
                 offset: offset,
                 limit: query.limit,
-                role:query.role
+                role: query.role
 
 
 

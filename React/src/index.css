@@ -16,9 +16,7 @@
   width:400px;
 }
 
-.project-deadline:hover {
-  /* Add styles to display the project name on hover */
-}
+
 
 .css-jgls56-MuiButtonBase-root-MuiPickersDay-root.Mui-selected {
       background-color: rgb(79 70 229) !important;
@@ -65,14 +63,12 @@ padding-left:11rem !important;
 padding-right:11rem !important;
 }
 a {
-  font-weight: 500;
-  color: rgb(156 163 175);
+  font-weight: 400;
+  color:white;
   text-decoration: inherit;
 }
 
-a:hover {
-  color: #535bf2;
-}
+
 .dimmed {
     opacity: 0.5; /* You can adjust the opacity value as needed */
     pointer-events: none; /* This ensures that the dimmed content is not clickable */
@@ -84,6 +80,18 @@ a:hover {
     
     z-index: 101; /* Ensure modal appears above dimmed content */
     background-color: white; /* This ensures modal's background is white, you can adjust if needed */
+}
+.loader-container {
+    border-radius: 8px; /* Rounded corners for the container */
+    padding: 10px; /* Some padding around the loader */
+      position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.loader-dot {
+    background-color: #4A46E8; /* Blue color for the dots */
 }
 
 /* Adjust the dimmed content */
@@ -130,10 +138,6 @@ button:focus-visible {
   :root {
     color: #213547;
     background-color: #ffffff;
-  }
-
-  a:hover {
-    color: #747bff;
   }
 
   button {

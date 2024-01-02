@@ -2,14 +2,15 @@ const { models } = require("./index");
 const { Op } = require("sequelize");
 
 module.exports = {
-    createSession: async (sessionId, userId, token) => {
-        // console.log(userId);
+    createSession: async (sessionId, token, userId) => {
+        console.log("session model", userId);
         try {
             const session = await models.Sessions.create({
                 sessionId: sessionId,
                 userId: userId,
                 token: token,
             });
+            console.log("new",sessionId, token, userId)
             return {
                 response: session,
             };

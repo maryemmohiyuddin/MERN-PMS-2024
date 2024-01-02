@@ -73,7 +73,7 @@ function Dashboard() {
         <>
 
             <div className=" w-screen h-screen flex justify-end overflow-x-hidden scrollbar-hidden">
-                <div className="ps-12 w-10/12 overflow-y-auto">
+                <div className="ps-8 w-10/12 overflow-y-auto">
                     <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
                         <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100 ps-6">
                             <li className="text-black flex items-center">
@@ -88,10 +88,10 @@ function Dashboard() {
                         <h3 className="font-bold text-3xl ps-6">Main Dashboard</h3>
 
                     </nav>
-                    <section className="p-4 md:p-8 dark:bg-gray-800 dark:text-gray-100">
-                        <div className="container grid pb-4 grid-cols-1 gap-6 m-4 mx-auto md:m-0 md:grid-cols-2 xl:grid-cols-3">
-                            <div className="bg-white  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
-                                <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
+                    <section className="p-4 md:p-8 dark:bg-gray-800 dark:text-gray-100 ">
+                        <div className="container grid pb-4 grid-cols-1 gap-6 m-4 mx-auto  md:m-0 md:grid-cols-2 xl:grid-cols-3">
+                            <div className="bg-white  rounded-full flex overflow-hidden shadow-md dark:bg-gray-900 dark:text-gray-100">
+                                <div className="flex flex-col items-center justify-center  ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
                                     <GrProjects /> {/* Adjust the font size as needed */}
                                 </div>
                                 <div className="flex items-center justify-between flex-1 p-3">
@@ -100,8 +100,8 @@ function Dashboard() {
                                 </div>
                             </div>
 
-                        
-                            <div className="bg-white  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
+
+                            <div className="bg-white shadow-md  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
                                 <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
                                     <FaUsers fontSize="18px" className="w-7" />
 
@@ -112,7 +112,7 @@ function Dashboard() {
                                 </div>
                             </div>
 
-                            <div className="bg-white  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
+                            <div className="bg-white shadow-md  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
                                 <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
                                     <SiMicrosoftteams fontSize="20px" className="w-7" />
 
@@ -125,7 +125,7 @@ function Dashboard() {
                                     <p>Total Teams</p>
                                 </div>
                             </div>
-                            <div className="bg-white  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
+                            <div className="bg-white shadow-md  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
                                 <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
                                     <FaTasks className="w-7" fontSize="20px" />
 
@@ -135,7 +135,7 @@ function Dashboard() {
                                     <p>Projects Assigned</p>
                                 </div>
                             </div>
-                            <div className="bg-white  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
+                            <div className="bg-white shadow-md rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
                                 <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
                                     <BsListTask className="w-7" fontSize="22px" />
 
@@ -145,7 +145,7 @@ function Dashboard() {
                                     <p>Unassigned Projects</p>
                                 </div>
                             </div>
-                            <div className="bg-white  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
+                            <div className="bg-white shadow-md rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
                                 <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
                                     <SiGoogleclassroom className="w-7" fontSize="20px" />
 
@@ -174,6 +174,7 @@ function Dashboard() {
                                 </DemoContainer>
                             </LocalizationProvider> */}
                             <Calendar
+                                className={"shadow-md"}
                                 onChange={setDate}
                                 value={date}
                                 tileClassName={tileClassName}
@@ -182,10 +183,10 @@ function Dashboard() {
                         </div>
                             <div className="ps-10 width">
                                 <h2 className="font-semibold ps-3 pb-3 ">Task Status</h2>                        <div className=" mt-2   dark:text-gray-100 dark:bg-gray-900">
-                                    <div className="overflow-x-auto">
-                                        <table className="min-w-full text-xs bg-white rounded-xl ">
+                                    <div className="overflow-x-auto shadow-md">
+                                        <table className="min-w-full   text-xs bg-white rounded-xl ">
                                             <thead className="rounded-t-lg dark:bg-gray-700">
-                                                <tr className="text-right border border-gray-100">
+                                                <tr className="bg-indigo-500   text-sm text-white">
                                                     <th title="Task Name" className="border border-gray-100 text-sm  text-left p-3 text-md">Task Name</th>
                                                     <th title="Trainee Name" className=" border border-gray-100 text-sm  text-left p-3">Trainee Name</th>
                                                     <th title="Class" className="p-3 border border-gray-100 text-sm  text-left">Class</th>

@@ -6,10 +6,10 @@ Sessions.init({
 
     sessionId: {
         primaryKey: true,
-        type: DataTypes.STRING(),
+        type: DataTypes.STRING(3000),
     },
     token: {
-        type: DataTypes.STRING(1000),
+        type: DataTypes.STRING(3000),
         unique: true,
         allowNull: false,
 

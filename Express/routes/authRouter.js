@@ -7,6 +7,8 @@ router.post("/logout", authController.logout);
 router.post("/signup", authController.signup);
 router.get("/resetpswd", authController.resetpswd);
 router.get("/forgotpswd", authController.forgotpswd);
+router.get("/getsession", authController.getSession);
+
 
 module.exports = router;
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Loader from '../../loader_component';
 
 function Trainee() {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -10,14 +11,14 @@ function Trainee() {
 
     const [selectedTraineeId, setSelectedTraineeId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);  // default page is 1
-
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
 
     const handleCloseModal = () => {
         setModalOpen(false);
         setDimmed(false);
     };
-
 
 
     const [currentTrainee, setCurrentTrainee] = useState(null);
@@ -60,33 +61,47 @@ function Trainee() {
     }
 
 
-    const getAllTrainees = async (pageNo) => {
-        try {
-            console.log("pageNop", pageNo);
-            setCurrentPage(pageNo);  // Update the currentPage state
+    
+    useEffect(() => {
 
-            const { data } = await axios.get("http://localhost:3000/user/getAllUsers", {
-                params: {
-                    role: "trainee",
-                    pageNo: pageNo
+        const getAllTrainees = async (pageNo) => {
+            try {
+                console.log("pageNop", pageNo);
+                setCurrentPage(pageNo);  // Update the currentPage state
+
+                const { data } = await axios.get("http://localhost:3000/user/getAllUsers", {
+                    params: {
+                        role: "trainee",
+                        pageNo: pageNo
+                    }
+                });
+                setData(data);
+                setTimeout(() => {
+                    setLoading(false);
+                }, 500); 
+                console.log(data)
+                if (data.response) {
+                    const formattedTrainees = data.response.map(item => ({
+                        firstName: item.firstName,
+                        lastName: item.lastName,
+                        email: item.email,
+                        cohort: item.cohort,
+                        stack: item.stack,
+                        userId: item.userId
+                    }));
+                    setTrainees(formattedTrainees);
                 }
-            });
-            console.log(data)
-            if (data.response) {
-                const formattedTrainees = data.response.map(item => ({
-                    firstName: item.firstName,
-                    lastName: item.lastName,
-                    email: item.email,
-                    cohort: item.cohort,
-                    stack: item.stack,
-                    userId: item.userId
-                }));
-                setTrainees(formattedTrainees);
+            } catch (error) {
+                console.error("Error fetching Trainees:", error);
+                setLoading(false);
             }
-        } catch (error) {
-            console.error("Error fetching Trainees:", error);
-        }
-    };
+        };
+
+        // Call getAllTrainees with an initial page number when the component mounts
+        getAllTrainees(1);
+
+    }, []);  // Dependency array is empty, so this effect will run once when the component mounts
+
     const blockUser = async (trainee) => {
         try {
             const { data } = await axios.put("http://localhost:3000/user/updateUser", {
@@ -107,12 +122,12 @@ function Trainee() {
         setDimmed(true);
     };
 
-    useEffect(() => {
-        void getAllTrainees();
-    }, []);
+  
 
     return (
-
+        <div className="app">
+            {loading ? <Loader /> : (
+                <div className="data-container">
         <div className='className="h-screen w-screen flex justify-center items-center my-8"'>
             {isEditModalOpen && (
                 <div className="modal-container  flex items-center justify-center z-100">
@@ -221,8 +236,8 @@ function Trainee() {
                     </nav>
                     <div className="container p-2 mx-auto sm:p-4 text-black ">
                         <h2 className="mb-4 text-2xl font-semibold leadi">Trainee List</h2>
-                        <div className="overflow-x-auto w-11/12 bg-white ">
-                            <table className="w-full text-sm border-collapse">                                  <colgroup>
+                        <div className="overflow-x-auto shadow-md w-11/12 bg-white ">
+                            <table className="w-full  text-sm border-collapse">                                  <colgroup>
                                 <col />
                                 <col />
                                 <col />
@@ -232,7 +247,7 @@ function Trainee() {
                             </colgroup>
 
                                 <thead className="bg-white">
-                                    <tr className="text-left">
+                                    <tr className="bg-indigo-500   text-sm text-white">
                                         <th className="p-3 border border-gray-300">Name</th>
                                         <th className="p-3 border border-gray-300">Email</th>
                                         <th className="p-3 border border-gray-300">Cohort</th>
@@ -293,6 +308,10 @@ function Trainee() {
                 </div>
             </div>
 
+        </div>
+                    <pre>{JSON.stringify(data, null, 2)}</pre>
+                </div>
+            )}
         </div>
     );
 }
