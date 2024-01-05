@@ -48,7 +48,7 @@ function OnBoarding() {
     });
 
     console.log("data ", data);
-    alert("Your requested has been sent");
+    alert("Your requested has been sent! Wait for your approval");
     return navigate("/");
 
 
@@ -60,9 +60,9 @@ function OnBoarding() {
 
   return (
     <>
-      <div className="w-screen h-screen bg-gray-100 flex justify-center">
+      <div className="w-screen h-screen bg-light-grey flex justify-center">
         <div className="w-1/4 h-full flex justify-center flex-col ">
-          <div className="w-full flex flex-col bg-white p-4 rounded-lg">
+          <div className="w-full flex flex-col shadow-md border border-gray-200 bg-white p-4 rounded-lg">
             <div className="w-full flex justify-center mb-4 ">
               <p className="text-black text-2xl font-semibold    ">
                 Onboarding
@@ -88,7 +88,7 @@ function OnBoarding() {
                   void onboarding();
                 }}
                 disabled={!instructor}
-                className="bg-blue-500 w-36 focus:outline-none disabled:bg-gray-300"
+                className="bg-indigo-500 text-white w-36 focus:outline-none"
               >
                 submit
               </button>

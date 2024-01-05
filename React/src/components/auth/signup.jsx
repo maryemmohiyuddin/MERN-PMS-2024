@@ -14,6 +14,39 @@ const ROLE = [
     },
 ];
 
+const STACK = [
+    {
+        value: "MERN",
+        label: "MERN",
+    },
+    {
+        value: "Python & Django",
+        label: "Python & Django",
+    },
+    {
+        value: "Data Science",
+        label: "Data Science",
+    },
+];
+const COHORT = [
+    {
+        value: "Cohort-1",
+        label: "Cohort-1",
+    },
+    {
+        value: "Cohort-2",
+        label: "Cohort-2",
+    },
+    {
+        value: "Cohort-3",
+        label: "Cohort-3",
+    },
+    {
+        value: "Cohort-4",
+        label: "Cohort-4",
+    },
+];
+
 function Signup(updateState) {
     const navigate = useNavigate();
 
@@ -45,44 +78,51 @@ function Signup(updateState) {
         if (role == "instructor" && !data.error) {
 
         }
-        return alert("Signed up Successfully");
+        void updateState.updateState(true);
+        return alert("Signed up Successfully! Please Login");
     };
 
     return (
         <>
-            <div className="w-screen  bg-gray-100 flex justify-center">
-                <div className="w-1/4 h-full flex justify-center flex-col ">
-                    <div className="w-full flex flex-col my-5 bg-white p-4 rounded-lg">
+            <div className="w-screen bg-light-grey flex justify-center">
+                <div className="h-screen w-form  w-1/4 flex justify-center flex-col ">
+                    <div className=" flex flex-col my-5  border border-gray-200 shadow-md  bg-white p-4 rounded-lg">
                         <div className="w-full flex justify-center mb-4 ">
                             <p className="text-black text-2xl font-semibold    ">Signup</p>
                         </div>
-                        <label className="text-md text-black font-medium mb-1">
-                            First Name
-                        </label>
+                        <div className="inline-group mb-2 row-container">
+                            <div className="row">
+                                <div className="row-item">
+                                    <label className="text-md text-black font-medium mb-1">First Name</label>
+                                    <input
+                                        className="bg-gray-50 border-2 px-3  border-gray-200 py-1 rounded-lg mb-2 focus:outline-none text-black font-medium"
+                                        required
+                                        type="text"
+                                        placeholder="Enter First Name"
+                                        onChange={(e) => {
+                                            setFirstName(e.target.value);
+                                        }}
+                                    />
+                                </div>
+                                <div className="row-item">
+                                    <label className="text-md text-black font-medium mb-1">Last Name</label>
+                                    <input
+                                        className="bg-gray-50 border-2 border-gray-200 py-1 px-3 rounded-lg mb-2 focus:outline-none text-black font-medium"
+                                        required
+                                        type="text"
+                                        placeholder="Enter Last Name"
+                                        onChange={(e) => {
+                                            setLastName(e.target.value);
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            {/* Add more rows as needed */}
+                        </div>
+
+                        <label className="text-md text-black font-medium ">Email</label>
                         <input
-                            className="bg-white border-2 border-gray-300 py-1 px-2 rounded-lg mb-2 focus:outline-none text-black font-medium"
-                            required
-                            type="text"
-                            placeholder="First Name"
-                            onChange={(e) => {
-                                setFirstName(e.target.value);
-                            }}
-                        />
-                        <label className="text-md text-black font-medium mb-1">
-                            Last Name
-                        </label>
-                        <input
-                            className="bg-white border-2 border-gray-300 py-1 px-2 rounded-lg mb-2 focus:outline-none text-black font-medium"
-                            required
-                            type="text"
-                            placeholder="Last Name"
-                            onChange={(e) => {
-                                setLastName(e.target.value);
-                            }}
-                        />
-                        <label className="text-md text-black font-medium mb-1">Email</label>
-                        <input
-                            className="bg-white border-2 border-gray-300 py-1 px-2 rounded-lg mb-2 focus:outline-none text-black font-medium"
+                            className="bg-gray-50 border-2 border-gray-200 py-1 px-2 rounded-lg mb-4 focus:outline-none text-black font-medium"
                             required
                             type="email"
                             placeholder="Abc@example.com"
@@ -90,53 +130,72 @@ function Signup(updateState) {
                                 setEmail(e.target.value);
                             }}
                         />
-                        <label className="text-md text-black font-medium mb-1">
-                            Password
-                        </label>
-                        <input
-                            className="bg-white border-2 border-gray-300 py-1 px-2 rounded-lg mb-2 focus:outline-none text-black font-medium"
-                            required
-                            type="password"
-                            onChange={(e) => {
-                                setPassword(e.target.value);
-                            }}
-                        />
-                        <label className="text-md text-black font-medium mb-1">
-                            Confirm Password
-                        </label>
-                        <input
-                            className="bg-white border-2 border-gray-300 py-1 px-2 rounded-lg mb-2 focus:outline-none text-black font-medium"
-                            required
-                            type="password"
-                            onChange={(e) => {
-                                setConfirmPassword(e.target.value);
-                            }}
-                        />
-                        <label className="text-md text-black font-medium mb-1">
-                            Cohort
-                        </label>
-                        <input
-                            className="bg-white border-2 border-gray-300 py-1 px-2 rounded-lg mb-2 focus:outline-none text-black font-medium"
-                            required
-                            type="text"
-                            onChange={(e) => {
-                                setCohort(e.target.value);
-                            }}
-                        />
-                        <label className="text-md text-black font-medium mb-1">
-                            Stack
-                        </label>
-                        <input
-                            className="bg-white border-2 border-gray-300 py-1 px-2 rounded-lg mb-2 focus:outline-none text-black font-medium"
-                            required
-                            type="text"
-                            onChange={(e) => {
-                                setStack(e.target.value);
-                            }}
-                        />
+                        <div className="inline-group mb-2 row-container">
+                            <div className="row">
+                                <div className="row-item">
+                                    <label className="text-md text-black font-medium mb-1">Password</label>
+                                    <input
+                                        className="bg-gray-50 border-2 border-gray-200 py-1 px-3 rounded-lg mb-2 focus:outline-none text-black font-medium"
+                                        required
+                                        placeholder="Enter password"
+                                        type="password"
+                                        onChange={(e) => {
+                                            setPassword(e.target.value);
+                                        }}
+                                    />
+                                </div>
+                                <div className="row-item">
+                                    <label className="text-md text-black font-medium mb-1">Confirm Password</label>
+                                    <input
+                                        className="bg-gray-50 border-2 border-gray-200 py-1 px-3 rounded-lg mb-2 focus:outline-none text-black font-medium"
+                                        required
+                                        placeholder="Confirm password"
+
+                                        type="password"
+                                        onChange={(e) => {
+                                            setConfirmPassword(e.target.value);
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            {/* Add more rows as needed */}
+                        </div>
+
+                        <div className="inline-group mb-2 row-container">
+                            <div className="row">
+                                <div className="row-item">
+                                    <label className="text-md text-black font-medium mb-1">Cohort</label>
+                                    <Select
+                                        className="bg-gray-50  rounded-lg mb-2 focus:outline-none text-black font-medium"
+                                        isSearchable={true}
+                                        options={COHORT}
+                                        onChange={(e) => {
+                                            setCohort(e.value);
+                                        }}
+                                        isDisabled={false}
+                                        placeholder="Select Cohort"
+                                    />
+                                </div>
+                                <div className="row-item">
+                                    <label className="text-md text-black font-medium mb-1">Stack</label>
+                                    <Select
+                                        className="bg-gray-50  rounded-lg mb-2 focus:outline-none text-black font-medium"
+                                        isSearchable={true}
+                                        options={STACK}
+                                        onChange={(e) => {
+                                            setStack(e.value);
+                                        }}
+                                        isDisabled={false}
+                                        placeholder="Select Stack"
+                                    />
+                                </div>
+                            </div>
+                            {/* Add more rows as needed */}
+                        </div>
+
                         <label className="text-md text-black font-medium mb-1">Role</label>
                         <Select
-                            className="bg-white  rounded-lg mb-2 focus:outline-none text-black font-medium"
+                            className="bg-gray-50  rounded-lg mb-2 focus:outline-none text-black font-medium"
                             isSearchable={true}
                             options={ROLE}
                             onChange={(e) => {
@@ -148,7 +207,7 @@ function Signup(updateState) {
                         <p className="text-md text-gray-400  mt-2">
                             {"Already have an account?  "}
                             <span
-                                className="hover:text-blue-500 cursor-pointer hover:underline"
+                                className="hover:text-indigo-500 text-indigo-500 cursor-pointer hover:no-underline"
                                 onClick={() => {
                                     void updateState.updateState(true);
                                 }}
@@ -158,17 +217,8 @@ function Signup(updateState) {
                         </p>
                         <div className="w-full p-4 flex justify-center mt-4">
                             <button
-                                className="bg-blue-500 w-36 disabled:bg-gray-300"
-                                disabled={
-                                    !(
-                                        role &&
-                                        firstName &&
-                                        lastName &&
-                                        email &&
-                                        password &&
-                                        confirmPassword
-                                    )
-                                }
+                                className="bg-indigo-500 w-36 cursor-pointer text-white disabled:bg-gray-300"
+                               
                                 onClick={() => {
                                     void signup();
                                 }}

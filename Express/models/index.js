@@ -18,8 +18,8 @@ TeamMembers.belongsTo(Users, { foreignKey: 'userId' });
 Teams.hasMany(TeamMembers, { foreignKey: 'teamId' });
 TeamMembers.belongsTo(Teams, { foreignKey: 'teamId' });
 
-Teams.hasOne(Projects, { foreignKey: 'teamId' });
-Projects.belongsTo(Teams, { foreignKey: 'teamId' });
+Projects.hasOne(Teams, { foreignKey: 'projectId' });
+Teams.belongsTo(Projects, { foreignKey: 'projectId' });
 
 Users.hasOne(Sessions, { foreignKey: 'userId', onDelete: "CASCADE" });
 Sessions.belongsTo(Users, { foreignKey: 'userId', onDelete: "CASCADE" });

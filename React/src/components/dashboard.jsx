@@ -5,6 +5,7 @@ import { SiMicrosoftteams, SiGoogleclassroom } from "react-icons/si";
 import { BsListTask } from "react-icons/bs";
 import Calendar from 'react-calendar';
 import dayjs from 'dayjs';
+import { useLocation } from "react-router-dom";
 
 import '../calendarStyles.css';
 
@@ -12,22 +13,23 @@ import '../calendarStyles.css';
 function Dashboard() {
     // Define the events array here
     const [date, setDate] = useState(new Date());
+   
 
     const events = [
         {
             title: '',
-            date: new Date(2023, 11, 28),  // JavaScript months are 0-indexed (December = 11)
+            date: new Date(2024, 1, 4),  // JavaScript months are 0-indexed (December = 11)
         },
         {
             title: '',
-            date: new Date(2023, 11, 29),
+            date: new Date(2024, 1, 3),
         },
         // ... add more events as needed
     ];
     const currentEvent = [
         {
             title: '',
-            date: new Date(2023, 11, 27),  // JavaScript months are 0-indexed (December = 11)
+            date: new Date(2024, 1, 2),  // JavaScript months are 0-indexed (December = 11)
         },
 
         // ... add more events as needed
@@ -86,9 +88,8 @@ function Dashboard() {
 
                         </ol>
                         <h3 className="font-bold text-3xl ps-6">Main Dashboard</h3>
-
                     </nav>
-                    <section className="p-4 md:p-8 dark:bg-gray-800 dark:text-gray-100 ">
+                    <section className="py-4 mx-8 dark:bg-gray-800 dark:text-gray-100 ">
                         <div className="container grid pb-4 grid-cols-1 gap-6 m-4 mx-auto  md:m-0 md:grid-cols-2 xl:grid-cols-3">
                             <div className="bg-white  rounded-full flex overflow-hidden shadow-md dark:bg-gray-900 dark:text-gray-100">
                                 <div className="flex flex-col items-center justify-center  ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
@@ -145,7 +146,7 @@ function Dashboard() {
                                     <p>Unassigned Projects</p>
                                 </div>
                             </div>
-                            <div className="bg-white shadow-md rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
+                            {/* <div className="bg-white shadow-md rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
                                 <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
                                     <SiGoogleclassroom className="w-7" fontSize="20px" />
 
@@ -154,7 +155,7 @@ function Dashboard() {
                                     <p className="text-2xl font-semibold">5</p>
                                     <p>Total classes</p>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
 
 
@@ -224,10 +225,10 @@ function Dashboard() {
 
 
                                                     <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>Login Function</span>
+                                                        <span>Signup Function</span>
                                                     </td>
                                                     <td className="px-3 py-2 border border-gray-100  text-left ">
-                                                        <span>Maryam Mohiyuddin</span>
+                                                        <span>Hira khalil</span>
                                                     </td>
                                                     <td className="px-3 py-2 border border-gray-100  text-left">
                                                         <span>Cohort-4 <span className=" text-gray-400 block">(evening)</span> </span>
@@ -246,10 +247,10 @@ function Dashboard() {
 
 
                                                     <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>Login Function</span>
+                                                        <span>Session Handling</span>
                                                     </td>
                                                     <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>Maryam Mohiyuddin</span>
+                                                        <span>Bilawal Zaman</span>
                                                     </td>
                                                     <td className="px-3 py-2 border border-gray-100  text-left">
                                                         <span>Cohort-4 <span className=" text-gray-400 block">(evening)</span> </span>
@@ -268,10 +269,10 @@ function Dashboard() {
 
 
                                                     <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>Login Function</span>
+                                                        <span>Clerk Authentication</span>
                                                     </td>
                                                     <td className="px-3 py-2 border border-gray-100  text-left ">
-                                                        <span>Maryam Mohiyuddin</span>
+                                                        <span>Ahmad mughal</span>
                                                     </td>
                                                     <td className="px-3 py-2 border border-gray-100  text-left">
                                                         <span>Cohort-4 <span className=" text-gray-400 block">(evening)</span> </span>
@@ -280,7 +281,7 @@ function Dashboard() {
                                                         <span>MERN</span>
                                                     </td>
                                                     <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>PMS</span>
+                                                        <span>E-commerce</span>
                                                     </td>
                                                     <td className="px-3 py-2 border border-gray-100  text-left text-indigo-400 font-semibold">
                                                         <span>Approved</span>

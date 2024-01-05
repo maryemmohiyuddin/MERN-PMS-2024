@@ -29,6 +29,7 @@ function Request() {
                 }));
                 setRequests(formattedRequests);
             }
+          
         } catch (error) {
             console.error("Error fetching requests:", error);
             setLoading(false);
@@ -50,7 +51,7 @@ function Request() {
             });
             // If successful, remove the approved request from the frontend
             setRequests(prevRequests => prevRequests.filter(request => request.userId !== userId));
-            alert("Your request has been approved successfully");
+            alert("The request has been approved successfully");
         } catch (error) {
             console.error("Error approving request:", error);
             alert("Failed to approve request. Please try again.");
@@ -82,7 +83,7 @@ function Request() {
                     </nav>
                     <div className="mt-8">
                         <h4 className="font-semibold text-lg mb-4 ms-5">All Requests:</h4>
-                        <table className="mx-5 me-6 w-11/12 border-collapse border shadow-md border-gray-300">
+                        <table className="mx-5 me-6 bg-white w-11/12 border-collapse border shadow-md border-gray-300">
                             <thead className="bg-white">
                                 <tr className="bg-indigo-500   text-sm text-white">
                                     <th className="border border-gray-300 px-4 py-2">First Name</th>
@@ -107,6 +108,9 @@ function Request() {
                                     </tr>
                                 ))}
                             </tbody>
+                                        {Requests.length === 0 && (
+                                            <p className="text-left mt-4 ms-3 text-sm  text-red-500">No request data yet.</p>
+                                        )}
                         </table>
                     </div>
 

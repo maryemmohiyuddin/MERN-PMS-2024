@@ -71,6 +71,9 @@ module.exports = {
             Session.isRequested = user.response.dataValues.isRequested;
             Session.isApproved = user.response.dataValues.isApproved;
             Session.isBlocked = user.response.dataValues.isBlocked;
+            Session.firstName = user.response.dataValues.firstName;
+            Session.lastName = user.response.dataValues.lastName;
+
 
 
             return {

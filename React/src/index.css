@@ -89,6 +89,26 @@ a {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+.width-select{
+  width:200px
+}
+.row-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Adjust the gap as per your preference */
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px; /* Adjust the gap as per your preference */
+}
+.w-form{
+  width:500px
+}
+.row-item {
+  flex: 1; /* Allow items to grow and occupy equal width */
+}
 
 .loader-dot {
     background-color: #4A46E8; /* Blue color for the dots */

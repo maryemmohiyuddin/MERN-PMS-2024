@@ -9,12 +9,15 @@ import Stack from '../instructor/stack-management/stack';
 import Trainee from '../instructor/Trainee-management/trainee';
 import Request from './request-management/requests';
 import { useState } from 'react'
+import { useLocation } from 'react-router-dom';
+
 
 function InstructorLayout() {
     const [component, setComponent] = useState("DASHBOARD");
     const updateState = (newState) => {
         setComponent(newState);
     }
+
     // const [isLogin, setIsLogin] = useState(true);
     // const updateState = (newState) => {
     //   setIsLogin(newState);
@@ -26,7 +29,7 @@ function InstructorLayout() {
       {!isLogin && <Signup updateState={updateState} />} */}
                 <Nav />
 
-                <Sidebar updateState={updateState} className={"shadow-xl"} />
+                <Sidebar updateState={updateState} />
                 {component == "DASHBOARD" && <Dashboard updateState={updateState} />}
                 {component == "STACKS" && <Stack updateState={updateState} />}
                 {component == "PROJECTS" && <Project updateState={updateState} />}
