@@ -8,7 +8,7 @@ module.exports = {
     createUser: async (body) => {
         try {
             const userId = uuidv4();
-            const isUser = await userModel.getUserByEmail(body.email);
+            const isUser = await userModel.getUserByemail(body.email);
 
             if (isUser.response || isUser.error) {
                 return {
@@ -41,9 +41,30 @@ module.exports = {
     },
     getAllUsers: async (query) => {
         try {
-            const offset = (query.pageNo - 1) * query.limit;
-            console.log(offset)
-            const users = await userModel.getAllUsers(offset, query);
+            // const offset = (query.pageNo - 1) * query.limit;
+            // console.log(offset)
+            const users = await userModel.getAllUsers(query);
+            if (users.error) {
+                return {
+                    error: users.error,
+                }
+            } return {
+                response: users.response,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
+    getAllInstructors: async (query) => {
+        try {
+            // const offset = (query.pageNo - 1) * query.limit;
+            // console.log(offset)
+            const users = await userModel.getAllInstructors(query);
             if (users.error) {
                 return {
                     error: users.error,
@@ -118,9 +139,9 @@ module.exports = {
         }
     },
 
-    getAllRequests: async () => {
+    getAllRequests: async (query) => {
         try {
-            const user = await userModel.getAllRequests();
+            const user = await userModel.getAllRequests(query);
             if (!user.response || user.error) {
                 return {
                     error: "request does not exist",

@@ -49,6 +49,26 @@ module.exports = {
         }
 
     },
+    getInsProjects: async (query) => {
+        try {
+
+            const projects = await projectModel.getInsProjects(query);
+            if (projects.error) {
+                return {
+                    error: projects.error,
+                }
+            } return {
+                response: projects.response,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
     deleteUser: async (query) => {
         try {
 

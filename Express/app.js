@@ -7,6 +7,8 @@ var cors = require('cors')
 var authRouter = require("./routes/authRouter");
 var userRouter = require("./routes/userRouter");
 var projectRouter = require("./routes/projectRouter");
+var teamRouter = require("./routes/teamRouter");
+
 
 
 //(secret code generator)  node -e "console.log(require('crypto').randomBytes(64).toString('base64'));"
@@ -27,6 +29,8 @@ app.use(
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
 app.use("/project", projectRouter);
+app.use("/team", teamRouter);
+
 
 
 // catch 404 and forward to error handler

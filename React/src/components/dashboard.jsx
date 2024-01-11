@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GrProjects } from "react-icons/gr";
 import { FaUsers, FaTasks } from "react-icons/fa";
 import { SiMicrosoftteams, SiGoogleclassroom } from "react-icons/si";
 import { BsListTask } from "react-icons/bs";
 import Calendar from 'react-calendar';
 import dayjs from 'dayjs';
-import { useLocation } from "react-router-dom";
+import { useLocation} from "react-router-dom";
+import Cookies from 'js-cookie';
+
 
 import '../calendarStyles.css';
 
@@ -65,7 +67,6 @@ function Dashboard() {
 
         return classes;
     };
-
 
 
     // ... rest of your Dashboard component code

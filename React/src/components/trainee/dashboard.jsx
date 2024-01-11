@@ -3,7 +3,7 @@ import { GrHelpBook } from "react-icons/gr";
 import { LiaProjectDiagramSolid } from "react-icons/lia";
 import { BsMicrosoftTeams } from "react-icons/bs";
 
-function Dashboard() {
+function Dashboard({ updateState, instructorId }) {
     return (
         <>
 

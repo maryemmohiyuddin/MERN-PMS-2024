@@ -41,24 +41,45 @@ module.exports = {
     },
     getAllProjects: async (offset, query) => {
         try {
-            console.log("model", offset, query)
 
             const projects = await models.Projects.findAll({
                 // attributes : ["firstName", "lastName", "role", "email"]
                 attributes: {
                     exclude: ["createdAt", "updatedAt", "deletedAt"],
                 },
-                where: [
-                    {
-                        ...(query.title
-                            ? { title: { [Op.substring]: query.title } }
-                            : true),
-                    },
+                where:
+                {
 
-                ],
-                order: [[query.sortValue, query.sortOrder]],
-                offset: offset,
-                limit: query.limit,
+                    instructorId: query.instructorId
+
+                },
+
+
+
+            })
+            return {
+                response: projects,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
+    getInsProjects: async (query) => {
+        try {
+
+            const projects = await models.Projects.findAll({
+                // attributes : ["firstName", "lastName", "role", "email"]
+                attributes: {
+                    exclude: ["createdAt", "updatedAt", "deletedAt"],
+                },
+                where: {
+                    instructorId: query.instructorId,
+                }
             })
             return {
                 response: projects,

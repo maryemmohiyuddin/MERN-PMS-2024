@@ -4,6 +4,7 @@ import Loader from '../../loader_component';
 import { MdArrowForwardIos } from "react-icons/md";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 import { createMemoryRouter } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 
 function Project() {
@@ -55,6 +56,17 @@ function Project() {
     const contentClassName = isDimmed ? 'dimmed' : '';
 
     const [Projects, setProjects] = useState([]);
+    const authCookie = Cookies.get('auth');
+
+    // Find the position of "userId" in the string
+    const userIdIndex = authCookie.indexOf('"userId":"');
+
+    // Extract the userId value using substr and indexOf
+    const start = userIdIndex + '"userId":"'.length;
+    const end = authCookie.indexOf('"', start);
+    const instructorId = authCookie.substring(start, end);
+
+    console.log(instructorId); // This will log the userId value
 
     const update = async (updatedData) => {
         try {
@@ -79,8 +91,17 @@ function Project() {
     }
     const create = async (createdData) => {
         try {
-            const { projectId, ...dataWithoutId } = createdData;  // Remove projectId if exists
+            // Include the instructorId from cookies in the request data
+           
 
+            // Add instructorId to the data to be sent in the request
+            const requestData = {
+                ...createdData,
+                instructorId: instructorId
+            };
+
+            const { projectId, ...dataWithoutId } = requestData;  // Remove projectId if exists
+            console.log("createdData", requestData);
             const { data } = await axios.post("http://localhost:3000/project/createProject", dataWithoutId);
             console.log(data);
 
@@ -95,6 +116,7 @@ function Project() {
 
 
 
+
     const getAllProjects = async (pageNo) => {
         try {
             console.log("pageNo", pageNo);
@@ -102,6 +124,7 @@ function Project() {
 
             const { data } = await axios.get("http://localhost:3000/project/getAllProjects", {
                 params: {
+                    instructorId: instructorId,
                     pageNo: pageNo
                 }
             });

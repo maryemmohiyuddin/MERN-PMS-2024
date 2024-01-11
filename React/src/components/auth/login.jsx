@@ -19,6 +19,7 @@ function Login(updateState) {
         withCredentials: true
       }
     );
+
     console.log("login", data.response)
     if (data.error) {
       return alert("Invalid Credentials");
@@ -28,22 +29,22 @@ function Login(updateState) {
       return navigate("/instructor");
     }
 
-    // if (data.response.isBlocked == true) {
-    //   return alert("You are blocked");
+    if (data.response.isBlocked == true) {
+      return alert("You are blocked");
 
-    // }
-    // if (data.response.isApproved == true) {
-    //   return navigate("trainee");
+    }
+    if (data.response.isApproved == true) {
+      return navigate("trainee");
 
-    // }
-    // if (data.response.isRequested == true) {
-    //   return alert("Your requested has been sent but not approved yet");
+    }
+    if (data.response.isRequested == true) {
+      return alert("Your requested has been sent but not approved yet");
 
-    // }
-    // if (data.response.isRequested == false) {
+    }
+    if (data.response.isRequested == false) {
 
-    //   navigate("onBoarding", { state: { userId: data.response.userId } });
-    // }
+      navigate("onBoarding", { state: { userId: data.response.userId } });
+    }
 
 
 

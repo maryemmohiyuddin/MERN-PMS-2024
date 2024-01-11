@@ -5,7 +5,7 @@ import { MdArrowForwardIos } from "react-icons/md";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 
 
-function Trainee() {
+function Trainee({updateState,instructorId}) {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
     const [editData, setEditData] = useState({});
 
@@ -73,6 +73,7 @@ function Trainee() {
 
                 const { data } = await axios.get("http://localhost:3000/user/getAllUsers", {
                     params: {
+                        instructorId:instructorId,
                         role: "trainee",
                         pageNo: pageNo
                     }

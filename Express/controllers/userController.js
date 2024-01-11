@@ -33,19 +33,19 @@ const updateUserSchema = joi.object().keys({
 
 
 })
-const paginationSchema = joi.object().keys({
-    pageNo: joi.number().greater(0).default(1),
-    limit: joi.number().valid(5, 10).default(5),
-    sortValue: joi
-        .string()
-        .valid("userId", "email", "role", "firstName", "lastName").default("firstName"),
-    sortOrder: joi.valid("ASC", "DESC").default("ASC"),
-    firstName: joi.string(),
-    lastName: joi.string(),
-    email: joi.string(),
-    role: joi.string().valid("instructor", "trainee"),
+// const paginationSchema = joi.object().keys({
+//     pageNo: joi.number().greater(0).default(1),
+//     limit: joi.number().valid(5, 10).default(5),
+//     sortValue: joi
+//         .string()
+//         .valid("userId", "email", "role", "firstName", "lastName").default("firstName"),
+//     sortOrder: joi.valid("ASC", "DESC").default("ASC"),
+//     firstName: joi.string(),
+//     lastName: joi.string(),
+//     email: joi.string(),
+//     role: joi.string().valid("instructor", "trainee"),
 
-})
+// })
 const getByUserIdSchema = joi.object().keys({
     userId: joi.string().required(),
 })
@@ -77,9 +77,33 @@ module.exports = {
         try {
 
 
-            const validate = await paginationSchema.validateAsync(req.query);
-            const users = await userService.getAllUsers(validate);
-            console.log(validate)
+            // const validate = await paginationSchema.validateAsync(req.query);
+            const users = await userService.getAllUsers(req.query);
+            console.log(req.query)
+            if (users.error) {
+                return res.send({
+                    error: users.error,
+                });
+
+            }
+            return res.send({
+                response: users.response,
+            });
+
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
+    getAllInstructors: async (req, res) => {
+        try {
+
+
+            // const validate = await paginationSchema.validateAsync(req.query);
+            const users = await userService.getAllInstructors(req.query);
+            console.log(req.query)
             if (users.error) {
                 return res.send({
                     error: users.error,
@@ -148,8 +172,8 @@ module.exports = {
         try {
 
 
-            const users = await userService.getAllRequests();
-
+            const users = await userService.getAllRequests(req.query);
+console.log("query",req.query)
             if (users.error) {
                 return res.send({
                     error: users.error,

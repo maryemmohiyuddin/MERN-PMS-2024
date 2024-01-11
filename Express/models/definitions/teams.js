@@ -7,10 +7,7 @@ Teams.init({
         primaryKey: true,
         type: DataTypes.STRING(60),
     },
-    teamLeader: {
-        type: DataTypes.STRING(60),
-        allowNull: false
-    }
+
 },
     {
         sequelize,

@@ -22,9 +22,9 @@ function App() {
             <Route
                 path="trainee"
                 element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                         <TraineeLayout />
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                 }
             ></Route>
     </Routes>

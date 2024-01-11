@@ -5,8 +5,27 @@ module.exports = {
     createUser: async (body, userId) => {
         try {
             const user = await models.Users.create({
-                userId,
-                ...body
+               ...body,
+               userId
+            })
+            return {
+                response: user,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
+    getUserByemail: async (email) => {
+        try {
+            const user = await models.Users.findOne({
+                where: {
+                    email: email,
+                }
             })
             return {
                 response: user,
@@ -39,41 +58,96 @@ module.exports = {
         }
 
     },
-    getAllUsers: async (offset, query) => {
+    getAllUsers: async ( query) => {
         try {
-            console.log("model", offset, query)
+            // console.log("model", offset, query)
 
             const users = await models.Users.findAll({
                 // attributes : ["firstName", "lastName", "role", "email"]
                 attributes: {
                     exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
                 },
-                where: [
-                    {
-                        ...(query.firstName
-                            ? { firstName: { [Op.substring]: query.firstName } }
-                            : true),
-                    },
-                    {
-                        ...(query.lastName
-                            ? { lastName: { [Op.substring]: query.lastName } }
-                            : true),
-                    },
-                    {
-                        ...(query.email
-                            ? { email: { [Op.substring]: query.email } }
-                            : true),
-                    },
-                    {
-                        ...(query.role ? { role: { [Op.in]: [query.role] } } : true),
-                    },
-                ],
-                order: [[query.sortValue, query.sortOrder]],
-                offset: offset,
-                limit: query.limit,
+                // where: [
+                //     {
+                //         ...(query.firstName
+                //             ? { firstName: { [Op.substring]: query.firstName } }
+                //             : true),
+                //     },
+                //     {
+                //         ...(query.lastName
+                //             ? { lastName: { [Op.substring]: query.lastName } }
+                //             : true),
+                //     },
+                //     {
+                //         ...(query.email
+                //             ? { email: { [Op.substring]: query.email } }
+                //             : true),
+                //     },
+                //     {
+                //         ...(query.role ? { role: { [Op.in]: [query.role] } } : true),
+                //     },
+                // ],
+                // order: [[query.sortValue, query.sortOrder]],
+                // offset: offset,
+                // limit: query.limit,
+               where:{ 
+                
+                instructorId:query.instructorId,
                 role: query.role
 
+               }
 
+
+            })
+            return {
+                response: users,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
+    getAllInstructors: async (query) => {
+        try {
+            // console.log("model", offset, query)
+
+            const users = await models.Users.findAll({
+                // attributes : ["firstName", "lastName", "role", "email"]
+                attributes: {
+                    exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
+                },
+                // where: [
+                //     {
+                //         ...(query.firstName
+                //             ? { firstName: { [Op.substring]: query.firstName } }
+                //             : true),
+                //     },
+                //     {
+                //         ...(query.lastName
+                //             ? { lastName: { [Op.substring]: query.lastName } }
+                //             : true),
+                //     },
+                //     {
+                //         ...(query.email
+                //             ? { email: { [Op.substring]: query.email } }
+                //             : true),
+                //     },
+                //     {
+                //         ...(query.role ? { role: { [Op.in]: [query.role] } } : true),
+                //     },
+                // ],
+                // order: [[query.sortValue, query.sortOrder]],
+                // offset: offset,
+                // limit: query.limit,
+                where: {
+
+                    role: query.role
+
+                }
 
 
             })
@@ -134,13 +208,14 @@ module.exports = {
 
 
 
-    getAllRequests: async () => {
+    getAllRequests: async (query) => {
         try {
             const user = await models.Users.findAll({
                 where: {
                     isRequested: true,
                     isApproved: false,
-                    isBlocked: false
+                    isBlocked: false,
+                    instructorId:query.instructorId
                 },
                 attributes: {
                     exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
