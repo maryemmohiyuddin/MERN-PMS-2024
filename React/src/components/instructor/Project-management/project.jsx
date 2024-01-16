@@ -5,6 +5,7 @@ import { MdArrowForwardIos } from "react-icons/md";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 import { createMemoryRouter } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import Select from "react-select";
 
 
 function Project() {
@@ -28,6 +29,7 @@ function Project() {
         setDimmed(false);
     };
 
+   
 
     const [currentproject, setCurrentproject] = useState(null);
     const handleEditClick = (project) => {
@@ -43,12 +45,27 @@ function Project() {
         setDimmed(true);
     };
 
-
+    const [assignedProjects, setAssignedProjects] = useState([]);
+    const [unassignedProjects, setUnassignedProjects] = useState([]);
     const handleEditAction = () => {
         setEditModalOpen(false);
         setDimmed(false);
     };
     const handleAddAction = () => {
+        // Check if any of the required fields are empty
+        if (!addData.title || !addData.description || !addData.projectEnding) {
+            alert("Please fill in all required fields before adding a project.");
+            return; // Exit the function if any field is empty
+        }
+
+        setAddModalOpen(false);
+        setDimmed(false);
+    };
+
+    const handleCloseAction = () => {
+        // Check if any of the required fields are empty
+
+
         setAddModalOpen(false);
         setDimmed(false);
     };
@@ -70,13 +87,24 @@ function Project() {
 
     const update = async (updatedData) => {
         try {
+            // Extract properties excluding status and projectTag
+            const { ...dataToSend } = updatedData;
 
-            const { data } = await axios.put("http://localhost:3000/project/updateProject", updatedData);
+            const { data } = await axios.put("http://localhost:3000/project/updateProject", dataToSend);
             console.log(data);
 
-            // Update the Projects state with the updated data
-            setProjects(prevProjects => {
-                const updatedIndex = prevProjects.findIndex(project => project.email === updatedData.email);
+            // Update the respective state based on 'isAssigned' flag
+            setAssignedProjects(prevProjects => {
+                const updatedIndex = prevProjects.findIndex(project => project.projectId === updatedData.projectId);
+                if (updatedIndex !== -1) {
+                    const updatedProjects = [...prevProjects];
+                    updatedProjects[updatedIndex] = updatedData;
+                    return updatedProjects;
+                }
+                return prevProjects;
+            });
+            setUnassignedProjects(prevProjects => {
+                const updatedIndex = prevProjects.findIndex(project => project.projectId === updatedData.projectId);
                 if (updatedIndex !== -1) {
                     const updatedProjects = [...prevProjects];
                     updatedProjects[updatedIndex] = updatedData;
@@ -85,19 +113,25 @@ function Project() {
                 return prevProjects;
             });
 
+
         } catch (error) {
             console.error("Error updating project:", error);
         }
-    }
+    };
+
     const create = async (createdData) => {
         try {
             // Include the instructorId from cookies in the request data
-           
+            console.log("createdData", createdData)
 
             // Add instructorId to the data to be sent in the request
             const requestData = {
                 ...createdData,
-                instructorId: instructorId
+                instructorId: instructorId,
+                projectStarting: new Date().toISOString().split('T')[0],
+                projectTag: 'Unassigned'  // Set projectStarting to the current date
+                // Set projectStarting to the current date
+
             };
 
             const { projectId, ...dataWithoutId } = requestData;  // Remove projectId if exists
@@ -106,7 +140,7 @@ function Project() {
             console.log(data);
 
             // Add the new project to the local state
-            setProjects(prevProjects => [...prevProjects, dataWithoutId]); // Assuming `data` contains the newly created project details
+            setUnassignedProjects(prevProjects => [...prevProjects, dataWithoutId]); // Assuming `data` contains the newly created project details
 
         } catch (error) {
             console.error("Error creating project:", error);
@@ -127,6 +161,7 @@ function Project() {
                     instructorId: instructorId,
                     pageNo: pageNo
                 }
+
             });
             setData(data);
             setTimeout(() => {
@@ -137,9 +172,20 @@ function Project() {
                 const formattedProjects = data.response.map(item => ({
                     title: item.title,
                     description: item.description,
-                    projectId: item.projectId
+                    projectId: item.projectId,
+                    projectStarting: item.projectStarting,
+                    projectEnding: item.projectEnding,
+                    projectTag: item.projectTag,
+                    status: item.status,
+                    // Assuming there is a property indicating whether the project is assigned
                 }));
-                setProjects(formattedProjects);
+
+                // Categorize projects into assigned and unassigned
+                const assigned = formattedProjects.filter(project => project.projectTag === "Assigned");
+                const unassigned = formattedProjects.filter(project => project.projectTag === "Unassigned");
+
+                setAssignedProjects(assigned);
+                setUnassignedProjects(unassigned);
             }
         } catch (error) {
             console.error("Error fetching Projects:", error);
@@ -161,14 +207,42 @@ function Project() {
         }
     };
 
+    const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [selectedProjectForDelete, setSelectedProjectForDelete] = useState(null);
+    const handleCloseDeleteModal = () => {
+        setDeleteModalOpen(false);
+        setDimmed(false);
+    };
 
-    const handleBlockClick = (project) => {
-        setSelectedprojectId(project.userId);
-        setModalOpen(true);
-        setDimmed(true);
+    const deleteProject = async (projectId) => {
+        try {
+            const { data } = await axios.delete("http://localhost:3000/project/deleteProject", {
+                params:{
+                projectId: projectId,
+                }
+            });
+            console.log(data.response);
+
+            // Update state to remove the deleted project
+            setAssignedProjects(prevProjects => prevProjects.filter(project => project.projectId !== projectId));
+            setUnassignedProjects(prevProjects => prevProjects.filter(project => project.projectId !== projectId));
+
+            // Close the delete modal
+            setDeleteModalOpen(false);
+        } catch (error) {
+            console.error("Error deleting project:", error);
+            alert("Failed to delete project. Please try again.");
+        }
     };
 
 
+
+    const handleDeleteClick = (project) => {
+        setSelectedProjectForDelete(project);
+        setDimmed(true);
+
+        setDeleteModalOpen(true);
+    };
     useEffect(() => {
         // Call getAllProjects with an initial page number when the component mounts
         getAllProjects(1);
@@ -207,12 +281,45 @@ function Project() {
                                             placeholder="Description"
                                             className="border p-2 w-full mb-2"
                                         /><br />
+                                        <label htmlFor="Start Date">Start Date</label><br />
+                                        <input
+                                            type="date"
+                                            value={editData.projectStarting || ''}
+                                            onChange={(e) => setEditData(prev => ({ ...prev, projectStarting: e.target.value }))}
+                                            className="border p-2 w-full mb-2"
+                                        /><br />
+                                        <label htmlFor="Deadline">Deadline</label><br />
+                                        <input
+                                            type="date"
+                                            value={editData.projectEnding || ''}
+                                            onChange={(e) => setEditData(prev => ({ ...prev, projectEnding: e.target.value }))}
+                                            min={new Date().toISOString().split('T')[0]} // Set min attribute to today's date
+                                            className="border p-2 w-full mb-2"
+                                        /><br />
+                                        {/* Project Tag */}
+                                        <label htmlFor="Project Tag">Project Tag</label><br />
+                                        <Select
+                                            value={{ label: editData.projectTag || '', value: editData.projectTag || '' }}
+                                            onChange={(selectedOption) => setEditData(prev => ({ ...prev, projectTag: selectedOption.value }))}
+                                            options={[{ label: 'Assigned', value: 'Assigned' }, { label: 'Unassigned', value: 'Unassigned' }]}
+                                        />
+                                        <br />
+
+                                        {/* Status */}
+                                        <label htmlFor="Status">Status</label><br />
+                                        <Select
+                                            value={{ label: editData.status || '', value: editData.status || '' }}
+                                            onChange={(selectedOption) => setEditData(prev => ({ ...prev, status: selectedOption.value }))}
+                                            options={[{ label: 'Pending', value: 'Pending' }, { label: 'Completed', value: 'Completed' }]}
+                                        />
+                                        <br />
+
 
                                         {/* ... other fields */}
                                     </div>
                                     <div className="flex justify-end mt-6">
                                         <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleEditAction}>Close</button>
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2" onClick={() => { handleEditAction(); update(editData); }}>Save</button>
+                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2" onClick={() => { handleEditAction(); update(editData); }}>Add</button>
                                     </div>
                                 </div>
                             </div>
@@ -230,6 +337,7 @@ function Project() {
                                         <label htmlFor="Title">Title</label><br />
 
                                         <input
+                                            required
                                             type="text"
                                             value={addData.title || ''}
                                             onChange={(e) => setAddData(prev => ({ ...prev, title: e.target.value }))}
@@ -238,47 +346,55 @@ function Project() {
                                         /><br />
                                         <label htmlFor="Description">Description</label><br />
                                         <input
+                                            required
                                             type="text"
                                             value={addData.description || ''}
                                             onChange={(e) => setAddData(prev => ({ ...prev, description: e.target.value }))}
                                             placeholder="Description"
                                             className="border p-2 w-full mb-2"
                                         /><br />
-
+                                        <label htmlFor="Deadline">Deadline</label><br />
+                                        <input
+                                            required
+                                            type="date"
+                                            value={addData.projectEnding || ''}
+                                            onChange={(e) => setAddData(prev => ({ ...prev, projectEnding: e.target.value }))}
+                                            min={new Date().toISOString().split('T')[0]} // Set min attribute to today's date
+                                            className="border p-2 w-full mb-2"
+                                        /><br />
                                         {/* ... other fields */}
                                     </div>
                                     <div className="flex justify-end mt-6">
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleAddAction}>Close</button>
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2" onClick={() => { handleAddAction(); create(addData); }}>Save</button>
+                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseAction}>Close</button>
+                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2" onClick={() => { handleAddAction(); create(addData); }}>Add</button>
                                     </div>
                                 </div>
                             </div>
                         )}
-                        {isModalOpen && (
+                        {isDeleteModalOpen && (
                             <div className="modal-container flex items-center justify-center z-100">
-                                <div className="absolute  bg-black opacity-50" onClick={handleCloseModal}></div>
-                                <div className="flex flex-col max-w-md gap-2 p-6 rounded-md shadow-md bg-white opacity-100 text-black">
-                                    <h2 className="flex items-center gap-2 text-xl font-semibold leadi tracki">
-                                        <span className=''>Are you sure you want to block this user?</span>
+                                <div className="absolute bg-black opacity-50" onClick={handleCloseDeleteModal}></div>
+                                <div className="flex flex-col w-form gap-2 p-6 rounded-md shadow-md bg-white opacity-100 text-black">
+                                    <h2 className="text-xl font-semibold text-center leading tracking">
+                                        Delete Project
                                     </h2>
-                                    <p className="flex-1 dark:text-gray-400">By blocking this user, they will no longer be able to interact with you or view your content.</p>
-                                    <div className="flex flex-col justify-end gap-3 mt-6 sm:flex-row">
-                                        {Projects.map((project, index) => (
-                                            <div key={index}> {selectedprojectId === project.userId ? (
-                                                <button className="px-6 py-2 mr-5 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseModal}>Close</button>
-
-                                            ) : null}
-                                                {selectedprojectId === project.userId ? (
-                                                    <button className="px-6 py-2 rounded-sm shadow-sm bg-red-500 text-white" onClick={() => { handleCloseModal(); blockUser(project.userId); }}>Change Status</button>
-                                                ) : null}
-                                            </div>
-                                        ))}
-
-
+                                    <div className="mt-4">
+                                        <p className="text-left mb-2">
+                                            Are you sure you want to delete the project "{selectedProjectForDelete.title}"? If there is any associated team, that will be deleted too!
+                                        </p>
+                                    </div>
+                                    <div className="flex justify-end mt-6">
+                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseDeleteModal}>
+                                            Close
+                                        </button>
+                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-red-500 text-white ml-2" onClick={() => { handleCloseModal(); deleteProject(selectedProjectForDelete.projectId); }}>
+                                            Delete
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         )}
+
                         <div className={`h-screen w-screen flex justify-end ${contentClassName}`}>
                             <div className=" ps-12 w-10/12 h-5/6">
                                 <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
@@ -297,7 +413,7 @@ function Project() {
                                 </nav>
                                 <div className="container p-2 mx-auto sm:p-4 text-black" >
                                     <div className="flex justify-between items-center">
-                                        <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">All Projects:</h4>
+                                        <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">Assigned Projects:</h4>
                                         <button
                                             type="button"
                                             className="px-5 py-2 me-28 bg-indigo-500 text-white rounded-full dark:bg-gray-100 dark:text-gray-800"
@@ -317,11 +433,16 @@ function Project() {
                                                 <tr className="bg-indigo-500 text-sm text-white">
                                                     <th className="p-3 border border-gray-300">Project Title</th>
                                                     <th className="p-3 border border-gray-300">Description</th>
+                                                    <th className="p-3 border border-gray-300">Start Date</th>
+                                                    <th className="p-3 border border-gray-300">Deadline</th>
+                                                    <th className="p-3 border border-gray-300">Status</th>
+
+
                                                     <th className="p-3 border border-gray-300">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {Projects.map((project, index) => (
+                                                {assignedProjects.map((project, index) => (
 
                                                     <tr key={index} className="border-b border-opacity-20 border-gray-700 bg-white">
                                                         <td className="p-3 border border-gray-300">
@@ -331,27 +452,90 @@ function Project() {
                                                             <p>{project.description}</p>
                                                         </td>
                                                         <td className="p-3 border border-gray-300">
+                                                            <p>{project.projectStarting}</p>
+                                                        </td><td className="p-3 border border-gray-300">
+                                                            <p>{project.projectEnding}</p>
+                                                        </td>
+
+                                                        <td className="p-3 border text-indigo-500 font-semibold border-gray-300">
+                                                            <p>{project.status}</p>
+                                                        </td>
+                                                        <td className="p-3 border border-gray-300">
                                                             <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer" onClick={() => handleEditClick(project)}>
                                                                 <span>Edit</span>
                                                             </span>
-                                                            <span className="px-3 py-2 ms-2 text-white rounded-md bg-red-500 cursor-pointer" onClick={() => handleBlockClick(project)}>
-                                                                <span>Change Status</span>
+                                                            <span className="px-3 py-2 ms-2 text-white rounded-md bg-red-500 cursor-pointer" onClick={() => handleDeleteClick(project)}>
+                                                                <span>Delete</span>
                                                             </span>
                                                         </td>
                                                     </tr>
                                                 ))}
                                             </tbody>
                                         </table>
-                                        {Projects.length === 0 && (
+                                        {assignedProjects.length === 0 && (
                                             <p className="text-left mt-4 ms-3 text-red-500">No project data yet.</p>
                                         )}
                                     </div>
-                                    <div className="flex justify-end me-28 space-x-1 mt-3 dark:text-gray-100">
+                                    <div className="flex justify-between items-center">
+                                        <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">Unassigned Projects:</h4>
+
+
+
+                                    </div>
+                                    <div className="overflow-x-auto shadow-md w-11/12 bg-white">
+                                        <table className="w-full text-sm border-collapse">
+                                            <colgroup>
+                                                {/* Add any column settings if needed */}
+                                            </colgroup>
+                                            <thead className="bg-white">
+                                                <tr className="bg-indigo-500 text-sm text-white">
+                                                    <th className="p-3 border border-gray-300">Project Title</th>
+                                                    <th className="p-3 border border-gray-300">Description</th>
+                                                    <th className="p-3 border border-gray-300">Start Date</th>
+                                                    <th className="p-3 border border-gray-300">Deadline</th>
+
+                                                    <th className="p-3 border border-gray-300">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {unassignedProjects.map((project, index) => (
+
+                                                    <tr key={index} className="border-b border-opacity-20 border-gray-700 bg-white">
+                                                        <td className="p-3 border border-gray-300">
+                                                            <p>{project.title}</p>
+                                                        </td>
+                                                        <td className="p-3 border border-gray-300">
+                                                            <p>{project.description}</p>
+                                                        </td>
+                                                        <td className="p-3 border border-gray-300">
+                                                            <p>{project.projectStarting}</p>
+
+                                                        </td><td className="p-3 border border-gray-300">
+                                                            <p>{project.projectEnding}</p>
+                                                        </td>
+
+                                                        <td className="p-3 border border-gray-300">
+                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer" onClick={() => handleEditClick(project)}>
+                                                                <span>Edit</span>
+                                                            </span>
+                                                            <span className="px-3 py-2 ms-2 text-white rounded-md bg-red-500 cursor-pointer" onClick={() => handleDeleteClick(project)}>
+                                                                <span>Delete</span>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                        {unassignedProjects.length === 0 && (
+                                            <p className="text-left mt-4 ms-3 text-red-500">No project data yet.</p>
+                                        )}
+                                    </div>
+                                    {/* <div className="flex justify-end me-28 space-x-1 mt-3 dark:text-gray-100">
                                         <button type="button" onClick={() => getAllProjects(1)} title="Page 1" className="bg-white inline-flex items-center justify-center w-8 h-8 text-sm font-semibold border rounded shadow-md dark:bg-gray-900 dark:text-violet-400 dark:border-violet-400">1</button>
                                         <button type="button" onClick={() => getAllProjects(2)} className="bg-white inline-flex items-center justify-center w-8 h-8 text-sm border rounded shadow-md dark:bg-gray-900 dark:border-gray-800" title="Page 2">2</button>
                                         <button type="button" onClick={() => getAllProjects(3)} className="bg-white inline-flex items-center justify-center w-8 h-8 text-sm border rounded shadow-md dark:bg-gray-900 dark:border-gray-800" title="Page 3">3</button>
                                         <button type="button" onClick={() => getAllProjects(4)} className="bg-white inline-flex items-center justify-center w-8 h-8 text-sm border rounded shadow-md dark:bg-gray-900 dark:border-gray-800" title="Page 4">4</button>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <pre>{(data, null)}</pre>
 

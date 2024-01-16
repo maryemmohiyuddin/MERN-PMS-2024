@@ -5,18 +5,23 @@ import { SiMicrosoftteams, SiGoogleclassroom } from "react-icons/si";
 import { BsListTask } from "react-icons/bs";
 import Calendar from 'react-calendar';
 import dayjs from 'dayjs';
-import { useLocation} from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Cookies from 'js-cookie';
+import axios from "axios";
+import Loader from "./loader_component";
 
 
 import '../calendarStyles.css';
 
 
-function Dashboard() {
+function Dashboard({updateState,instructorId}) {
     // Define the events array here
     const [date, setDate] = useState(new Date());
-   
 
+    const [loading, setLoading] = useState(true);
+    setTimeout(() => {
+        setLoading(false);
+    }, 500);
     const events = [
         {
             title: '',
@@ -68,13 +73,38 @@ function Dashboard() {
         return classes;
     };
 
+    const [statistics, setStatistics] = useState(null);
+
+    const getAllStatistics = async () => {
+        try {
+
+            const { data } = await axios.get("http://localhost:3000/user/getAllStatistics", {
+                params: {
+                    instructorId: instructorId,
+                }
+            });
+
+            console.log(data.response);
+            setStatistics(data.response);
+
+        } catch (error) {
+            console.error("Error fetching Projects:", error);
+        }
+    };
 
     // ... rest of your Dashboard component code
 
+    useEffect(() => {
+
+        getAllStatistics(1)
+    }
+        , [])
+
 
     return (
-        <>
+               <div className="app">
 
+            {loading ? <Loader /> : (
             <div className=" w-screen h-screen flex justify-end overflow-x-hidden scrollbar-hidden">
                 <div className="ps-8 w-10/12 overflow-y-auto">
                     <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
@@ -97,7 +127,7 @@ function Dashboard() {
                                     <GrProjects /> {/* Adjust the font size as needed */}
                                 </div>
                                 <div className="flex items-center justify-between flex-1 p-3">
-                                    <p className="text-2xl font-semibold">20</p>
+                                    <p className="text-2xl font-semibold">{statistics?.projectCount || 0}</p>
                                     <p>Total Projects</p>
                                 </div>
                             </div>
@@ -109,7 +139,7 @@ function Dashboard() {
 
                                 </div>
                                 <div className="flex items-center justify-between flex-1 p-3">
-                                    <p className="text-2xl font-semibold">75</p>
+                                    <p className="text-2xl font-semibold">{statistics?.userCount || 0}</p>
                                     <p>Total Trainees</p>
                                 </div>
                             </div>
@@ -123,7 +153,7 @@ function Dashboard() {
 
                                 </div>
                                 <div className="flex items-center justify-between flex-1 p-3">
-                                    <p className="text-2xl font-semibold">14</p>
+                                    <p className="text-2xl font-semibold">{statistics?.teamCount || 0}</p>
                                     <p>Total Teams</p>
                                 </div>
                             </div>
@@ -133,7 +163,7 @@ function Dashboard() {
 
                                 </div>
                                 <div className="flex items-center justify-between flex-1 p-3">
-                                    <p className="text-2xl font-semibold">10</p>
+                                    <p className="text-2xl font-semibold">{statistics?.asProjects || 0}</p>
                                     <p>Projects Assigned</p>
                                 </div>
                             </div>
@@ -143,7 +173,7 @@ function Dashboard() {
 
                                 </div>
                                 <div className="flex items-center justify-between flex-1 p-3">
-                                    <p className="text-2xl font-semibold">4</p>
+                                    <p className="text-2xl font-semibold">{statistics?.unasProjects || 0}</p>
                                     <p>Unassigned Projects</p>
                                 </div>
                             </div>
@@ -298,7 +328,8 @@ function Dashboard() {
                     </section>
                 </div>
             </div>
-        </>
+            )}
+        </div>
     );
 }
 

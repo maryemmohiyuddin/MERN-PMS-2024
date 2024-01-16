@@ -7,13 +7,15 @@ const createTeamSchema = joi.object().keys({
     leaderId: joi.string().required(),
     projectId: joi.string().required(),
     userId: joi.array().items(joi.string().uuid()).required(),
-    instructorId: joi.string().required()
+    instructorId: joi.string().required(),
+    status: joi.string().valid("Pending", "Completed"),
+
 
 
 })
 
-const getMembersSchema = joi.object().keys({
-    instructorId: joi.string().required()
+const getByTeamIdSchema = joi.object().keys({
+    teamId: joi.string().required()
 })
 
 // const paginationSchema = joi.object().keys({
@@ -31,8 +33,32 @@ module.exports = {
     createTeam: async (req, res) => {
         try {
             const validate = await createTeamSchema.validateAsync(req.body);
-            console.log("here    ",validate)
+            console.log("here    ", validate)
             const team = await teamService.createTeam(validate);
+            if (team.error) {
+                return res.send({
+                    error: team.error,
+                });
+
+            }
+            return res.send({
+                response: team.response,
+            });
+
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
+
+    deleteTeam: async (req, res) => {
+        try {
+            console.log(req.query)
+            const validate = await getByTeamIdSchema.validateAsync(req.query);
+
+            const team = await teamService.deleteTeam(validate);
             if (team.error) {
                 return res.send({
                     error: team.error,
@@ -81,7 +107,7 @@ module.exports = {
 
             // const validate = await getMembersSchema.validateAsync(req.query);
             const members = await teamService.getAllMembers(req.query);
-console.log("query here                  ",req.query)
+            console.log("query here                  ", req.query)
             if (members.error) {
                 return res.send({
                     error: members.error,
@@ -92,6 +118,26 @@ console.log("query here                  ",req.query)
                 response: members.response,
             });
 
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
+    getTeamMembers: async (req, res) => {
+        try {
+            const validate = await getByTeamIdSchema.validateAsync(req.query);
+            const members = await teamService.getTeamMembers(validate);
+            if (members.error) {
+                return res.send({
+                    error: members.error,
+                });
+
+            }
+            return res.send({
+                response: members.response,
+            });
         }
         catch (error) {
             return res.send({

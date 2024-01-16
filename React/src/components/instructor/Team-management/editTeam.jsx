@@ -9,9 +9,8 @@ import Select from "react-select";
 
 
 
+function EditTeam({  }) {
 
-function Team({ updateState,instructorId }) {
-   
     const [selectedTeamId, setSelectedTeamId] = useState(null);
 
     const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -35,7 +34,6 @@ function Team({ updateState,instructorId }) {
     };
 
 
-    const [localSelectedTeamMembers, setLocalSelectedTeamMembers] = useState([]);
 
     const [currentproject, setCurrentproject] = useState(null);
     const handleEditClick = (team) => {
@@ -47,34 +45,22 @@ function Team({ updateState,instructorId }) {
     const handleAddClick = (project) => {
         setCurrentproject(project);
         setAddData({}); // Clear previous data
-        setLocalSelectedTeamMembers([]); // Reset local state
         setAddModalOpen(true);
         setDimmed(true);
     };
 
+    const [assignedProjects, setAssignedProjects] = useState([]);
+    const [unassignedProjects, setUnassignedProjects] = useState([]);
     const handleEditAction = () => {
         setEditModalOpen(false);
         setDimmed(false);
-    }; const handleAddAction = () => {
-        // Check if all team members are selected
-        const isAllMembersSelected = localSelectedTeamMembers.every(member => member !== null);
-
-        if (!isAllMembersSelected || teamLeader === null || selectedProjectId === null) {
-            // Show an error message or handle incomplete selection
-            console.error("Please select all team members, team leader, and project");
-            return;
+    };
+    const handleAddAction = () => {
+        // Check if any of the required fields are empty
+        if (!addData.title || !addData.description || !addData.projectEnding) {
+            alert("Please fill in all required fields before adding a team.");
+            return; // Exit the function if any field is empty
         }
-
-        // Use a Set to filter out duplicate users
-        const uniqueSelectedMembers = [...new Set(localSelectedTeamMembers)];
-
-        // Continue with the add action
-        create({
-            userId: uniqueSelectedMembers,
-            leaderId: teamLeader,
-            projectId: selectedProjectId,
-            instructorId: instructorId
-        });
 
         setAddModalOpen(false);
         setDimmed(false);
@@ -96,34 +82,31 @@ function Team({ updateState,instructorId }) {
 
 
 
-    // Add these state variables at the beginning of your functional component
-    const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-    const [selectedTeamIdForDelete, setSelectedTeamIdForDelete] = useState(null);
 
+
+
+    const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [selectedProjectForDelete, setSelectedProjectForDelete] = useState(null);
     const handleCloseTeamModal = () => {
         setAddModalOpen(false);
-        setDeleteModalOpen(false);
-
         setDimmed(false);
     };
 
-    const handleDeleteClick = (teamId) => {
+
+
+    const handleDeleteClick = (project) => {
+        setSelectedProjectForDelete(project);
         setDimmed(true);
-        setSelectedTeamIdForDelete(teamId);
+
         setDeleteModalOpen(true);
     };
 
-    const handleDeleteAction = (teamId) => {
-        setDimmed(false);
-        setSelectedTeamIdForDelete(teamId);
-        setDeleteModalOpen(false);
-    };
 
 
-    
+
 
     const [currentTeam, setCurrentTeam] = useState(null);
-   
+
     const contentClassName = isDimmed ? 'dimmed' : '';
     const [Teams, setTeams] = useState([]);
 
@@ -156,19 +139,15 @@ function Team({ updateState,instructorId }) {
     const [selectedTeamMembers, setSelectedTeamMembers] = useState([]);
     const [teamLeader, setTeamLeader] = useState(null);
     const [selectedProjectId, setSelectedProjectId] = useState(null);
-    const handleMemberSelect = (selectedOption, index) => {
-        setLocalSelectedTeamMembers(prev => {
-            const newSelectedMembers = [...prev];
-            newSelectedMembers[index] = selectedOption ? selectedOption.value : null;
-            return newSelectedMembers;
-        });
 
+    const handleMemberSelect = (selectedOption, index) => {
         setSelectedTeamMembers(prev => {
             const newSelectedMembers = [...prev];
-            newSelectedMembers[index] = selectedOption ? selectedOption.value : null;
+            newSelectedMembers[index] = selectedOption.value;
             return newSelectedMembers;
         });
     };
+
 
     const create = async () => {
         try {
@@ -185,11 +164,11 @@ function Team({ updateState,instructorId }) {
             // Add the new team to the state
             getAllTeams();
             getTeamMembers();
+
         } catch (error) {
             console.error("Error creating Team:", error);
         }
     };
-
 
 
     const getAllTeams = async () => {
@@ -201,7 +180,7 @@ function Team({ updateState,instructorId }) {
             });
 
             if (response && response.data && Array.isArray(response.data.response)) {
-                console.log("response",response)
+                console.log("response", response)
                 console.log("response,data", response.data)
                 console.log("response.data.response", response.data.response)
 
@@ -209,11 +188,10 @@ function Team({ updateState,instructorId }) {
                 const mappedTeams = response.data.response.map(team => ({
                     ...team,
                     // Convert IDs to names if needed
-                    teamId:team.teamId,
                     leaderName: team.leaderName, // Replace with actual conversion logic
-                    projectTitle: team.projectTitle 
-                     // Replace with actual conversion logic
-                }));console.log("mapped",mappedTeams)
+                    projectTitle: team.projectTitle
+                    // Replace with actual conversion logic
+                })); console.log("mapped", mappedTeams)
                 // Update the Teams state with the fetched and mapped data
                 setTeams(mappedTeams);
                 setLoading(false);
@@ -282,31 +260,26 @@ function Team({ updateState,instructorId }) {
             console.error("Error fetching Teams:", error);
             setLoading(false);
         }
-    }; const deleteTeam = async (teamId) => {
-        try {
-            console.log("teamid", teamId);
-            const { data } = await axios.delete("http://localhost:3000/team/deleteTeam", {
-                params:{
-                teamId: teamId
-                }
-            });
-            console.log("Response:", data);
+    };
 
-            // Handle the deletion on the client side if needed
-            setTeams(prevTeams => prevTeams.filter(team => team.teamId !== teamId));
+
+    const blockUser = async (Team) => {
+        try {
+            const { data } = await axios.put("http://localhost:3000/user/updateUser", {
+                userId: Team,
+                isBlocked: true
+            });
+            console.log(data.response)
         } catch (error) {
-            console.error("Error deleting Team:", error);
-            alert("Failed to delete team. Please try again.");
+            console.error("Error approving request:", error);
+            alert("Failed to approve request. Please try again.");
         }
     };
 
-    const handleTeamLeaderSelect = (selectedOption) => {
-        setTeamLeader(selectedOption ? selectedOption.value : null);
-    };
 
-   
-        // Update the memberOptions for all dropdowns
-  
+
+    // Update the memberOptions for all dropdowns
+
 
 
     useEffect(() => {
@@ -371,32 +344,31 @@ function Team({ updateState,instructorId }) {
                                         {/* Here you can have your edit form fields */}
                                         {/* For example: */}
                                         {[...Array(4)].map((_, index) => (
-                <div key={index}>
+                                            <div key={index}>
                                                 <label htmlFor={`teammember-${index}`}>{`${index + 1}st Team Member`}</label><br />
-
                                                 <Select
                                                     id={`teammember-${index}`}
                                                     className="bg-white rounded-lg mb-2 focus:outline-none text-black font-medium"
                                                     isSearchable={true}
                                                     isDisabled={false}
                                                     placeholder={`Select ${index + 1}st team member`}
-                                                    options={memberOptions.filter(option => !localSelectedTeamMembers.includes(option.value))}
+                                                    options={memberOptions}
                                                     onChange={(selectedOption) => handleMemberSelect(selectedOption, index)}
                                                 />
 
 
-
-
-                                         </div>
+                                            </div>
                                         ))} <label htmlFor="teammember">Select team Leader</label><br />
-
                                         <Select
-                                            className="bg-white rounded-lg mb-2 focus:outline-none text-black font-medium"
+                                            className="bg-white  rounded-lg mb-2 focus:outline-none text-black font-medium"
                                             isSearchable={true}
+
                                             isDisabled={false}
                                             placeholder="Select team leader"
-                                            options={memberOptions.filter(option => localSelectedTeamMembers.includes(option.value))}
-                                            onChange={(selectedOption) => handleTeamLeaderSelect(selectedOption)}
+                                            options={memberOptions}
+                                            onChange={(selectedOption) => setTeamLeader(selectedOption.value)}
+
+
                                         />
                                         <label htmlFor="project">Select Project</label><br />
                                         <Select
@@ -436,27 +408,31 @@ function Team({ updateState,instructorId }) {
                                 </div>
                             </div>
                         )}
-                        {isDeleteModalOpen && (
+                        {isModalOpen && (
                             <div className="modal-container flex items-center justify-center z-100">
-                                {/* Add the necessary components for the delete modal */}
-                                <div className="absolute bg-black opacity-50" onClick={handleCloseTeamModal}></div>
+                                <div className="absolute  bg-black opacity-50" onClick={handleCloseModal}></div>
                                 <div className="flex flex-col max-w-md gap-2 p-6 rounded-md shadow-md bg-white opacity-100 text-black">
                                     <h2 className="flex items-center gap-2 text-xl font-semibold leadi tracki">
-                                        <span className=''>Are you sure you want to delete this team?</span>
+                                        <span className=''>Are you sure you want to block this user?</span>
                                     </h2>
-                                    {/* Add any additional information or confirmation message */}
+                                    <p className="flex-1 dark:text-gray-400">By blocking this user, they will no longer be able to interact with you or view your content.</p>
                                     <div className="flex flex-col justify-end gap-3 mt-6 sm:flex-row">
-                                        <button className="px-6 py-2 mr-5 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseTeamModal}>
-                                            Close
-                                        </button>
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-red-500 text-white" onClick={() => { handleDeleteAction(); deleteTeam(selectedTeamIdForDelete); }}>
-                                            Delete Team
-                                        </button>
+                                        {Teams.map((Team, index) => (
+                                            <div key={index}> {selectedTeamId === Team.userId ? (
+                                                <button className="px-6 py-2 mr-5 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseModal}>Close</button>
+
+                                            ) : null}
+                                                {selectedTeamId === Team.userId ? (
+                                                    <button className="px-6 py-2 rounded-sm shadow-sm bg-red-500 text-white" onClick={() => { handleCloseModal(); blockUser(Team.userId); }}>Change Status</button>
+                                                ) : null}
+                                            </div>
+                                        ))}
+
+
                                     </div>
                                 </div>
                             </div>
                         )}
-
                         <div className={`h-screen w-screen flex justify-end ${contentClassName}`}>
                             <div className=" ps-12 w-10/12 h-5/6">
                                 <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
@@ -467,6 +443,10 @@ function Team({ updateState,instructorId }) {
                                         <li className="flex items-center space-x-1">
                                             <span className="dark:text-gray-400">/</span>
                                             <a rel="noopener noreferrer" href="#" className="text-black text-sm hover:text-black flex items-center px-1 capitalize hover:underline">Teams</a>
+                                        </li>
+                                        <li className="flex items-center space-x-1">
+                                            <span className="dark:text-gray-400">/</span>
+                                            <a rel="noopener noreferrer" href="#" className="text-black text-sm hover:text-black flex items-center px-1 capitalize hover:underline">Edit Team</a>
                                         </li>
 
                                     </ol>
@@ -505,14 +485,12 @@ function Team({ updateState,instructorId }) {
                                                         <td className="border border-gray-300 bg-white px-4 py-2"> {team.leaderName}</td>
                                                         <td className="border border-gray-300 bg-white px-4 py-2">{team.projectTitle}</td>
                                                         <td className="p-3 border border-gray-300">
-                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer" onClick={() => handleEditClick(team)}>
-                                                                <span>View</span>
+                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer" onClick={() => handleEditClick(Team)}>
+                                                                <span>Edit</span>
                                                             </span>
-                                                            {console.log(team.teamId)}
-                                                            <span className="px-3 py-2 ms-2 text-white rounded-md bg-red-500 cursor-pointer" onClick={() => handleDeleteClick(team.teamId)}>
-                                                                <span>Delete</span>
+                                                            <span className="px-3 py-2 ms-2 text-white rounded-md bg-red-500 cursor-pointer" onClick={() => handleBlockClick(Team)}>
+                                                                <span>Change Status</span>
                                                             </span>
-
                                                         </td>
                                                     </tr>
                                                 ))}
@@ -542,4 +520,4 @@ function Team({ updateState,instructorId }) {
     );
 }
 
-export default Team;
+export default EditTeam;

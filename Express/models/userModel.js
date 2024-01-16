@@ -5,8 +5,8 @@ module.exports = {
     createUser: async (body, userId) => {
         try {
             const user = await models.Users.create({
-               ...body,
-               userId
+                ...body,
+                userId
             })
             return {
                 response: user,
@@ -39,7 +39,7 @@ module.exports = {
         }
 
     },
-    getUserByEmail: async (userId) => {
+    getUserByUserId: async (userId) => {
         try {
             const user = await models.Users.findOne({
                 where: {
@@ -58,7 +58,7 @@ module.exports = {
         }
 
     },
-    getAllUsers: async ( query) => {
+    getAllUsers: async (query) => {
         try {
             // console.log("model", offset, query)
 
@@ -90,12 +90,14 @@ module.exports = {
                 // order: [[query.sortValue, query.sortOrder]],
                 // offset: offset,
                 // limit: query.limit,
-               where:{ 
-                
-                instructorId:query.instructorId,
-                role: query.role
+                where: {
 
-               }
+                    instructorId: query.instructorId,
+                    role: query.role,
+                    isBlocked:false,
+                    isApproved:true
+
+                }
 
 
             })
@@ -207,6 +209,61 @@ module.exports = {
     },
 
 
+    getAllStatistics: async (query) => {
+        try {
+            const users = await models.Users.findAll({
+                where: {
+                    instructorId: query.instructorId,
+                    isBlocked: false,
+                    isApproved: true
+                }
+            });
+            const projects = await models.Projects.findAll({
+                where: {
+                    instructorId: query.instructorId
+                }
+            });
+            const assignedProjects = await models.Projects.findAll({
+                where: {
+                    projectTag: 'Assigned',
+                    instructorId: query.instructorId
+                }
+            });
+            const unassignedProjects = await models.Projects.findAll({
+                where: {
+                    projectTag: 'Unassigned',
+                    instructorId: query.instructorId
+                }
+            });
+            const teams = await models.Teams.findAll({
+                where: {
+                    instructorId: query.instructorId
+                }
+            });
+
+            const userCount = users.length;
+            const projectCount = projects.length;
+            const teamCount = teams.length;
+            const asProjects = assignedProjects.length;
+            const unasProjects = unassignedProjects.length;
+
+
+            return {
+                response: {
+
+                    userCount,
+                    projectCount,
+                    teamCount,
+                    asProjects,
+                    unasProjects
+                },
+            };
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
 
     getAllRequests: async (query) => {
         try {
@@ -215,7 +272,7 @@ module.exports = {
                     isRequested: true,
                     isApproved: false,
                     isBlocked: false,
-                    instructorId:query.instructorId
+                    instructorId: query.instructorId
                 },
                 attributes: {
                     exclude: ["password", "createdAt", "updatedAt", "deletedAt"],

@@ -45,7 +45,7 @@ module.exports = {
     getAllTeams: async (query) => {
         try {
             const teams = await teamModel.getAllTeams(query);
-
+            console.log("tea", teams.response)
             if (teams.error) {
                 return {
                     error: teams.error,
@@ -53,20 +53,23 @@ module.exports = {
             }
 
             const teamResponses = [];
-console.log("length",teams.response.length)
+            console.log("length", teams.response.length)
             for (let i = 0; i < teams.response.length; i++) {
+                const teamId = teams.response[i].dataValues.teamId;
+
                 const teamLeader = teams.response[i].dataValues.teamLeader;
                 const projectId = teams.response[i].dataValues.projectId;
 
                 const isTeam = await teamModel.getTeamById(teamLeader, projectId);
-// console.log("isTeam",isTeam.response)
+                // console.log("isTeam",isTeam.response)
                 if (!isTeam.response || isTeam.error) {
                     continue; // Skip this team and move to the next one
                 }
 
                 // Extract the required information from the response
                 const teamInfo = {
-                   leaderName: isTeam.response.userName, // Assuming 'name' is the property name in the response
+                    teamId: teamId,
+                    leaderName: isTeam.response.userName, // Assuming 'name' is the property name in the response
                     projectTitle: isTeam.response.projectTitle // Assuming 'projectName' is the property name in the response
                 };
 
@@ -78,6 +81,31 @@ console.log("length",teams.response.length)
             };
 
         } catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
+
+    deleteTeam: async (query) => {
+        try {
+
+
+            const team = await teamModel.deleteTeam(query.teamId);
+
+            if (team.error) {
+                return {
+                    error: team.error,
+                }
+            }
+            return {
+                response: team.response,
+            }
+
+
+        }
+
+        catch (error) {
             return {
                 error: error,
             };
@@ -96,6 +124,28 @@ console.log("length",teams.response.length)
 
             } return {
                 response: teamMembers.response,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
+    getTeamMembers: async (query) => {
+        try {
+
+            const teamMembers = await teamModel.getTeamMembers(query);
+        const MembersName=await teamModel.getMemberById(teamMembers);
+            if (MembersName.error) {
+                return {
+                    error: MembersName.error,
+                }
+
+            } return {
+                response: MembersName.response,
             };
 
 

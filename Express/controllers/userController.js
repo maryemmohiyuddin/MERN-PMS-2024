@@ -49,6 +49,10 @@ const updateUserSchema = joi.object().keys({
 const getByUserIdSchema = joi.object().keys({
     userId: joi.string().required(),
 })
+const getStatisticsSchema = joi.object().keys({
+    instructorId: joi.string().required(),
+})
+
 
 module.exports = {
     createUser: async (req, res) => {
@@ -182,6 +186,30 @@ console.log("query",req.query)
             }
             return res.send({
                 response: users.response,
+            });
+
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
+    getAllStatistics: async (req, res) => {
+        try {
+
+            const validate = await  getStatisticsSchema.validateAsync(req.query);
+
+            const statistics = await userService.getAllStatistics(validate);
+            console.log("query", req.query)
+            if (statistics.error) {
+                return res.send({
+                    error: statistics.error,
+                });
+
+            }
+            return res.send({
+                response: statistics.response,
             });
 
         }

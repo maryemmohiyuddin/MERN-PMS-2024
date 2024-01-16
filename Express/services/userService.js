@@ -109,7 +109,7 @@ module.exports = {
 
     updateUser: async (body) => {
         try {
-            const isUser = await userModel.getUserByEmail(body.userId);
+            const isUser = await userModel.getUserByUserId(body.userId);
             console.log("isUser", isUser)
             if (!isUser.response || isUser.error) {
                 return {
@@ -150,6 +150,24 @@ module.exports = {
 
             return {
                 response: user.response,
+            };
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
+    getAllStatistics: async (query) => {
+        try {
+            const statistics = await userModel.getAllStatistics(query);
+            if (!statistics.response || statistics.error) {
+                return {
+                    error: "request does not exist",
+                };
+            }
+
+            return {
+                response: statistics.response,
             };
         } catch (error) {
             return {

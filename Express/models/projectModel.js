@@ -20,6 +20,28 @@ module.exports = {
         }
 
     },
+
+    deleteProject: async (query) => {
+        try {
+            const project = await models.Projects.destroy({
+                where: {
+                    projectId: query.projectId,
+                }
+            })
+            console.log(project)
+
+            return {
+                response: project,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
     getProjectById: async (projectId) => {
         try {
             const project = await models.Projects.findOne({
@@ -39,7 +61,7 @@ module.exports = {
         }
 
     },
-    getAllProjects: async (offset, query) => {
+    getAllProjects: async (query) => {
         try {
 
             const projects = await models.Projects.findAll({
@@ -79,6 +101,7 @@ module.exports = {
                 },
                 where: {
                     instructorId: query.instructorId,
+                    projectTag:'Unassigned'
                 }
             })
             return {
@@ -93,27 +116,9 @@ module.exports = {
         }
 
     },
-    deleteUser: async (userId) => {
-        try {
-            const user = await models.Users.destroy({
-                where: {
-                    userId: userId,
-                }
-            })
-            return {
-                response: user,
-            };
-
-
-        } catch (error) {
-            return {
-                error: error,
-            };
-        }
-
-    },
     updateProject: async (body) => {
         try {
+            console.log("body",body)
             const project = await models.Projects.update({
                 ...body
             }, {
@@ -138,25 +143,5 @@ module.exports = {
 
 
 
-    getAllRequests: async () => {
-        try {
-            const user = await models.Users.findAll({
-                where: {
-                    isRequested: true,
-                    isApproved: false,
-                    isBlocked: false
-                },
-                attributes: {
-                    exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
-                },
-            });
-            return {
-                response: user,
-            };
-        } catch (error) {
-            return {
-                error: error,
-            };
-        }
-    },
+
 };

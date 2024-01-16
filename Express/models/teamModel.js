@@ -3,7 +3,7 @@ const { Op } = require("sequelize");
 
 module.exports = {
     createTeam: async (body, teamId, membersArray) => {
-        console.log("m", membersArray)
+        console.log("m", membersArray);
         let team;
 
         try {
@@ -16,7 +16,24 @@ module.exports = {
                 instructorId: body.instructorId
             });
 
-            // Associate members with the team
+            // Add the team leader as a normal team member
+            await models.TeamMembers.create({
+                teamMemberId: body.leaderId,
+                teamId: team.teamId,
+                userId: body.leaderId,
+                // ... any other fields
+            });
+
+            const project = await models.Projects.update({
+                projectTag: 'Assigned',
+                status: 'Pending'
+            }, {
+                where: {
+                    projectId: body.projectId,
+                }
+            });
+
+            // Associate other members with the team
             if (membersArray && membersArray.length > 0) {
                 for (let member of membersArray) {
                     await models.TeamMembers.create({
@@ -84,25 +101,48 @@ module.exports = {
         }
     }
     ,
-    getUserByEmail: async (userId) => {
+    getMemberById: async (teammembers) => {
         try {
-            const user = await models.Users.findOne({
-                where: {
-                    userId: userId,
-                }
-            })
-            return {
-                response: user,
-            };
+            let memberDetails = [];
+console.log("teammebers",teammembers)
+            // Assuming teammembers.response is an array of objects
 
+            for (let i = 0; i < teammembers.response.length; i++) {
+                console.log(teammembers.response[i].dataValues.userId)
+                        console.log("mmm", member);
+
+                        const userDetails = await models.Users.findOne({
+                            where: {
+                                userId: teammembers.response[i].dataValues.userId
+                            },
+                            attributes: ['firstName', 'lastName']
+                        });
+
+                        // Check if userDetails is not null before pushing to the array
+                        if (userDetails) {
+                            memberDetails.push({
+                                userId: teammembers.response[i].dataValues.userId,
+                                firstName: userDetails.firstName,
+                                lastName: userDetails.lastName
+                            });
+                        
+                    
+                }
+            }
+
+            console.log("array", memberDetails);
+
+            return {
+                response: memberDetails
+            };
 
         } catch (error) {
             return {
                 error: error,
             };
         }
-
-    },
+    }
+,
     getAllMembers: async (query) => {
         try {
             // Step 1: Fetch all trainees from the Users table
@@ -157,6 +197,68 @@ module.exports = {
         }
     },
 
+    getTeamMembers: async (query) => {
+        try {
+          
+            const teamMembers = await models.TeamMembers.findAll({
+                where: {
+                    teamId: query.teamId
+                },
+                attributes: ['userId','teamMemberId']
+            });
+console.log("model",teamMembers)
+            return {
+                response: teamMembers,
+            };
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
+
+    deleteTeam: async (teamId) => {
+        try {
+            // Fetch the team before destroying it to access its projectId
+            const team = await models.Teams.findOne({
+                where: {
+                    teamId: teamId,
+                },
+            });
+
+            if (!team) {
+                return {
+                    error: "Team not found",
+                };
+            }
+
+            // Destroy the team
+            const deletedTeam = await models.Teams.destroy({
+                where: {
+                    teamId: teamId,
+                },
+            });
+
+            // Fetch the associated project
+            const project = await models.Projects.findOne({
+                where: { projectId: team.projectId },
+            });
+
+            // Update the projectTag to 'unassigned'
+            if (project) {
+                await project.update({ projectTag: 'Unassigned' });
+            }
+
+            return {
+                response: deletedTeam,
+            };
+        } catch (error) {
+            return {
+                error: error.message,
+            };
+        }
+    },
 
     getAllTeams: async (query) => {
         try {
@@ -187,71 +289,5 @@ module.exports = {
             };
         }
 
-    },
-    deleteUser: async (userId) => {
-        try {
-            const user = await models.Users.destroy({
-                where: {
-                    userId: userId,
-                }
-            })
-            return {
-                response: user,
-            };
-
-
-        } catch (error) {
-            return {
-                error: error,
-            };
-        }
-
-    },
-    updateUser: async (body) => {
-        try {
-            const user = await models.Users.update({
-                ...body
-            }, {
-                where: {
-
-                    userId: body.userId,
-                }
-            })
-            return {
-                response: user,
-            };
-
-
-        } catch (error) {
-            console.log("error", error);
-            return {
-                error: error,
-            };
-        }
-
-    },
-
-
-
-    getAllRequests: async () => {
-        try {
-            const user = await models.Users.findAll({
-                where: {
-                    isRequested: true,
-                    isApproved: false,
-                    isBlocked: false
-                },
-                attributes: {
-                    exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
-                },
-            });
-            return {
-                response: user,
-            };
-        } catch (error) {
-            return {
-                error: error,
-            };
-        }
     },
 };

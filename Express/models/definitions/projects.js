@@ -17,11 +17,28 @@ Projects.init({
         allowNull: false,
     },
 
+    projectTag: {
+        type: DataTypes.STRING(60),
+        allowNull: false,
+    },
+    projectStarting: {
+        type: DataTypes.DATEONLY(),
+        allowNull: false,
+    },
+    projectEnding: {
+        type: DataTypes.DATEONLY(),
+        allowNull: false,
+
+    },
+    status: {
+        type: DataTypes.STRING(),
+
+    },
 },
     {
         sequelize,
         timestamps: true,
-        paranoid: true,
+        paranoid: false,
         modelName: "projects"
 
     });

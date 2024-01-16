@@ -308,7 +308,7 @@ function Trainee({updateState,instructorId}) {
                         </div>
 
                     </div>
-                    <pre>{JSON.stringify(data, null, 2)}</pre>
+                    {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
                 </div>
             )}
         </div>

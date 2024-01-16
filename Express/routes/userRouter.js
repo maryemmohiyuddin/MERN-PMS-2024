@@ -8,6 +8,8 @@ router.get("/getAllInstructors", userController.getAllInstructors);
 router.delete("/deleteUser", userController.deleteUser);
 router.put("/updateUser", userController.updateUser);
 router.get("/getAllRequests", userController.getAllRequests);
+router.get("/getAllStatistics", userController.getAllStatistics);
+
 
 
 

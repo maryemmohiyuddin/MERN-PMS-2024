@@ -28,11 +28,36 @@ module.exports = {
             };
         }
     },
+
+    deleteProject: async (query) => {
+        try {
+
+
+            const project = await projectModel.deleteProject(query.projectId);
+
+            if (project.error) {
+                return {
+                    error: project.error,
+                }
+            }
+            return {
+                response: project.response,
+            }
+
+
+        }
+
+        catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
+
+
     getAllProjects: async (query) => {
         try {
-            const offset = (query.pageNo - 1) * query.limit;
-            console.log(offset)
-            const projects = await projectModel.getAllProjects(offset, query);
+            const projects = await projectModel.getAllProjects( query);
             if (projects.error) {
                 return {
                     error: projects.error,
@@ -69,32 +94,6 @@ module.exports = {
         }
 
     },
-    deleteUser: async (query) => {
-        try {
-
-
-            const user = await userModel.deleteUser(query.userId);
-
-            if (user.error) {
-                return {
-                    error: user.error,
-                }
-            }
-            return {
-                response: user.response,
-            }
-
-
-        }
-
-        catch (error) {
-            return {
-                error: error,
-            };
-        }
-    },
-
-
     updateProject: async (body) => {
         try {
             const isProject = await projectModel.getProjectById(body.projectId);
@@ -127,22 +126,4 @@ module.exports = {
         }
     },
 
-    getAllRequests: async () => {
-        try {
-            const user = await userModel.getAllRequests();
-            if (!user.response || user.error) {
-                return {
-                    error: "request does not exist",
-                };
-            }
-
-            return {
-                response: user.response,
-            };
-        } catch (error) {
-            return {
-                error: error,
-            };
-        }
-    },
 };
