@@ -139,6 +139,24 @@ module.exports = {
         }
     },
 
+    getUserByUserId: async (query) => {
+        try {
+            const user = await userModel.getUserById(query);
+            if (!user.response || user.error) {
+                return {
+                    error: "user does not exist",
+                };
+            }
+
+            return {
+                response: user.response,
+            };
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
     getAllRequests: async (query) => {
         try {
             const user = await userModel.getAllRequests(query);

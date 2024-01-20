@@ -88,23 +88,16 @@ module.exports = {
     logout: async (body) => {
         try {
             const logoutResponse = await authModel.logout(body);
-            console.log("req body data", body)
-            var number = body.number;
-            if (number % 2 == 0) {
-                console.log("Number is Even");
-            }
-            else {
-                console.log("Number is Odd");
-            }
-
+            console.log("req body data", logoutResponse)
+         
             if (logoutResponse.error) {
                 return {
-                    error: logoutResponse.error,
+                    error: "error",
                 };
 
             }
             return {
-                response: logoutResponse.response,
+                response: logoutResponse,
             };
         }
 

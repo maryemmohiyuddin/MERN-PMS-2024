@@ -21,12 +21,18 @@ module.exports = {
         }
     },
 
-    logout: () => {
+    logout:async (body) => {
         try {
+            const user = await models.Sessions.destroy({
+                where: {
+                    userId: body.userId,
+                },
+            });
+            console.log("this user", user)
+           
             return {
-                response: "user is logged out",
+                response: "session deleted successfully",
             };
-
         } catch (error) {
             return {
                 error: error,

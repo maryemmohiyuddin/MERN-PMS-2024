@@ -4,10 +4,13 @@ import { CgProfile } from "react-icons/cg";
 import { IoIosNotifications } from "react-icons/io";
 import { FiMessageSquare } from "react-icons/fi";
 import '../customSideBar.css'
+import axios from 'axios';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 
 
-const Nav = () => {
+const Nav = (updateState,instructorId) => {
+   const  navigate=useNavigate()
     const [showNotifications, setShowNotifications] = useState(false);
     const handleNotificationClick = () => {
         console.log("Notification icon clicked");
@@ -18,7 +21,24 @@ const Nav = () => {
         console.log("Overlay clicked");
         setShowNotifications(false);
     };
+    const handleLogout = async () => {
+        try {
+            // Call the backend logout API
+            await axios.post('http://localhost:3000/auth/logout',{
 
+
+            userId:instructorId
+            } /* Add any necessary data for the logout */);
+
+            // Delete cookies on the frontend
+            document.cookie = 'auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+navigate("/")
+            // useNavigate("/trainee")
+        } catch (error) {
+            console.error('Error during logout:', error);
+            // Handle errors if needed
+        }
+    };
 
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -32,8 +52,9 @@ const Nav = () => {
 
                         <li className="hover:bg-gray-100 py-2 px-4 cursor-pointer">Settings</li>
 
-                        <li className="hover:bg-gray-100 py-2 px-4 cursor-pointer text-red-500">Logout</li>
-                        {/* Add more dropdown options here as needed */}
+                        <li onClick={handleLogout} className="p-3 cursor-pointer text-red-500">
+                            Logout
+                        </li>                        {/* Add more dropdown options here as needed */}
                     </ul>
                 </div>
             )}
@@ -69,8 +90,10 @@ const Nav = () => {
                             <input type="search" name="Search" placeholder="Search..." className=" bg-gray-100 w-32 py-2 pl-10 text-sm rounded-full sm:w-auto focus:outline-none dark:bg-gray-800 dark:text-gray-100 focus:dark:bg-gray-900 focus:dark:border-violet-400" />
                         </div>
                     </fieldset></li>
-                    <li className='p-3 cursor-pointer'>
-                        <CgProfile /></li>
+                    <li className='p-3 cursor-pointer' onClick={() => {
+                        updateState.updateState("PROFILE");
+                    }}>
+                        <CgProfile  /></li>
                     <li className='p-3 cursor-pointer' onClick={handleNotificationClick}>
                         <IoIosNotifications />
 

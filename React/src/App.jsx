@@ -4,7 +4,6 @@ import { Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./middleware";
 import InstructorLayout from "./components/instructor/instructor-layout";
 import TraineeLayout from "./components/trainee/trainee-layout";
-import EditTeam from "./components/instructor/Team-management/editTeam";
 import Sidebar from "./components/instructor/sidebar";
 function App() {
     return (

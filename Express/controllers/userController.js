@@ -30,8 +30,15 @@ const updateUserSchema = joi.object().keys({
     isRequested: joi.boolean(),
     isBlocked: joi.boolean(),
     instructorId: joi.string()
-
-
+})
+const updateProfileSchema = joi.object().keys({
+    userId: joi.string().required(),
+    firstName: joi.string().min(3).max(20),
+    lastName: joi.string().min(3).max(30),
+    email: joi.string().email(),
+    cohort: joi.string().min(3).max(30),
+    stack: joi.string().min(3).max(30),
+    role: joi.string().valid("instructor", "trainee"),
 })
 // const paginationSchema = joi.object().keys({
 //     pageNo: joi.number().greater(0).default(1),
@@ -101,6 +108,31 @@ module.exports = {
             });
         };
     },
+
+    getUserByUserId: async (req, res) => {
+        try {
+
+
+            const validate = await getByUserIdSchema.validateAsync(req.query);
+            const users = await userService.getUserByUserId(validate);
+            console.log(req.query)
+            if (users.error) {
+                return res.send({
+                    error: users.error,
+                });
+
+            }
+            return res.send({
+                response: users.response,
+            });
+
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
     getAllInstructors: async (req, res) => {
         try {
 
@@ -152,6 +184,29 @@ module.exports = {
     updateUser: async (req, res) => {
         try {
             const validate = await updateUserSchema.validateAsync(req.body);
+
+            const user = await userService.updateUser(validate);
+            console.log("user", user)
+            if (user.error) {
+                return res.send({
+                    error: user.error,
+                });
+
+            }
+            return res.send({
+                response: user.response,
+            });
+
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
+    updateProfile: async (req, res) => {
+        try {
+            const validate = await updateProfileSchema.validateAsync(req.body);
 
             const user = await userService.updateUser(validate);
             console.log("user", user)

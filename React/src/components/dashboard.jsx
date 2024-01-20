@@ -9,6 +9,8 @@ import { useLocation } from "react-router-dom";
 import Cookies from 'js-cookie';
 import axios from "axios";
 import Loader from "./loader_component";
+import * as ReactTooltip from 'react-tooltip';
+
 
 
 import '../calendarStyles.css';
@@ -16,27 +18,84 @@ import '../calendarStyles.css';
 
 function Dashboard({updateState,instructorId}) {
     // Define the events array here
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(new Date()); // Initialize with the current date
+    const [Teams, setTeams] = useState([]);
+    const [data , setData] = useState([]);
 
+    const getUserById = async () => {
+        try {
+            const { data } = await axios.get('http://localhost:3000/user/getUserByUserId', {
+                params: {
+                    userId: instructorId,
+                },
+            });
+            console.log(data.response);
+            setData(data.response);
+          
+            setLoading(false);
+        } catch (error) {
+            console.error('Error approving request:', error);
+            alert('Failed to approve request. Please try again.');
+        }
+    };
+
+    const getAllTeams = async () => {
+        try {
+
+            const response = await axios.get("http://localhost:3000/task/getAllTasks", {
+                params: {
+                    instructorId: instructorId
+                }
+            });
+
+            if (response && response.data && Array.isArray(response.data.response)) {
+                // console.log("response", response)
+                // console.log("response,data", response.data)
+                // console.log("response.data.response", response.data.response)
+
+                const mappedTeams = response.data.response.map(team => ({
+                    ...team,
+                    projectTitle: team.project.title,
+                    MemberName: team.user.firstName + team.user.lastName,
+                    taskTitle: team.taskTitle,
+                    taskDes: team.taskDes,
+                    taskId: team.taskId,
+                    status: team.status
+                }));
+                setTeams(mappedTeams);
+            } else {
+                console.error("Invalid response format");
+            }
+        } catch (error) {
+            console.error("Error fetching Teams:", error);
+        }
+    };
     const [loading, setLoading] = useState(true);
-    setTimeout(() => {
-        setLoading(false);
-    }, 500);
-    const events = [
-        {
-            title: '',
-            date: new Date(2024, 1, 4),  // JavaScript months are 0-indexed (December = 11)
-        },
-        {
-            title: '',
-            date: new Date(2024, 1, 3),
-        },
-        // ... add more events as needed
-    ];
+   
+    const tileContent = ({ date }) => {
+        const eventForDate = events.find(event =>
+            dayjs(event.date).isSame(date, 'day')
+        );
+
+        if (eventForDate) {
+            return (
+                <div>
+                    <p>{eventForDate.title}</p>
+                    {/* Add the tooltip */}
+                    <ReactTooltip id={`tooltip-${date}`} place="top" effect="solid">
+                        {eventForDate.tooltipContent}
+                    </ReactTooltip>
+                </div>
+            );
+        }
+
+        return null;
+    };
     const currentEvent = [
         {
             title: '',
-            date: new Date(2024, 1, 2),  // JavaScript months are 0-indexed (December = 11)
+            date: new Date(),  // JavaScript months are 0-indexed (December = 11)
+
         },
 
         // ... add more events as needed
@@ -55,26 +114,70 @@ function Dashboard({updateState,instructorId}) {
     };
     const CurrentClassName = ({ date }) => {
         if (isCurrent(date)) {
-            return 'blue-circle';
+            return 'blue-circle current-date'; // Add a new class for the current date, e.g., 'current-date'
         }
         return '';
     };
-    const tileClassName = ({ date }) => {
-        let classes = '';
 
-        if (isDeadline(date)) {
-            classes += ' red-circle';
-        }
+  const tileClassName = ({ date }) => {
+    let classes = '';
 
-        if (isCurrent(date)) {
-            classes += ' blue-circle';
-        }
+    const eventForDate = events.find(event =>
+      dayjs(event.date).isSame(date, 'day')
+    );
 
-        return classes;
-    };
+    if (eventForDate) {
+      classes += ' red-circle'; // Assuming this means it's a deadline
+    }
+
+    if (dayjs(date).isSame(new Date(), 'day')) {
+      classes += ' blue-circle tooltip'; // Add a class to indicate the presence of a tooltip
+    }
+
+    return classes;
+  };
+
 
     const [statistics, setStatistics] = useState(null);
+    const [insProjects, setInsProjects] = useState([]);
 
+    const getInsProjects = async () => {
+        try {
+            // console.log(instructorId)
+            const { data } = await axios.get("http://localhost:3000/project/getInsProjects", {
+                params: {
+                    instructorId: instructorId,
+                    projectTag: 'Assigned'
+
+                }
+            });
+            console.log("data", data.response)
+
+            // console.log("r", data.response);
+            setInsProjects(data.response.map(user => ({
+                value: user.projectId,
+                label: user.projectEnding
+            })));
+            console.log("data",insProjects)
+
+
+
+        } catch (error) {
+            console.error("Error fetching Teams:", error);
+        }
+    };
+    const eventsFromApi = insProjects.map((project, index) => {
+        console.log("Project Ending:", project.projectEnding);
+        return {
+            title: '',
+            date: new Date(project.label),
+            tooltipContent: 'This is Event 1',
+
+        };
+    });
+
+    console.log("Events from ", eventsFromApi);
+const events=[...eventsFromApi]
     const getAllStatistics = async () => {
         try {
 
@@ -95,10 +198,32 @@ function Dashboard({updateState,instructorId}) {
     // ... rest of your Dashboard component code
 
     useEffect(() => {
+        const fetchData = async () => {
+            try {
 
-        getAllStatistics(1)
-    }
-        , [])
+                // Fetch the teams for project ID 1
+
+                // Fetch all teams
+                await getAllTeams();
+
+                // Fetch team members
+                await getAllStatistics();
+                await getUserById();
+
+                // Fetch instructor projects
+                await getInsProjects();
+
+                // Set loading to false when all data has been fetched
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                setLoading(false);
+            }
+        };
+
+        // Wrap fetchData in a setTimeout to ensure it runs after the initial rendering
+        setTimeout(fetchData);
+    }, []);
 
 
     return (
@@ -118,9 +243,13 @@ function Dashboard({updateState,instructorId}) {
                             </li>
 
                         </ol>
-                        <h3 className="font-bold text-3xl ps-6">Main Dashboard</h3>
+                        {/* <h3 className="font-bold text-3xl ps-6">Main Dashboard</h3> */}
+                            <h5 className="font-bold text-3xl  ps-6">Welcome! {data.firstName} {data.lastName}</h5>
+
                     </nav>
+
                     <section className="py-4 mx-8 dark:bg-gray-800 dark:text-gray-100 ">
+
                         <div className="container grid pb-4 grid-cols-1 gap-6 m-4 mx-auto  md:m-0 md:grid-cols-2 xl:grid-cols-3">
                             <div className="bg-white  rounded-full flex overflow-hidden shadow-md dark:bg-gray-900 dark:text-gray-100">
                                 <div className="flex flex-col items-center justify-center  ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
@@ -213,114 +342,48 @@ function Dashboard({updateState,instructorId}) {
                             />
 
                         </div>
+                            
                             <div className="ps-10 width">
                                 <h2 className="font-semibold ps-3 pb-3 ">Task Status</h2>                        <div className=" mt-2   dark:text-gray-100 dark:bg-gray-900">
-                                    <div className="overflow-x-auto shadow-md">
-                                        <table className="min-w-full   text-xs bg-white rounded-xl ">
-                                            <thead className="rounded-t-lg dark:bg-gray-700">
-                                                <tr className="bg-indigo-500   text-sm text-white">
-                                                    <th title="Task Name" className="border border-gray-100 text-sm  text-left p-3 text-md">Task Name</th>
-                                                    <th title="Trainee Name" className=" border border-gray-100 text-sm  text-left p-3">Trainee Name</th>
-                                                    <th title="Class" className="p-3 border border-gray-100 text-sm  text-left">Class</th>
-                                                    <th title="Stack" className="p-3 border border-gray-100 text-sm  text-left">Stack</th>
-                                                    <th title="Project Name" className="border border-gray-100 text-sm  text-left p-3">Project Name</th>
+                                        <div className="overflow-x-auto shadow-md bg-white">
+                                            <table className="w-full text-sm border-collapse">
+                                                <colgroup>
+                                                </colgroup>
+                                                <thead className="bg-white">
+                                                    <tr className="bg-indigo-500 text-sm text-white">
+                                                        <th className="p-3 border border-gray-300">Task Name</th>
+                                                        <th className="p-3 border border-gray-300">Task Description</th>
+                                                        <th className="p-3 border border-gray-300">Project Name</th>
+                                                        <th className="p-3 border border-gray-300">Member Name</th>
+                                                        <th className="p-3 border border-gray-300">Status</th>
 
-                                                    <th title="Status" className="p-3 border border-gray-100 text-sm  text-left">Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {Teams.map((team, index) => (
 
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr className="text-right text-sm border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-800">
+                                                        <tr key={index} className="border-b border-opacity-20 border-gray-700 bg-white">
+                                                            <td className="border border-gray-300 bg-white px-4 py-2"> {team.taskTitle}</td>
+                                                            <td className="border border-gray-300 bg-white px-4 py-2">{team.taskDes}</td>
+                                                            <td className="border border-gray-300 bg-white px-4 py-2">{team.projectTitle}</td>
+                                                            <td className="border border-gray-300 bg-white px-4 py-2">{team.MemberName}</td>
+                                                            {/* Conditionally set the style based on the 'status' value */}
+                                                            <td
+                                                                className={`border border-gray-300 px-4 py-2 ${team.status.toLowerCase() === 'pending' ? 'text-red-400' : 'text-indigo-500'
+                                                                    } font-semibold bg-white`}
+                                                            >
+                                                                {team.status}
+                                                            </td>
 
+                                                        </tr>
+                                                    ))}
 
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>Login Function</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left ">
-                                                        <span>Maryam Mohiyuddin</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>Cohort-4<span className=" text-gray-400 block ">(evening)</span> </span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>MERN</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>PMS</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left text-red-500 font-semibold">
-                                                        <span>Pending</span>
-                                                    </td>
-                                                </tr>
-                                                <tr className="text-right text-sm border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-800">
-
-
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>Signup Function</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left ">
-                                                        <span>Hira khalil</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>Cohort-4 <span className=" text-gray-400 block">(evening)</span> </span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>MERN</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>PMS</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left text-indigo-400 font-semibold">
-                                                        <span>Submitted</span>
-                                                    </td>
-                                                </tr>
-                                                <tr className=" border-b text-sm border-opacity-20 dark:border-gray-700 dark:bg-gray-800">
-
-
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>Session Handling</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>Bilawal Zaman</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>Cohort-4 <span className=" text-gray-400 block">(evening)</span> </span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>MERN</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>PMS</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left text-indigo-400 font-semibold">
-                                                        <span>In Revision</span>
-                                                    </td>
-                                                </tr>
-                                                <tr className="text-right text-sm  border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-800">
-
-
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>Clerk Authentication</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left ">
-                                                        <span>Ahmad mughal</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>Cohort-4 <span className=" text-gray-400 block">(evening)</span> </span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>MERN</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left">
-                                                        <span>E-commerce</span>
-                                                    </td>
-                                                    <td className="px-3 py-2 border border-gray-100  text-left text-indigo-400 font-semibold">
-                                                        <span>Approved</span>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                </tbody>
+                                            </table>
+                                            {Teams.length === 0 && (
+                                                <p className="text-left mt-4 ms-3 text-red-500">No Team data yet.</p>
+                                            )}
+                                        </div>
 
                                 </div>
                             </div>

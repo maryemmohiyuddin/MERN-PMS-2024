@@ -17,6 +17,9 @@ const createTeamSchema = joi.object().keys({
 const getByTeamIdSchema = joi.object().keys({
     teamId: joi.string().required()
 })
+const getTeamByProjectId = joi.object().keys({
+    projectId: joi.string().required()
+})
 
 // const paginationSchema = joi.object().keys({
 //     pageNo: joi.number().greater(0).default(1),
@@ -32,6 +35,7 @@ const getByTeamIdSchema = joi.object().keys({
 module.exports = {
     createTeam: async (req, res) => {
         try {
+            console.log("how many req's",req.length)
             const validate = await createTeamSchema.validateAsync(req.body);
             console.log("here    ", validate)
             const team = await teamService.createTeam(validate);
@@ -118,6 +122,30 @@ module.exports = {
                 response: members.response,
             });
 
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
+    getTeamByProjectId: async (req, res) => {
+        try {
+            console.log("check1",req.query)
+            const validate = await getTeamByProjectId.validateAsync(req.query);
+            console.log("check2", validate)
+
+            const members = await teamService.getTeamByProjectId(validate);
+            // console.log("check3", members)
+            if (members.error) {
+                return res.send({
+                    error: members.error,
+                });
+
+            }
+            return res.send({
+                response: members.response,
+            });
         }
         catch (error) {
             return res.send({

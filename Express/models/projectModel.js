@@ -101,7 +101,7 @@ module.exports = {
                 },
                 where: {
                     instructorId: query.instructorId,
-                    projectTag:'Unassigned'
+                    projectTag:query.projectTag
                 }
             })
             return {

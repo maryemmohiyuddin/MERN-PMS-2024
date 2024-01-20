@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 function Task() {
-    // State variables to manage task name, task description file, uploaded file, and success messages for each row
     const [tasks, setTasks] = useState([
         { id: 1, taskName: 'Login page', taskDescriptionFile: 'existing-file.pdf', file: null, successMessage: '', deadline: '2023-12-31' },
         { id: 2, taskName: 'Onboarding', taskDescriptionFile: 'existing-file.pdf', file: null, successMessage: '', deadline: '2023-12-25' },

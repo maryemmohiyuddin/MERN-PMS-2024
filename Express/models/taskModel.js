@@ -20,16 +20,71 @@ module.exports = {
         }
 
     },
+    getProjectMembers: async (namesArray) => {
+        try {
+            console.log("Array", namesArray.response)
+            const results = [];
 
-    getInstructorTasks: async (query) => {
+            for (const item of namesArray.response) {
+                console.log("Array", item.title)
+
+                const project = await models.Projects.findOne({
+                    where: {
+                        projectId: item.projectId,
+                    },
+                    attributes: ["title"],
+                });
+
+                const teamMember = await models.TeamMembers.findOne({
+                    where: {
+                        teamMemberId: item.teamMemberId,
+                    },
+                    attributes: ["userId"],
+                });
+
+                const user = await models.Users.findOne({
+                    where: {
+                        userId: teamMember.userId,
+                    },
+                    attributes: ["firstName", "lastName"],
+
+                });
+
+                results.push({
+                    projectId: item.projectId,
+                    teamMemberId: item.teamMemberId,
+                    project: project.dataValues,
+                    teamMember: teamMember.dataValues,
+                    user: user.dataValues,
+                    taskTitle: item.title,
+                    taskDes: item.description,
+                    taskId: item.taskId,
+                    status: item.status
+
+
+
+                });
+            }
+            console.log("here", results)
+            return {
+                response: results,
+            };
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
+
+
+    getAllTasks: async (query) => {
         try {
             const task = await models.Tasks.findAll({
                 where: {
-                    teamMemberId:query.teamMemberId,  
-                    projectId:query.projectId            
+                    instructorId: query.instructorId
                 },
                 attributes: {
-                    exclude: [ "createdAt", "updatedAt", "deletedAt"],
+                    exclude: ["createdAt", "updatedAt", "deletedAt"],
                 },
             });
             return {
@@ -41,4 +96,66 @@ module.exports = {
             };
         }
     },
-    };
+
+    deleteTask: async (taskId) => {
+        try {
+          
+            const deletedTask = await models.Tasks.destroy({
+                where: {
+                    taskId: taskId,
+                },
+            });          
+            return {
+                response: deletedTask,
+            };
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
+
+    getTaskById: async (taskId) => {
+        try {
+            const task = await models.Tasks.findOne({
+                where: {
+                    taskId: taskId,
+                }
+            })
+            return {
+                response: task,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
+    updateTask: async (body) => {
+        try {
+            console.log("body", body)
+            const task = await models.Tasks.update({
+                ...body
+            }, {
+                where: {
+
+                    taskId: body.taskId,
+                }
+            })
+            return {
+                response: task,
+            };
+
+
+        } catch (error) {
+            console.log("error", error);
+            return {
+                error: error,
+            };
+        }
+
+    },
+};

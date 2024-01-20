@@ -6,7 +6,8 @@ const { v4: uuidv4 } = require("uuid");
 module.exports = {
     createTeam: async (body) => {
         try {
-            console.log("Service method started execution");
+
+            console.log("Service method started execution",body);
 
             const teamId = uuidv4();
             const membersArray = [];
@@ -124,6 +125,28 @@ module.exports = {
 
             } return {
                 response: teamMembers.response,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
+    getTeamByProjectId: async (query) => {
+        try {
+
+            // const teamMembers = await teamModel.getTeamMembers(query);
+            const MembersName = await teamModel.getTeamByProjectId(query);
+            if (MembersName.error) {
+                return {
+                    error: MembersName.error,
+                }
+
+            } return {
+                response: MembersName.response,
             };
 
 

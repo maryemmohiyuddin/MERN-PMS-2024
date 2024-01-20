@@ -58,6 +58,26 @@ module.exports = {
         }
 
     },
+
+    getUserById: async (query) => {
+        try {
+            const user = await models.Users.findOne({
+                where: {
+                    userId: query.userId,
+                }
+            })
+            return {
+                response: user,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
     getAllUsers: async (query) => {
         try {
             // console.log("model", offset, query)

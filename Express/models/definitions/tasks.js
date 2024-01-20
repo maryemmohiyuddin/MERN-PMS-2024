@@ -15,6 +15,11 @@ Tasks.init({
         type: DataTypes.STRING(60),
         allowNull: false,
     },
+    status:{
+        type: DataTypes.STRING(60),
+        allowNull: false,
+        defaultValue:"Pending"
+    }
 
 },
     {

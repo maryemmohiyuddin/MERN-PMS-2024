@@ -33,6 +33,9 @@ Tasks.belongsTo(Projects, { foreignKey: 'projectId', onDelete: "CASCADE" });
 TeamMembers.hasMany(Tasks, { foreignKey: 'teamMemberId', onDelete: "CASCADE" });
 Tasks.belongsTo(TeamMembers, { foreignKey: 'teamMemberId', onDelete: "CASCADE" });
 
+Users.hasMany(Tasks, { foreignKey: 'instructorId', onDelete: "CASCADE" });
+Tasks.belongsTo(Users, { foreignKey: 'instructorId', onDelete: "CASCADE" });
+
 Users.hasMany(Teams, { foreignKey: 'teamLeader', onDelete: "CASCADE" });
 Teams.belongsTo(Users, { foreignKey: 'teamLeader', onDelete: "CASCADE" });
 

@@ -14,7 +14,7 @@ function Team({ updateState,instructorId }) {
    
     const [selectedTeamId, setSelectedTeamId] = useState(null);
 
-    const [isEditModalOpen, setEditModalOpen] = useState(false);
+    const [isViewModalOpen, setViewModalOpen] = useState(false);
     const [editData, setEditData] = useState({});
     const [isAddModalOpen, setAddModalOpen] = useState(false);
     const [addData, setAddData] = useState({});
@@ -38,12 +38,40 @@ function Team({ updateState,instructorId }) {
     const [localSelectedTeamMembers, setLocalSelectedTeamMembers] = useState([]);
 
     const [currentproject, setCurrentproject] = useState(null);
-    const handleEditClick = (team) => {
-        // setCurrentproject(team);
-        // setEditData(team);
-        setEditModalOpen(true);
-        setDimmed(true);
+    const [viewData, setViewData] = useState(null);
+    const [viewLoading, setViewLoading] = useState(false);
+    const [isLoadingView, setIsLoadingView] = useState(false);
+
+    const handleViewClick = async (teamId) => {
+                try {
+            // Set loading to true when initiating the API call
+                    setIsLoadingView(true);
+
+            // Call the getMembers API
+            const response = await axios.get("http://localhost:3000/team/getTeamMembers", {
+                params: {
+                    teamId: teamId
+                }
+            });
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    // Once the data is loaded or operation is complete, open the modal
+                    setIsLoadingView(false);
+            // Update the state with the fetched data
+            setViewData(response.data.response);
+
+            // Set loading to false once the data is fetched
+
+            // Open the view modal
+            setViewModalOpen(true);
+            setDimmed(true);
+        } catch (error) {
+            console.error("Error fetching team members:", error);
+            // Handle the error and set loading to false
+            setViewLoading(false);
+        }
     };
+
     const handleAddClick = (project) => {
         setCurrentproject(project);
         setAddData({}); // Clear previous data
@@ -52,8 +80,8 @@ function Team({ updateState,instructorId }) {
         setDimmed(true);
     };
 
-    const handleEditAction = () => {
-        setEditModalOpen(false);
+    const handleViewAction = () => {
+        setViewModalOpen(false);
         setDimmed(false);
     }; const handleAddAction = () => {
         // Check if all team members are selected
@@ -79,6 +107,7 @@ function Team({ updateState,instructorId }) {
         setAddModalOpen(false);
         setDimmed(false);
     };
+
 
     const handleCloseAction = () => {
         // Check if any of the required fields are empty
@@ -129,6 +158,8 @@ function Team({ updateState,instructorId }) {
 
     const [teamMembers, setTeamMembers] = useState([]);
     const [insProjects, setInsProjects] = useState([]);
+    // Add this at the beginning of your component
+    const [createTeamCounter, setCreateTeamCounter] = useState(0);
 
 
 
@@ -169,7 +200,6 @@ function Team({ updateState,instructorId }) {
             return newSelectedMembers;
         });
     };
-
     const create = async () => {
         try {
             const requestData = {
@@ -182,6 +212,9 @@ function Team({ updateState,instructorId }) {
             const { data } = await axios.post("http://localhost:3000/team/createTeam", requestData);
             console.log(data.response);
 
+            // Increment the counter
+            setCreateTeamCounter(prevCounter => prevCounter + 1);
+
             // Add the new team to the state
             getAllTeams();
             getTeamMembers();
@@ -189,6 +222,8 @@ function Team({ updateState,instructorId }) {
             console.error("Error creating Team:", error);
         }
     };
+    // Log the counter value to the console
+    console.log("Create Team API calls:", createTeamCounter);
 
 
 
@@ -266,10 +301,11 @@ function Team({ updateState,instructorId }) {
             console.log(instructorId)
             const { data } = await axios.get("http://localhost:3000/project/getInsProjects", {
                 params: {
-                    instructorId: instructorId
+                    instructorId: instructorId,
+                    projectTag:'Unassigned'
                 }
             });
-            console.log("r", data.response);
+            console.log("ree", data.response);
             // Assuming data.response is the array you mentioned
             setInsProjects(data.response.map(user => ({
                 value: user.projectId,
@@ -282,7 +318,24 @@ function Team({ updateState,instructorId }) {
             console.error("Error fetching Teams:", error);
             setLoading(false);
         }
-    }; const deleteTeam = async (teamId) => {
+    }; 
+
+    const getMembers = async (teamId) => {
+        try {
+            console.log("teamId",teamId)
+            const { data } = await axios.get("http://localhost:3000/team/getTeamMembers", {
+                params: {
+                    teamId: teamId
+                }
+            });
+            console.log("hey", data.response);
+ 
+        } catch (error) {
+            console.error("Error fetching Teams:", error);
+            setLoading(false);
+        }
+    }; 
+    const deleteTeam = async (teamId) => {
         try {
             console.log("teamid", teamId);
             const { data } = await axios.delete("http://localhost:3000/team/deleteTeam", {
@@ -306,13 +359,24 @@ function Team({ updateState,instructorId }) {
 
    
         // Update the memberOptions for all dropdowns
-  
 
-
+   
     useEffect(() => {
-        getAllTeams(1);
-        getTeamMembers();
-        getInsProjects();  // Call getTeamMembers here
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+        await getAllTeams();
+        await getTeamMembers();
+        await getInsProjects();
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                setLoading(false);
+            }
+        };
+
+        // Wrap fetchData in a setTimeout to ensure it runs after the initial rendering
+        fetchData();  // Call getTeamMembers here
         // Call getTeamMembers here
     }, []);  // Include getTeamMembers in the dependency array
     // Include getAllTeams in the dependency array
@@ -322,41 +386,38 @@ function Team({ updateState,instructorId }) {
             {loading ? <Loader /> : (
                 <div className="data-container">
                     <div className='className="h-screen w-screen flex justify-center items-center my-8"'>
-                        {isEditModalOpen && (
+                        {isLoadingView && (
+                            <div className="loader-container">
+                                {/* Your loader component or message goes here */}
+<Loader />                            </div>
+                        )}  {isViewModalOpen && (
                             <div className="modal-container  flex items-center justify-center z-100">
-                                <div className="absolute  bg-black opacity-50" onClick={() => setEditModalOpen(false)}></div>
+                                {/* ... (existing code) */}
                                 <div className="flex flex-col w-form gap-2 p-6 rounded-md shadow-md bg-white opacity-100 text-black">
                                     <h2 className="text-xl font-semibold text-center leading tracking">
-                                        Edit Team
+                                        View Team
                                     </h2>
                                     <div className="mt-4">
-                                        {/* Here you can have your edit form fields */}
-                                        {/* For example: */}
-                                        <label htmlFor="Title">Title</label><br />
-
-                                        <input
-                                            type="text"
-                                            value={editData.title || ''}
-                                            onChange={(e) => setEditData(prev => ({ ...prev, title: e.target.value }))}
-                                            placeholder="Title"
-                                            className="border w-full p-2 mb-2"
-
-                                        /><br />
-                                        <label htmlFor="Description">Description</label><br />
-                                        <input
-                                            type="text"
-                                            value={editData.description || ''}
-                                            onChange={(e) => setEditData(prev => ({ ...prev, description: e.target.value }))}
-                                            placeholder="Description"
-                                            className="border p-2 w-full mb-2"
-                                        /><br />
-
-                                        {/* ... other fields */}
+                                       
+                                           { viewData && viewData.map((member, index) => (
+                                                <div key={index}>
+                                                    <label htmlFor={`TeamMember${index + 1}`}>{`Team Member ${index + 1}`}</label><br />
+                                                    <input
+                                                        type="text"
+                                                        value={member.firstName + ' ' + member.lastName}
+                                                        className="border w-full p-2 mb-2"
+                                                        disabled
+                                                    /><br />
+                                                {/* Add other fields as needed */}
+                                                </div>
+                                            ))
+                                        }
+                                        <div className="flex justify-end mt-6">
+                                            <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleViewAction}>Close</button>
+                                            {/* <button className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2" onClick={() => { handleViewAction(); update(editData); }}>Save</button> */}
+                                        </div>
                                     </div>
-                                    <div className="flex justify-end mt-6">
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleEditAction}>Close</button>
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2" onClick={() => { handleEditAction(); update(editData); }}>Save</button>
-                                    </div>
+                                    {/* ... (existing code) */}
                                 </div>
                             </div>
                         )}
@@ -415,22 +476,19 @@ function Team({ updateState,instructorId }) {
                                     </div>
                                     <div className="flex justify-end mt-6">
                                         <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseTeamModal}>Close</button>
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2"
+                                        <button
+                                            className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2"
                                             onClick={() => {
                                                 console.log("Selected Team Members:", selectedTeamMembers.filter(member => member !== null));
                                                 console.log("Team Leader ID:", teamLeader);
                                                 console.log("Selected Project ID:", selectedProjectId);
                                                 console.log("Instructor ID:", instructorId);
                                                 handleAddAction();
-                                                create({
-                                                    userId: selectedTeamMembers.filter(member => member !== null), // Remove any null values
-                                                    leaderId: teamLeader,
-                                                    projectId: selectedProjectId,
-                                                    instructorId: instructorId
-                                                });
-                                            }}>
+                                            }}
+                                        >
                                             Save
                                         </button>
+
 
                                     </div>
                                 </div>
@@ -505,7 +563,7 @@ function Team({ updateState,instructorId }) {
                                                         <td className="border border-gray-300 bg-white px-4 py-2"> {team.leaderName}</td>
                                                         <td className="border border-gray-300 bg-white px-4 py-2">{team.projectTitle}</td>
                                                         <td className="p-3 border border-gray-300">
-                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer" onClick={() => handleEditClick(team)}>
+                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer" onClick={() => handleViewClick(team.teamId)}>
                                                                 <span>View</span>
                                                             </span>
                                                             {console.log(team.teamId)}

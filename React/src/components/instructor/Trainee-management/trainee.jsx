@@ -296,13 +296,13 @@ function Trainee({updateState,instructorId}) {
                                         </table>
 
                                     </div>
-                                    <div className="flex justify-end me-28 space-x-1 mt-3 dark:text-gray-100">
+                                    {/* <div className="flex justify-end me-28 space-x-1 mt-3 dark:text-gray-100">
 
                                         <button type="button" onClick={() => getAllTrainees(1)} title="Page 1" className="bg-white inline-flex items-center justify-center w-8 h-8 text-sm font-semibold border rounded shadow-md dark:bg-gray-900 dark:text-violet-400 dark:border-violet-400">1</button>
                                         <button type="button" onClick={() => getAllTrainees(2)} className="bg-white inline-flex items-center justify-center w-8 h-8 text-sm border rounded shadow-md dark:bg-gray-900 dark:border-gray-800" title="Page 2">2</button>
                                         <button type="button" onClick={() => getAllTrainees(3)} className="bg-white inline-flex items-center justify-center w-8 h-8 text-sm border rounded shadow-md dark:bg-gray-900 dark:border-gray-800" title="Page 3">3</button>
                                         <button type="button" onClick={() => getAllTrainees(4)} className="bg-white inline-flex items-center justify-center w-8 h-8 text-sm border rounded shadow-md dark:bg-gray-900 dark:border-gray-800" title="Page 4">4</button>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>

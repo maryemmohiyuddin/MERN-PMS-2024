@@ -8,7 +8,9 @@ const loginSchema = joi.object().keys({
 
 
 });
-
+const logoutSchema = joi.object().keys({
+    userId: joi.string().required().min(3).max(100),
+})
 const signupSchema = joi.object().keys({
     firstName: joi.string().required().min(3).max(20),
     lastName: joi.string().required().min(3).max(30),
@@ -44,25 +46,29 @@ module.exports = {
         }
     },
 
-    logout: (req, res) => {
-        try {
-            const logoutResponse = authService.logout(req.body);
-            if (logoutResponse.error) {
-                res.send({
-                    error: logoutResponse.error,
-                });
+        logout: async(req, res) => {
+            try {
+                const validate = await logoutSchema.validateAsync(req.body);
 
+                const logoutResponse = authService.logout(validate);
+                res.clearCookie("auth");
+                // Check if the 'Set-Cookie' header is present
+                if (res.get("Set-Cookie")) {
+                    console.log("Cookie deleted successfully");
+                } else {
+                    console.log("Cookie deletion failed");
+                }
+
+                return res.send({
+                    response: "session deleted successfully",
+                });
             }
-            res.send({
-                response: logoutResponse.response,
-            });
-        }
-        catch (error) {
-            res.send({
-                error: error,
-            });
-        };
-    },
+            catch (error) {
+                res.send({
+                    error: error,
+                });
+            };
+        },
     signup: async (req, res) => {
         try {
             const validate = await signupSchema.validateAsync(req.body);

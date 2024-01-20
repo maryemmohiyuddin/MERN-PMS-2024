@@ -11,10 +11,6 @@ const createProjectSchema = joi.object().keys({
     projectEnding: joi.date().required(),
     projectStarting: joi.date().required(),
     projectTag: joi.string().required(),
-
-
-
-
 })
 
 const updateProjectSchema = joi.object().keys({
@@ -31,20 +27,8 @@ const getByProjectIdSchema = joi.object().keys({
 })
 const InsProjectSchema = joi.object().keys({
     instructorId: joi.string().required(),
+    projectTag:joi.string().required()
 })
-
-
-// const paginationSchema = joi.object().keys({
-//     pageNo: joi.number().greater(0).default(1),
-//     limit: joi.number().valid(5, 10).default(5),
-//     sortValue: joi
-//         .string()
-//         .default("title"),
-//     sortOrder: joi.valid("ASC", "DESC").default("ASC"),
-//     title: joi.string(),
-//     instructorId: joi.string().required()
-
-// })
 
 module.exports = {
     createProject: async (req, res) => {
