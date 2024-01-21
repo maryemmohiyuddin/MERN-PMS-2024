@@ -116,6 +116,110 @@ module.exports = {
         }
 
     },
+
+    getUserProject: async (query) => {
+        try {
+            let project;
+            let teamLeader;
+
+            const isUser = await models.TeamMembers.findOne({
+                attributes: {
+                    exclude: ["createdAt", "updatedAt", "deletedAt"],
+                },
+                where: {
+                    userId: query.userId,
+                }
+            });
+
+            console.log("isUser", isUser);
+            console.log("isUser length", isUser.teamId);
+
+            if (isUser) {
+                const team = await models.Teams.findOne({
+                    attributes: {
+                        exclude: ["createdAt", "updatedAt", "deletedAt"],
+                    },
+                    where: {
+                        teamId: isUser.teamId,
+                    }
+                });
+
+                console.log("team", team);
+
+                project = await models.Projects.findOne({
+                    attributes: {
+                        exclude: ["createdAt", "updatedAt", "deletedAt"],
+                    },
+                    where: {
+                        projectId: team.projectId,
+                    }
+                });
+
+                console.log("project", project);
+
+                teamLeader = team.teamLeader; // Assuming teamLeader is a property of the team object
+            }
+
+            return {
+                response: {
+                    project: project,
+                    teamLeader: teamLeader,
+                },
+            };
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
+
+    getUserNames: async (query) => {
+        try {
+        
+console.log("quer",query)
+            console.log("queryyy", query.response.project.dataValues.instructorId)
+
+            const instructor = await models.Users.findOne({
+                attributes: {
+                    exclude: ["createdAt", "updatedAt", "deletedAt"],
+                },
+                where: {
+                    userId: query.response.project.dataValues.instructorId,
+                }
+            });
+
+            console.log("instructor", instructor);
+            console.log("isUser length", instructor.firstName+instructor.lastName);
+
+            
+                const user = await models.Users.findOne({
+                    attributes: {
+                        exclude: ["createdAt", "updatedAt", "deletedAt"],
+                    },
+                    where: {
+                        userId: query.response.teamLeader,
+                    }
+                });
+
+                console.log("user", user.dataValues.firstName);
+
+               
+
+
+            
+            return {
+                response: {
+                    instructorName: instructor.firstName +" "+ instructor.lastName,
+                    leaderName: user.dataValues.firstName + " " + user.dataValues.lastName,
+                },
+            };
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
+
     updateProject: async (body) => {
         try {
             console.log("body",body)

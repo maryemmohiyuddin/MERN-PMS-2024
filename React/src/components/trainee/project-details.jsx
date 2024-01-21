@@ -8,7 +8,7 @@ import Select from "react-select";
 import Loader from '../loader_component';
 
 
-function Project() {
+function Project(userId) {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
     const [editData, setEditData] = useState({});
     const [isAddModalOpen, setAddModalOpen] = useState(false);
@@ -72,62 +72,127 @@ function Project() {
 
     const contentClassName = isDimmed ? 'dimmed' : '';
 
-    const [Projects, setProjects] = useState([]);
-    const authCookie = Cookies.get('auth');
 
-    // Find the position of "userId" in the string
-    const userIdIndex = authCookie.indexOf('"userId":"');
+    // console.log(userId); // This will log the userId value
 
-    // Extract the userId value using substr and indexOf
-    const start = userIdIndex + '"userId":"'.length;
-    const end = authCookie.indexOf('"', start);
-    const userId = authCookie.substring(start, end);
-
-    console.log(userId); // This will log the userId value
-
-    const getAllProjects = async (pageNo) => {
+    const getAllProjects = async () => {
         try {
-            console.log("pageNo", pageNo);
-            setCurrentPage(pageNo);  // Update the currentPage state
-
-            const { data } = await axios.get("http://localhost:3000/project/getAllProjects", {
+            console.log("userId", userId.userId);
+            const { data } = await axios.get("http://localhost:3000/project/getUserProjects", {
                 params: {
-                    userId: userId,
-                    pageNo: pageNo
+                    userId: userId.userId
                 }
-
             });
             setData(data);
             setTimeout(() => {
                 setLoading(false);
             }, 500);
-            console.log(data)
-            if (data.response) {
-                const formattedProjects = data.response.map(item => ({
-                    title: item.title,
-                    description: item.description,
-                    projectId: item.projectId,
-                    projectStarting: item.projectStarting,
-                    projectEnding: item.projectEnding,
-                    projectTag: item.projectTag,
-                    status: item.status,
-                    // Assuming there is a property indicating whether the project is assigned
-                }));
+
+            console.log("here", data.response);
+
+            if (data.response && data.response.projects) {
+                let formattedProjects = [];
+
+                if (Array.isArray(data.response.projects)) {
+                    // If projects is an array, use it directly
+                    formattedProjects = data.response.projects.map(item => ({
+                        title: item.title,
+                        // Add other properties as needed
+                    })
+                    );
+                    console.log("Array")
+                } else if (typeof data.response.projects === 'object') {
+                    // If projects is an object, convert it to an array
+                    formattedProjects = Object.values(data.response.projects).map(item => ({
+                        title: item.title,
+                        description: item.description,
+                        startingDate: item.projectStarting,
+                        endingDate: item.projectEnding,
+                        instructorName: data.response.names.instructorName,
+                        leaderName: data.response.names.leaderName,
+                        status: item.status
+
+
+                        // Add other properties as needed
+                    }));
+
+                    console.log("obj")
+                }
+
+                console.log(formattedProjects);
 
                 // Categorize projects into assigned and unassigned
-                const assigned = formattedProjects.filter(project => project.projectTag === "Assigned");
-                const unassigned = formattedProjects.filter(project => project.projectTag === "Unassigned");
-
+                const assigned = formattedProjects.filter(project => project.title);
                 setAssignedProjects(assigned);
-                setUnassignedProjects(unassigned);
+            } else {
+                console.error("Invalid response format or missing projects");
+                setLoading(false);
             }
         } catch (error) {
             console.error("Error fetching Projects:", error);
             setLoading(false);
         }
+
     };
 
 
+    const getUserMembers = async () => {
+        try {
+            console.log("userId", userId.userId);
+            const { data } = await axios.get("http://localhost:3000/team/getUserMembers", {
+                params: {
+                    userId: userId.userId
+                }
+            });
+            setData(data);
+            setTimeout(() => {
+                setLoading(false);
+            }, 500);
+
+            console.log("data here", data.response);
+
+            if (data.response && data.response) {
+                let formattedProjects = [];
+
+                if (Array.isArray(data.response)) {
+                    // If projects is an array, use it directly
+                    formattedProjects = data.response.map(item => ({
+                        userName: item.userName,
+                        cohort: item.cohort,
+                        stack: item.stack                        // Add other properties as needed
+                    })
+                    );
+                    console.log("Array")
+                } else if (typeof data.response === 'object') {
+                    // If projects is an object, convert it to an array
+                    formattedProjects = Object.values(data.response).map(item => ({
+                        name: item.firstName + " " + item.lastName,
+                        cohort: item.cohort,
+                        stack: item.stack
+
+
+                        // Add other properties as needed
+                    }));
+
+                    console.log("obj")
+                }
+
+                console.log(formattedProjects);
+
+                // Categorize projects into assigned and unassigned
+                const unassigned = formattedProjects.filter(name => name.userName);
+
+                setUnassignedProjects(unassigned);
+            } else {
+                console.error("Invalid response format or missing projects");
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error("Error fetching Projects:", error);
+            setLoading(false);
+        }
+
+    };
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selectedProjectForDelete, setSelectedProjectForDelete] = useState(null);
     const handleCloseDeleteModal = () => {
@@ -144,6 +209,7 @@ function Project() {
     useEffect(() => {
         // Call getAllProjects with an initial page number when the component mounts
         getAllProjects(1);
+        getUserMembers()
     }, []);  // Include getAllProjects in the dependency array
 
     return (
@@ -151,7 +217,7 @@ function Project() {
             {loading ? <Loader /> : (
                 <div className="data-container">
                     <div className='className="h-screen w-screen flex justify-center items-center my-8"'>
-                        
+
 
                         <div className={`h-screen w-screen flex justify-end ${contentClassName}`}>
                             <div className=" ps-12 w-10/12 h-5/6">
@@ -191,6 +257,8 @@ function Project() {
                                                     <th className="p-3 border border-gray-300">Ending Date</th>
                                                     <th className="p-3 border border-gray-300">Project Leader</th>
                                                     <th className="p-3 border border-gray-300">Project Instructor</th>
+                                                    <th className="p-3 border border-gray-300">Status</th>
+
 
 
 
@@ -200,23 +268,26 @@ function Project() {
                                                 {assignedProjects.map((project, index) => (
 
                                                     <tr key={index} className="border-b border-opacity-20 border-gray-700 bg-white">
-                                                        <td className="p-3 border border-gray-300">
+                                                        <td className="p-3 border border-gray-300 font-semibold">
                                                             <p>{project.title}</p>
                                                         </td>
                                                         <td className="p-3 border border-gray-300">
                                                             <p>{project.description}</p>
                                                         </td>
                                                         <td className="p-3 border border-gray-300">
-                                                            <p>{project.projectStarting}</p>
+                                                            <p>{project.startingDate}</p>
                                                         </td>
                                                         <td className="p-3 border border-gray-300">
-                                                            <p>{project.projectStarting}</p>
+                                                            <p>{project.endingDate}</p>
                                                         </td>
-                                                        <td className="p-3 border border-gray-300">
-                                                            <p>{project.projectStarting}</p>
+                                                        <td className="p-3 border border-gray-300 font-semibold">
+                                                            <p>{project.leaderName}</p>
                                                         </td>
-                                                        <td className="p-3 border border-gray-300">
-                                                            <p>{project.projectStarting}</p>
+                                                        <td className="p-3 border border-gray-300 font-semibold">
+                                                            <p>{project.instructorName}</p>
+                                                        </td>
+                                                        <td className="p-3 border font-semibold text-red-500 border-gray-300">
+                                                            <p>{project.status}</p>
                                                         </td>
                                                     </tr>
                                                 ))}
@@ -228,15 +299,15 @@ function Project() {
                                     </div>
 
                                 </div>
-                               
+
                                 <div className="container p-2 mx-auto sm:p-4 text-black" >
                                     <div className="flex justify-between items-center">
                                         <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">All Members:</h4>
-                                       
+
 
 
                                     </div>
-                                    
+
                                     <div className="overflow-x-auto shadow-md w-11/12 bg-white">
                                         <table className="w-full text-sm border-collapse">
                                             <colgroup>
@@ -250,29 +321,29 @@ function Project() {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {assignedProjects.map((project, index) => (
+                                                {unassignedProjects.map((name, index) => (
 
                                                     <tr key={index} className="border-b border-opacity-20 border-gray-700 bg-white">
                                                         <td className="p-3 border border-gray-300">
-                                                            <p>{project.title}</p>
+                                                            <p>{name.userName}</p>
                                                         </td>
                                                         <td className="p-3 border border-gray-300">
-                                                            <p>{project.description}</p>
+                                                            <p>{name.cohort}</p>
                                                         </td>
                                                         <td className="p-3 border border-gray-300">
-                                                            <p>{project.projectStarting}</p>
+                                                            <p>{name.stack}</p>
                                                         </td>
-                                                       
+
                                                     </tr>
                                                 ))}
                                             </tbody>
                                         </table>
-                                        {assignedProjects.length === 0 && (
+                                        {unassignedProjects.length === 0 && (
                                             <p className="text-left mt-4 ms-3 text-red-500">No project data yet.</p>
                                         )}
                                     </div>
-                                   
-                                   </div>
+
+                                </div>
                                 <pre>{(data, null)}</pre>
 
                             </div>

@@ -74,12 +74,43 @@ a {
     pointer-events: none; /* This ensures that the dimmed content is not clickable */
     transition: opacity 0.3s ease; /* Optional: Add a smooth transition effect */
 }
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        /* transform: translateY(-50%); */
+    }
+    to {
+        opacity: 1;
+        /* transform: translateY(0); */
+    }
+}
+@keyframes fadeOut {
+  
+    to {
+        opacity: 0;
+        /* transform: translateY(0); */
+    }
+}
+
 .modal-container {
-    /* Add any specific styling for the modal here */
     position: fixed;
-    
-    z-index: 101; /* Ensure modal appears above dimmed content */
-    background-color: white; /* This ensures modal's background is white, you can adjust if needed */
+    z-index: 101;
+    background-color: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: fadeIn 0.5s ease-in-out;
+
+}
+.modal-container-closed {
+    position: fixed;
+    z-index: 101;
+    background-color: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: fadeOut 0.5s ease-in-out;
+
 }
 .loader-container {
     border-radius: 8px; /* Rounded corners for the container */
@@ -151,7 +182,62 @@ button {
 button:hover {
   border-color: #646cff;
 }
+body {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
 
+.notification {
+  backdrop-filter: blur(5px);
+  z-index: 999;
+  transition: opacity 0.1s ease-in-out;
+  animation: mymove 0.5s;
+  animation-fill-mode: forwards;
+  position: absolute;
+  right: -100px; /* Adjust as needed */
+}
+/* Add this style in your CSS file or use inline styles in your React components */
+.notification-indicator {
+    position: absolute;
+    top: 32px;
+    right:124px;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+}
+.hover-effect {
+  transition: background-color 0.2s ease, color 0.2s ease; /* Adjust the duration and easing function as needed */
+}
+
+.hover-effect:hover {
+  background-color: #5a67d8; /* Your hover background color */
+  color: #ffffff; /* Your hover text color */
+}
+
+@keyframes mymove {
+  from {
+    right: -100px;
+  }
+  to {
+    right: 0;
+  }
+}
+
+
+
+
+.blurrr {
+  filter: blur(5px); /* Adjust the value (5px) based on your desired blur amount */
+    pointer-events: none; /* This ensures that the dimmed content is not clickable */
+    transition: opacity 0.9s ease; /* Optional: Add a smooth transition effect */
+  }
+.blurr {
+  filter: blur(5px); /* Adjust the value (5px) based on your desired blur amount */
+z-index:-100;
+    pointer-events: none; /* This ensures that the dimmed content is not clickable */
+    transition: opacity 0.9s ease; /* Optional: Add a smooth transition effect */
+  }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;

@@ -5,7 +5,7 @@ import { MdArrowForwardIos } from "react-icons/md";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 
 
-function Trainee({updateState,instructorId}) {
+function Trainee({updateState,showNotification,instructorId}) {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
     const [editData, setEditData] = useState({});
 
@@ -21,6 +21,8 @@ function Trainee({updateState,instructorId}) {
     const handleCloseModal = () => {
         setModalOpen(false);
         setDimmed(false);
+        setIsClosing(true); // Set the closing state to trigger the animation
+
     };
 
 
@@ -35,6 +37,12 @@ function Trainee({updateState,instructorId}) {
     const handleEditAction = () => {
         setEditModalOpen(false);
         setDimmed(false);
+        setClosing(true);
+        setTimeout(() => {
+            setClosing(false); // Reset the closing state after the animation
+            setEditModalOpen(false); // Close the modal after the animation
+        }, 500);
+
     };
 
     const contentClassName = isDimmed ? 'dimmed' : '';
@@ -122,6 +130,9 @@ function Trainee({updateState,instructorId}) {
         setDimmed(true);
     };
 
+    const [isClosing, setClosing] = useState(false);
+
+  
 
     useEffect(() => {
         // Call getAllProjects with an initial page number when the component mounts
@@ -133,10 +144,10 @@ function Trainee({updateState,instructorId}) {
         <div className="app">
             {loading ? <Loader /> : (
                 <div className="data-container">
-                    <div className='className="h-screen w-screen flex justify-center items-center my-8"'>
+                    <div className={`className="h-screen w-screen flex  justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
                         {isEditModalOpen && (
-                            <div className="modal-container  flex items-center justify-center z-100">
-                                <div className="absolute  bg-black opacity-50" onClick={() => setEditModalOpen(false)}></div>
+                            <div className={` modal-container flex items-center justify-center z-100`}>
+<div className="absolute bg-black opacity-50" onClick={() => { setEditModalOpen(false); }}></div>
                                 <div className="flex flex-col w-form gap-2 p-6 rounded-md shadow-md bg-white opacity-100 text-black">
                                     <h2 className="text-xl font-semibold text-center leading tracking">
                                         Edit Trainee
@@ -256,6 +267,7 @@ function Trainee({updateState,instructorId}) {
                                                     <th className="p-3 border border-gray-300">Name</th>
                                                     <th className="p-3 border border-gray-300">Email</th>
                                                     <th className="p-3 border border-gray-300">Cohort</th>
+                                                    <th className="p-3 border border-gray-300">Stack</th>
 
                                                     <th className="p-3 border border-gray-300">Action</th>
                                                 </tr>
@@ -272,6 +284,10 @@ function Trainee({updateState,instructorId}) {
                                                         </td>
                                                         <td className="p-3 border border-gray-300">
                                                             <p>{trainee.cohort}
+                                                            </p>
+                                                        </td>
+                                                        <td className="p-3 border border-gray-300">
+                                                            <p>{trainee.stack}
                                                             </p>
                                                         </td>
 

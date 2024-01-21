@@ -10,7 +10,7 @@ import Select from "react-select";
 
 
 
-function Team({ updateState,instructorId }) {
+function Team({ updateState,showNotification,instructorId }) {
    
     const [selectedTeamId, setSelectedTeamId] = useState(null);
 
@@ -46,6 +46,7 @@ function Team({ updateState,instructorId }) {
                 try {
             // Set loading to true when initiating the API call
                     setIsLoadingView(true);
+                    setDimmed(true)
 
             // Call the getMembers API
             const response = await axios.get("http://localhost:3000/team/getTeamMembers", {
@@ -385,42 +386,48 @@ function Team({ updateState,instructorId }) {
         <div className="app">
             {loading ? <Loader /> : (
                 <div className="data-container">
-                    <div className='className="h-screen w-screen flex justify-center items-center my-8"'>
+                    <div className={`h-screen w-screen flex justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
                         {isLoadingView && (
-                            <div className="loader-container">
-                                {/* Your loader component or message goes here */}
-<Loader />                            </div>
-                        )}  {isViewModalOpen && (
-                            <div className="modal-container  flex items-center justify-center z-100">
-                                {/* ... (existing code) */}
+                            <div className="modal-container flex items-center justify-center z-100">
+                                <div className="loader-container">
+                                    {/* Your loader component or message goes here */}
+                                    <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-violet-400"></div>
+                                </div>
+                            </div>
+                        )}
+                        {isViewModalOpen && (
+                            
+                            <div className="modal-container flex items-center justify-center z-100">
                                 <div className="flex flex-col w-form gap-2 p-6 rounded-md shadow-md bg-white opacity-100 text-black">
                                     <h2 className="text-xl font-semibold text-center leading tracking">
                                         View Team
                                     </h2>
                                     <div className="mt-4">
-                                       
-                                           { viewData && viewData.map((member, index) => (
-                                                <div key={index}>
-                                                    <label htmlFor={`TeamMember${index + 1}`}>{`Team Member ${index + 1}`}</label><br />
-                                                    <input
-                                                        type="text"
-                                                        value={member.firstName + ' ' + member.lastName}
-                                                        className="border w-full p-2 mb-2"
-                                                        disabled
-                                                    /><br />
+
+                                        {/* Rest of your code for displaying team members */}
+                                        {viewData && viewData.map((member, index) => (
+                                            <div key={index}>
+                                                <label htmlFor={`TeamMember${index + 1}`}>{`Team Member ${index + 1}`}</label><br />
+                                                <input
+                                                    type="text"
+                                                    value={member.firstName + ' ' + member.lastName}
+                                                    className="border w-full p-2 mb-2"
+                                                    disabled
+                                                /><br />
                                                 {/* Add other fields as needed */}
-                                                </div>
-                                            ))
-                                        }
+                                            </div>
+                                        ))}
                                         <div className="flex justify-end mt-6">
-                                            <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleViewAction}>Close</button>
-                                            {/* <button className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2" onClick={() => { handleViewAction(); update(editData); }}>Save</button> */}
+                                            <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleViewAction}>
+                                                Close
+                                            </button>
+                                            {/* Add other buttons or actions as needed */}
                                         </div>
                                     </div>
-                                    {/* ... (existing code) */}
                                 </div>
                             </div>
                         )}
+
                         {isAddModalOpen && (
                             <div className="modal-container  flex items-center justify-center z-100">
                                 <div className="absolute  bg-black opacity-50" onClick={() => setAddModalOpen(false)}></div>

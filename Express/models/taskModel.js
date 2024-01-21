@@ -99,12 +99,12 @@ module.exports = {
 
     deleteTask: async (taskId) => {
         try {
-          
+
             const deletedTask = await models.Tasks.destroy({
                 where: {
                     taskId: taskId,
                 },
-            });          
+            });
             return {
                 response: deletedTask,
             };
@@ -124,6 +124,35 @@ module.exports = {
             })
             return {
                 response: task,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
+    getTaskByUserId: async (query) => {
+        try {
+            const memberId = await models.TeamMembers.findOne({
+                where: {
+                    userId: query.userId,
+                },
+                attributes: ["teamMemberId"],
+
+            })
+            console.log("memberId",memberId.dataValues.teamMemberId)
+            if (memberId) {
+                tasks = await models.Tasks.findAll({
+                    where: {
+                        teamMemberId: memberId.dataValues.teamMemberId,
+                    }
+                })
+            }
+            return {
+                response: tasks,
             };
 
 

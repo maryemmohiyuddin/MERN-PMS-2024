@@ -261,6 +261,67 @@ module.exports = {
             };
         }
     },
+    getUserMembers: async (query) => {
+        try {
+            console.log("model", query);
+
+            // Step 1: Fetch teamId for the given userId
+            const teamId = await models.TeamMembers.findOne({
+                where: {
+                    userId: query.userId
+                },
+                attributes: ['teamId']
+            });
+
+            if (!teamId) {
+                return {
+                    response: [],
+                };
+            }
+
+            // Step 2: Fetch all team members for the found teamId
+            const teamMembers = await models.TeamMembers.findAll({
+                where: {
+                    teamId: teamId.dataValues.teamId
+                },
+            });
+
+            const memberNames = [];
+
+            // Step 3: Iterate through teamMembers and fetch user information
+            for (const teamMember of teamMembers) {
+                const userId = teamMember.dataValues.userId;
+
+                const user = await models.Users.findOne({
+                    where: {
+                        userId: userId,
+                    },
+                });
+
+                // Assuming you want to push the user information into an array
+                // Adjust this part based on the actual structure of your Users model
+                if (user) {
+                    memberNames.push({
+                        userId: user.dataValues.userId,
+                        userName: `${user.dataValues.firstName} ${user.dataValues.lastName}`,
+                        cohort:user.dataValues.cohort,
+                        stack:user.dataValues.stack
+                        // ... other properties you want to include
+                    });
+                }
+            }
+
+            console.log("memberNames", memberNames);
+
+            return {
+                response: memberNames,
+            };
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
 
     getTeamMembers: async (query) => {
         try {

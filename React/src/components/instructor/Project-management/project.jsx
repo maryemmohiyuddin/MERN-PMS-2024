@@ -8,7 +8,7 @@ import Cookies from 'js-cookie';
 import Select from "react-select";
 
 
-function Project() {
+function Project({updateState,showNotification,instructorId}) {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
     const [editData, setEditData] = useState({});
     const [isAddModalOpen, setAddModalOpen] = useState(false);
@@ -73,15 +73,7 @@ function Project() {
     const contentClassName = isDimmed ? 'dimmed' : '';
 
     const [Projects, setProjects] = useState([]);
-    const authCookie = Cookies.get('auth');
-
-    // Find the position of "userId" in the string
-    const userIdIndex = authCookie.indexOf('"userId":"');
-
-    // Extract the userId value using substr and indexOf
-    const start = userIdIndex + '"userId":"'.length;
-    const end = authCookie.indexOf('"', start);
-    const instructorId = authCookie.substring(start, end);
+  
 
     console.log(instructorId); // This will log the userId value
 
@@ -239,9 +231,10 @@ function Project() {
 
     const handleDeleteClick = (project) => {
         setSelectedProjectForDelete(project);
-        setDimmed(true);
 
         setDeleteModalOpen(true);
+        setDimmed(true);
+
     };
     useEffect(() => {
         // Call getAllProjects with an initial page number when the component mounts
@@ -249,10 +242,10 @@ function Project() {
     }, []);  // Include getAllProjects in the dependency array
 
     return (
-        <div className="app">
+        <div className="z-0">
             {loading ? <Loader /> : (
                 <div className="data-container">
-                    <div className='className="h-screen w-screen flex justify-center items-center my-8"'>
+                    <div className={`className="h-screen w-screen  justify-center items-center  ${showNotification ? 'blurr -z-50' : ''}`}>
                         {isEditModalOpen && (
                             <div className="modal-container  flex items-center justify-center z-100">
                                 <div className="absolute  bg-black opacity-50" onClick={() => setEditModalOpen(false)}></div>

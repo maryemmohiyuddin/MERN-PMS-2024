@@ -8,7 +8,9 @@ const createTaskSchema = joi.object().keys({
     teamMemberId: joi.string().required(),
     instructorId: joi.string().required()
 })
-
+const getTaskByUserIdSchema = joi.object().keys({
+    userId: joi.string().required()
+})
 const getTaskSchema = joi.object().keys({
     instructorId: joi.string().required()
 })
@@ -51,6 +53,29 @@ module.exports = {
             const validate = await getTaskSchema.validateAsync(req.query);
             console.log("req.body")
             const task = await taskService.getAllTasks(validate);
+            if (task.error) {
+                return res.send({
+                    error: task.error,
+                });
+
+            }
+            return res.send({
+                response: task.response,
+            });
+
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
+
+    getTaskByUserId: async (req, res) => {
+        try {
+            const validate = await getTaskByUserIdSchema.validateAsync(req.query);
+            console.log(req.query)
+            const task = await taskService.getTaskByUserId(validate);
             if (task.error) {
                 return res.send({
                     error: task.error,

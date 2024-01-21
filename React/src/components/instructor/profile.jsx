@@ -3,7 +3,10 @@ import axios from 'axios';
 import Loader from '../loader_component';
 import Select from 'react-select';
 
-function Profile({ instructorId }) {
+function Profile({ updateState, showNotification,instructorId }) {
+    console.log("profile here updateState   ", updateState, "shownotification", showNotification, "instructorId", instructorId)
+
+   
     const STACK = [
         {
             value: 'MERN',
@@ -124,7 +127,7 @@ function Profile({ instructorId }) {
         <div className="app">
             {loading ? <Loader /> : (
                 <div className="data-container">
-                    <div className='className="h-screen w-screen flex justify-center items-center my-8"'>
+                    <div className={`className="h-screen w-screen flex justify-center items-center  ${showNotification ? ' blurrr' : ' '}`}>
 
                         <div className="h-screen w-screen flex justify-end ">
                             <div className=" ps-12 w-10/12 h-5/6">

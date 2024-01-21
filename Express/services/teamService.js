@@ -135,6 +135,29 @@ module.exports = {
         }
 
     },
+
+    getUserMembers: async (query) => {
+        try {
+
+            const teamMembers = await teamModel.getUserMembers(query);
+console.log("service",teamMembers)
+            if (teamMembers.error) {
+                return {
+                    error: teamMembers.error,
+                }
+
+            } return {
+                response: teamMembers.response,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
     getTeamByProjectId: async (query) => {
         try {
 

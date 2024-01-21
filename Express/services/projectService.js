@@ -94,6 +94,29 @@ module.exports = {
         }
 
     },
+
+    getUserProject: async (query) => {
+        try {
+            const projects = await projectModel.getUserProject(query);
+            const names = await projectModel.getUserNames(projects);
+            console.log("service",names)
+            if (projects.error) {
+                return {
+                    error: projects.error,
+                }
+            } return {
+                names: names.response,
+                projects:projects.response,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
     updateProject: async (body) => {
         try {
             const isProject = await projectModel.getProjectById(body.projectId);

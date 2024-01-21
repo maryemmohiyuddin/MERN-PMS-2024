@@ -16,7 +16,7 @@ import * as ReactTooltip from 'react-tooltip';
 import '../calendarStyles.css';
 
 
-function Dashboard({updateState,instructorId}) {
+function Dashboard({ updateState, showNotification, instructorId }) {
     // Define the events array here
     const [date, setDate] = useState(new Date()); // Initialize with the current date
     const [Teams, setTeams] = useState([]);
@@ -198,6 +198,8 @@ const events=[...eventsFromApi]
     // ... rest of your Dashboard component code
 
     useEffect(() => {
+        console.log("showNotification value:", showNotification);
+
         const fetchData = async () => {
             try {
 
@@ -223,14 +225,15 @@ const events=[...eventsFromApi]
 
         // Wrap fetchData in a setTimeout to ensure it runs after the initial rendering
         setTimeout(fetchData);
-    }, []);
+    }, [showNotification]);
 
 
     return (
-               <div className="app">
+        <div className={`app`}>
+
 
             {loading ? <Loader /> : (
-            <div className=" w-screen h-screen flex justify-end overflow-x-hidden scrollbar-hidden">
+                <div className={`w-screen h-screen flex justify-end overflow-x-hidden scrollbar-hidden  ${showNotification ? 'blurr -z-50' : ''}`}>
                 <div className="ps-8 w-10/12 overflow-y-auto">
                     <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
                         <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100 ps-6">

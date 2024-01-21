@@ -10,7 +10,7 @@ import Select from "react-select";
 
 
 
-function Task({ updateState, instructorId }) {
+function Task({ updateState, showNotification,instructorId }) {
 
 
     const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -389,7 +389,7 @@ function Task({ updateState, instructorId }) {
         <div className="app">
             {loading ? <Loader /> : (
                 <div className="data-container">
-                    <div className='className="h-screen w-screen flex justify-center items-center my-8"'>
+                    <div className={`className="h-screen w-screen flex  justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
                         {isEditModalOpen && (
                             <div className="modal-container  flex items-center justify-center z-100">
                                 <div className="absolute  bg-black opacity-50" onClick={() => setEditModalOpen(false)}></div>

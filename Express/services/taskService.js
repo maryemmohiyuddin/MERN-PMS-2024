@@ -53,6 +53,29 @@ module.exports = {
         }
     },
 
+    getTaskByUserId: async (query) => {
+        try {
+
+
+            const task = await taskModel.getTaskByUserId(query);
+
+
+            if (task.error) {
+                return {
+                    error: task.error,
+                }
+            }
+            return {
+                response: task.response,
+            }
+
+        }
+        catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
     deleteTask: async (query) => {
         try {
 

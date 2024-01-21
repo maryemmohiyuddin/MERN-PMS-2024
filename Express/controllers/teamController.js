@@ -129,6 +129,32 @@ module.exports = {
             });
         };
     },
+    getUserMembers: async (req, res) => {
+        try {
+
+
+            // const validate = await getMembersSchema.validateAsync(req.query);
+            const members = await teamService.getUserMembers(req.query);
+            console.log("query here", req.query)
+            console.log("CONTROLLER", members)
+
+            if (members.error) {
+                return res.send({
+                    error: members.error,
+                });
+
+            }
+            return res.send({
+                response: members.response,
+            });
+
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
     getTeamByProjectId: async (req, res) => {
         try {
             console.log("check1",req.query)

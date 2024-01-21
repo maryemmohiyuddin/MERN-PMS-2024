@@ -29,6 +29,9 @@ const InsProjectSchema = joi.object().keys({
     instructorId: joi.string().required(),
     projectTag:joi.string().required()
 })
+const UserProjectSchema = joi.object().keys({
+    userId: joi.string().required(),
+})
 
 module.exports = {
     createProject: async (req, res) => {
@@ -119,6 +122,29 @@ module.exports = {
             }
             return res.send({
                 response: projects.response,
+            });
+
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
+
+
+    getUserProject: async (req, res) => {
+        try {
+
+
+            const validate = await UserProjectSchema.validateAsync(req.query);
+            const projects = await projectService.getUserProject(validate);
+            console.log("controller",projects)
+
+            console.log(validate)
+            
+            return res.send({
+                response: projects,
             });
 
         }

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../../loader_component";
 import Cookies from "js-cookie";
 
-function Request({ updateState, instructorId }) {
+function Request({ updateState,showNotification, instructorId }) {
 
     const [Requests, setRequests] = useState([]);
     const [data, setData] = useState(null);
@@ -75,7 +75,8 @@ function Request({ updateState, instructorId }) {
             <div className="app">
                 {loading ? <Loader /> : (
                     <div className="data-container">
-                        <div className="h-screen w-screen flex justify-end ">
+                            <div className={`className="h-screen w-screen flex  justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
+
                             <div className=" ps-12 w-10/12 h-5/6">
                                 <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
                                     <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100">
@@ -126,7 +127,7 @@ function Request({ updateState, instructorId }) {
 
                             </div>
                         </div>
-                        <pre>{JSON.stringify(data, null, 2)}</pre>
+                        {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
                     </div>
                 )}
             </div>

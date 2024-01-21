@@ -8,19 +8,19 @@ import axios from 'axios';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 
+function Nav({ updateState, setHasNewNotification, notificationState,instructorId,showNotification,hasNewNotifications} ) {
+    console.log("nav bar here","updateState   ", updateState, "updatenew",setHasNewNotification,"notificationState", notificationState, "instructorId", instructorId,"showNotification",showNotification,"hasNewNotifications",hasNewNotifications)
 
-const Nav = (updateState,instructorId) => {
+    const [dataToSend, setDataToSend] = useState('');
+
+ 
    const  navigate=useNavigate()
-    const [showNotifications, setShowNotifications] = useState(false);
-    const handleNotificationClick = () => {
-        console.log("Notification icon clicked");
-        setShowNotifications(true);
-    };
+    
 
-    const handleOverlayClick = () => {
-        console.log("Overlay clicked");
-        setShowNotifications(false);
-    };
+    // const handleOverlayClick = () => {
+    //     console.log("Overlay clicked");
+    //     setShowNotifications(false);
+    // };
     const handleLogout = async () => {
         try {
             // Call the backend logout API
@@ -43,8 +43,10 @@ navigate("/")
     const [showDropdown, setShowDropdown] = useState(false);
 
     let [open, setOpen] = useState(false);
+    
     return (
-        <div className='bg-white  shadow-md rounded-full flex fixed top-12 right-14 '>
+        
+        <div className={`bg-white  shadow-md rounded-full flex fixed top-12 right-14  ${showNotification ? 'blurrr' : ' '}`}>
             {showDropdown && (
                 <div className="absolute  top-12 right-0 mt-2 w-36 bg-white rounded-md shadow-lg z-10">
                     <ul>
@@ -58,14 +60,7 @@ navigate("/")
                     </ul>
                 </div>
             )}
-            {showNotifications && (
-                <>
-                    <div className="notification-sidebar fixed right-80">
-                        {/* Notification content here */}
-                    </div>
-                    <div className="overlay" >bhgh</div>
-                </>
-            )}
+
             <div className='md:flex py-0 px-5 w-12/12'>
                 <div className='cursor-pointer flex items-center 
       text-gray-800'>
@@ -91,11 +86,16 @@ navigate("/")
                         </div>
                     </fieldset></li>
                     <li className='p-3 cursor-pointer' onClick={() => {
-                        updateState.updateState("PROFILE");
+                        updateState("PROFILE");
                     }}>
                         <CgProfile  /></li>
-                    <li className='p-3 cursor-pointer' onClick={handleNotificationClick}>
+                    <li className='p-3 cursor-pointer' onClick={() => {
+                        notificationState.notificationState(true);
+                        setHasNewNotification(false);
+
+                    }}>
                         <IoIosNotifications />
+                        {hasNewNotifications && <div className="notification-indicator"></div>}
 
                     </li>
                     <li className='p-3 cursor-pointer'><FiMessageSquare />
