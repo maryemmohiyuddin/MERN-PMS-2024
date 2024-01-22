@@ -384,9 +384,11 @@ function Team({ updateState,showNotification,instructorId }) {
 
     return (
         <div className="app">
-            {loading ? <Loader /> : (
-                <div className="data-container">
-                    <div className={`h-screen w-screen flex justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
+            {loading ? <div className="flex ps-48 items-center justify-center h-screen">
+                <div className="w-16 h-16  border-4 border-dashed rounded-full animate-spin border-violet-400"></div>
+            </div>
+                : (                <div className="data-container">
+                    <div className={`h-screen w-screen fade-in flex justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
                         {isLoadingView && (
                             <div className="modal-container flex items-center justify-center z-100">
                                 <div className="loader-container">
@@ -418,7 +420,7 @@ function Team({ updateState,showNotification,instructorId }) {
                                             </div>
                                         ))}
                                         <div className="flex justify-end mt-6">
-                                            <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleViewAction}>
+                                            <button className="px-6 py-2  hover:bg-gray-300 hover:shadow-sm hover-effect rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleViewAction}>
                                                 Close
                                             </button>
                                             {/* Add other buttons or actions as needed */}
@@ -482,9 +484,9 @@ function Team({ updateState,showNotification,instructorId }) {
                                         {/* ... other fields */}
                                     </div>
                                     <div className="flex justify-end mt-6">
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseTeamModal}>Close</button>
+                                        <button className="px-6 py-2 rounded-sm  hover:bg-gray-300 hover:shadow-sm hover-effect shadow-sm bg-gray-200 text-black" onClick={handleCloseTeamModal}>Close</button>
                                         <button
-                                            className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2"
+                                            className="px-6 py-2  hover:bg-indigo-600 hover:shadow-md hover-effect rounded-sm shadow-sm bg-indigo-500 text-white ml-2"
                                             onClick={() => {
                                                 console.log("Selected Team Members:", selectedTeamMembers.filter(member => member !== null));
                                                 console.log("Team Leader ID:", teamLeader);
@@ -511,10 +513,10 @@ function Team({ updateState,showNotification,instructorId }) {
                                     </h2>
                                     {/* Add any additional information or confirmation message */}
                                     <div className="flex flex-col justify-end gap-3 mt-6 sm:flex-row">
-                                        <button className="px-6 py-2 mr-5 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseTeamModal}>
+                                        <button className="px-6 py-2  hover:bg-gray-300 hover:shadow-sm hover-effect mr-5 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseTeamModal}>
                                             Close
                                         </button>
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-red-500 text-white" onClick={() => { handleDeleteAction(); deleteTeam(selectedTeamIdForDelete); }}>
+                                        <button className="px-6 py-2  hover:bg-red-600 hover:shadow-md hover-effect rounded-sm shadow-sm bg-red-500 text-white" onClick={() => { handleDeleteAction(); deleteTeam(selectedTeamIdForDelete); }}>
                                             Delete Team
                                         </button>
                                     </div>
@@ -523,7 +525,7 @@ function Team({ updateState,showNotification,instructorId }) {
                         )}
 
                         <div className={`h-screen w-screen flex justify-end ${contentClassName}`}>
-                            <div className=" ps-12 w-10/12 h-5/6">
+                            <div className=" px-2 pe-8 ps-7 w-10/12 h-5/6">
                                 <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
                                     <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100">
                                         <li className="text-black flex items-center">
@@ -535,15 +537,15 @@ function Team({ updateState,showNotification,instructorId }) {
                                         </li>
 
                                     </ol>
-                                    <h3 className="font-bold text-3xl">Teams</h3>
+                                    <h3 className="font-bold text-2xl">Teams</h3>
 
                                 </nav>
                                 <div className="container p-2 mx-auto sm:p-4 text-black" >
                                     <div className="flex justify-between items-center">
-                                        <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">All Teams:</h4>
+                                        <h4 className="font-semibold text-md mb-4 ms-2 mt-5">All Teams</h4>
                                         <button
                                             type="button"
-                                            className="px-5 py-2 me-28 bg-indigo-500 text-white rounded-full dark:bg-gray-100 dark:text-gray-800"
+                                            className="px-5 py-2 hover:bg-indigo-600 hover:shadow-md hover-effect  bg-indigo-500 text-white rounded-full dark:bg-gray-100 dark:text-gray-800"
                                             onClick={() => handleAddClick(Teams[0])}
                                         >
                                             Add Team
@@ -551,7 +553,7 @@ function Team({ updateState,showNotification,instructorId }) {
 
 
                                     </div>
-                                    <div className="overflow-x-auto shadow-md w-11/12 bg-white">
+                                    <div className="overflow-x-auto shadow-md  bg-white">
                                         <table className="w-full text-sm border-collapse">
                                             <colgroup>
                                                 {/* Add any column settings if needed */}
@@ -570,11 +572,11 @@ function Team({ updateState,showNotification,instructorId }) {
                                                         <td className="border border-gray-300 bg-white px-4 py-2"> {team.leaderName}</td>
                                                         <td className="border border-gray-300 bg-white px-4 py-2">{team.projectTitle}</td>
                                                         <td className="p-3 border border-gray-300">
-                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer" onClick={() => handleViewClick(team.teamId)}>
+                                                            <span className="px-3 py-2 text-white rounded-md  hover:bg-indigo-600 hover:shadow-md hover-effect bg-indigo-500 cursor-pointer" onClick={() => handleViewClick(team.teamId)}>
                                                                 <span>View</span>
                                                             </span>
                                                             {console.log(team.teamId)}
-                                                            <span className="px-3 py-2 ms-2 text-white rounded-md bg-red-500 cursor-pointer" onClick={() => handleDeleteClick(team.teamId)}>
+                                                            <span className="px-3 py-2 ms-2 text-white rounded-md  hover:bg-red-600 hover:shadow-md hover-effect bg-red-500 cursor-pointer" onClick={() => handleDeleteClick(team.teamId)}>
                                                                 <span>Delete</span>
                                                             </span>
 

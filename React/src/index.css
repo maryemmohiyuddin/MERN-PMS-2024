@@ -91,7 +91,18 @@ a {
         /* transform: translateY(0); */
     }
 }
+/* InstructorLayout.css */
 
+.fade-in {
+  opacity: 1;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+
+.fade-inn {
+  opacity: 1;
+  animation: fadeIn 0.7s ease-in-out;
+}
 .modal-container {
     position: fixed;
     z-index: 101;
@@ -182,61 +193,114 @@ button {
 button:hover {
   border-color: #646cff;
 }
-body {
-  overflow-x: hidden;
-  overflow-y: hidden;
+body{
+  overflow-x:hidden
 }
-
 .notification {
+  overflow-x:auto;
   backdrop-filter: blur(5px);
   z-index: 999;
-  transition: opacity 0.1s ease-in-out;
-  animation: mymove 0.5s;
+  transition: opacity 0.6s ease-in-out;
+  animation: mymove 0.7s;
   animation-fill-mode: forwards;
   position: absolute;
-  right: -100px; /* Adjust as needed */
+  right: -300px; /* Adjust as needed */
 }
 /* Add this style in your CSS file or use inline styles in your React components */
 .notification-indicator {
     position: absolute;
     top: 32px;
-    right:124px;
+    right:103px;
     width: 10px;
     height: 10px;
     background-color: red;
     border-radius: 50%;
 }
 .hover-effect {
-  transition: background-color 0.2s ease, color 0.2s ease; /* Adjust the duration and easing function as needed */
+  transition: background-color 0.5s ease; /* Adjust the duration and easing function as needed */
 }
 
 .hover-effect:hover {
-  background-color: #5a67d8; /* Your hover background color */
-  color: #ffffff; /* Your hover text color */
+  background-color: #e5e5e5 ; /* Your hover background color */
 }
 
 @keyframes mymove {
   from {
-    right: -100px;
+    right: -200px;
   }
   to {
     right: 0;
   }
 }
 
+@keyframes move {
+  from {
+    left: -200px;
+    opacity:0
+  }
+  to {
+    left: 0;
+    opacity:1
+  }
+}
 
 
+@keyframes navbar {
+  from {
+    top: -10px;
+    opacity:0
+  }
+  to {
+    top: 42px;
+    opacity:1
+  }
+}
+
+
+.navbarr {
+  backdrop-filter: blur(5px);
+  z-index: 999;
+  transition: opacity 1s ease-in-out;
+  animation: navbar 1s;
+  animation-fill-mode: forwards;
+  position: absolute;
+  top:-10px
+}
+/* Styles for the dropdown */
+
+.dropdown-content {
+  position: absolute;
+  padding:5px;
+  padding-left:10px;
+  padding-right:10px;
+color:black;
+  font-size:13px;
+  background-color: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+}
+
+
+.sidebarr {
+  backdrop-filter: blur(5px);
+  z-index: 999;
+  transition: opacity 1s ease-in-out;
+  animation: move 1s;
+  animation-fill-mode: forwards;
+  position: absolute;
+  left: -200px; /* Adjust as needed */
+}
 
 .blurrr {
   filter: blur(5px); /* Adjust the value (5px) based on your desired blur amount */
     pointer-events: none; /* This ensures that the dimmed content is not clickable */
-    transition: opacity 0.9s ease; /* Optional: Add a smooth transition effect */
+    transition: opacity 2s ease-in-out; /* Optional: Add a smooth transition effect */
   }
 .blurr {
   filter: blur(5px); /* Adjust the value (5px) based on your desired blur amount */
 z-index:-100;
     pointer-events: none; /* This ensures that the dimmed content is not clickable */
-    transition: opacity 0.9s ease; /* Optional: Add a smooth transition effect */
+    transition: opacity 2s ease-in-out; /* Optional: Add a smooth transition effect */
   }
 button:focus,
 button:focus-visible {

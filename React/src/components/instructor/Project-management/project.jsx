@@ -243,8 +243,10 @@ function Project({updateState,showNotification,instructorId}) {
 
     return (
         <div className="z-0">
-            {loading ? <Loader /> : (
-                <div className="data-container">
+            {loading ? <div className="flex ps-48 items-center justify-center h-screen">
+                <div className="w-16 h-16  border-4 border-dashed rounded-full animate-spin border-violet-400"></div>
+            </div>
+                : (                <div className="data-container">
                     <div className={`className="h-screen w-screen  justify-center items-center  ${showNotification ? 'blurr -z-50' : ''}`}>
                         {isEditModalOpen && (
                             <div className="modal-container  flex items-center justify-center z-100">
@@ -318,10 +320,10 @@ function Project({updateState,showNotification,instructorId}) {
                             </div>
                         )}
                         {isAddModalOpen && (
-                            <div className="modal-container  flex items-center justify-center z-100">
-                                <div className="absolute  bg-black opacity-50" onClick={() => setAddModalOpen(false)}></div>
-                                <div className="flex flex-col w-form gap-2 p-6 rounded-md shadow-md bg-white opacity-100 text-black">
-                                    <h2 className="text-xl font-semibold text-center leading tracking">
+                            <div className="modal-container rounded-md flex items-center justify-center z-100">
+                                <div className="absolute  rounded-md bg-black opacity-50" onClick={() => setEditModalOpen(false)}></div>
+                                <div className="flex flex-col  w-form gap-2 p-6 rounded-md shadow-md bg-white opacity-100 text-black">
+                                    <h2 className="text-xl  font-semibold text-center leading tracking">
                                         Add project
                                     </h2>
                                     <div className="mt-4">
@@ -358,8 +360,8 @@ function Project({updateState,showNotification,instructorId}) {
                                         {/* ... other fields */}
                                     </div>
                                     <div className="flex justify-end mt-6">
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseAction}>Close</button>
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2" onClick={() => { handleAddAction(); create(addData); }}>Add</button>
+                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black hover:bg-gray-300 hover:shadow-sm hover-effect" onClick={handleCloseAction}>Close</button>
+                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2  hover:bg-indigo-600 hover:shadow-md hover-effect" onClick={() => { handleAddAction(); create(addData); }}>Add</button>
                                     </div>
                                 </div>
                             </div>
@@ -388,8 +390,8 @@ function Project({updateState,showNotification,instructorId}) {
                             </div>
                         )}
 
-                        <div className={`h-screen w-screen flex justify-end ${contentClassName}`}>
-                            <div className=" ps-12 w-10/12 h-5/6">
+                        <div className={`h-screen w-screen fade-in  flex justify-end ${contentClassName} `}>
+                            <div className=" px-3 ps-8 pe-8 w-10/12 h-5/6">
                                 <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
                                     <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100">
                                         <li className="text-black flex items-center">
@@ -401,15 +403,15 @@ function Project({updateState,showNotification,instructorId}) {
                                         </li>
 
                                     </ol>
-                                    <h3 className="font-bold text-3xl">Projects</h3>
+                                    <h3 className="font-bold text-2xl">Projects</h3>
 
                                 </nav>
-                                <div className="container p-2 mx-auto sm:p-4 text-black" >
+                                <div className="container  mx-auto sm:p-4 text-black" >
                                     <div className="flex justify-between items-center">
-                                        <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">Assigned Projects:</h4>
+                                        <h4 className="font-semibold text-md mb-1 mt-5">Assigned Projects</h4>
                                         <button
                                             type="button"
-                                            className="px-5 py-2 me-28 bg-indigo-500 text-white rounded-full dark:bg-gray-100 dark:text-gray-800"
+                                            className="px-5 py-2  bg-indigo-500 text-white rounded-full dark:bg-gray-100 dark:text-gray-800 hover:bg-indigo-600 hover:shadow-md hover-effect"
                                             onClick={() => handleAddClick(Projects[0])}
                                         >
                                             Add Project
@@ -417,8 +419,8 @@ function Project({updateState,showNotification,instructorId}) {
 
 
                                     </div>
-                                    <div className="overflow-x-auto shadow-md w-11/12 bg-white">
-                                        <table className="w-full text-sm border-collapse">
+                                    <div className="overflow-x-auto shadow-md -ms-1 mt-1 bg-white">
+                                        <table className="w-full  text-sm  border-collapse">
                                             <colgroup>
                                                 {/* Add any column settings if needed */}
                                             </colgroup>
@@ -450,14 +452,14 @@ function Project({updateState,showNotification,instructorId}) {
                                                             <p>{project.projectEnding}</p>
                                                         </td>
 
-                                                        <td className="p-3 border text-indigo-500 font-semibold border-gray-300">
+                                                        <td className="p-3 border text-red-500  border-gray-300">
                                                             <p>{project.status}</p>
                                                         </td>
                                                         <td className="p-3 border border-gray-300">
-                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer" onClick={() => handleEditClick(project)}>
+                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer hover:bg-indigo-600 hover:shadow-md hover-effect" onClick={() => handleEditClick(project)}>
                                                                 <span>Edit</span>
                                                             </span>
-                                                            <span className="px-3 py-2 ms-2 text-white rounded-md bg-red-500 cursor-pointer" onClick={() => handleDeleteClick(project)}>
+                                                            <span className="px-3 py-2 ms-2 text-white rounded-md bg-red-500 cursor-pointer hover:bg-red-600 hover:shadow-md hover-effect" onClick={() => handleDeleteClick(project)}>
                                                                 <span>Delete</span>
                                                             </span>
                                                         </td>
@@ -470,12 +472,12 @@ function Project({updateState,showNotification,instructorId}) {
                                         )}
                                     </div>
                                     <div className="flex justify-between items-center">
-                                        <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">Unassigned Projects:</h4>
+                                        <h4 className="font-semibold text-md mb-2 mt-5">Unassigned Projects</h4>
 
 
 
                                     </div>
-                                    <div className="overflow-x-auto shadow-md w-11/12 bg-white">
+                                    <div className="overflow-x-auto shadow-md  bg-white">
                                         <table className="w-full text-sm border-collapse">
                                             <colgroup>
                                                 {/* Add any column settings if needed */}
@@ -508,10 +510,10 @@ function Project({updateState,showNotification,instructorId}) {
                                                         </td>
 
                                                         <td className="p-3 border border-gray-300">
-                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer" onClick={() => handleEditClick(project)}>
+                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer hover:bg-indigo-600 hover:shadow-md hover-effect" onClick={() => handleEditClick(project)}>
                                                                 <span>Edit</span>
                                                             </span>
-                                                            <span className="px-3 py-2 ms-2 text-white rounded-md bg-red-500 cursor-pointer" onClick={() => handleDeleteClick(project)}>
+                                                            <span className="px-3 py-2 ms-2 text-white rounded-md bg-red-500 cursor-pointer hover:bg-red-600 hover:shadow-md hover-effect" onClick={() => handleDeleteClick(project)}>
                                                                 <span>Delete</span>
                                                             </span>
                                                         </td>

@@ -73,11 +73,13 @@ function Request({ updateState,showNotification, instructorId }) {
     return (
         <>
             <div className="app">
-                {loading ? <Loader /> : (
-                    <div className="data-container">
-                            <div className={`className="h-screen w-screen flex  justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
+                {loading ? <div className="flex ps-48 items-center justify-center h-screen">
+                    <div className="w-16 h-16  border-4 border-dashed rounded-full animate-spin border-violet-400"></div>
+                </div>
+                    : (<div className="data-container">
+                            <div className={`className="h-screen fade-in w-screen flex  justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
 
-                            <div className=" ps-12 w-10/12 h-5/6">
+                            <div className=" px-3 ps-8 w-10/12 h-5/6">
                                 <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
                                     <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100">
                                         <li className="text-black flex items-center">
@@ -89,14 +91,15 @@ function Request({ updateState,showNotification, instructorId }) {
                                         </li>
 
                                     </ol>
-                                    <h3 className="font-bold text-3xl">Requests</h3>
+                                    <h3 className="font-bold text-2xl">Requests</h3>
 
                                 </nav>
-                                <div className="mt-8">
-                                    <h4 className="font-semibold text-lg mb-4 ms-5">All Requests:</h4>
-                                    <table className="mx-5 me-6 bg-white w-11/12 border-collapse border shadow-md border-gray-300">
+                                <div className="container p-2 mx-auto sm:p-4 text-black ">
+                                    <h4 className="font-semibold text-md mb-2  ">All Trainees</h4>
+                                    <div className="overflow-x-auto shadow-md me-5 bg-white ">
+                                        <table className="w-full  text-sm border-collapse">           
                                         <thead className="bg-white">
-                                            <tr className="bg-indigo-500   text-sm text-white">
+                                            <tr className="bg-indigo-500 text-sm text-white">
                                                 <th className="border border-gray-300 px-4 py-2">First Name</th>
                                                 <th className="border border-gray-300 px-4 py-2">Last Name</th>
                                                 <th className="border border-gray-300 px-4 py-2">Email</th>
@@ -110,10 +113,10 @@ function Request({ updateState,showNotification, instructorId }) {
                                             {Requests.map((request, index) => (
 
                                                 <tr key={index} >
-                                                    <td className="border border-gray-300 bg-white px-4 py-2">{request.firstName}</td>
-                                                    <td className="border border-gray-300  bg-white px-4 py-2">{request.lastName}</td>
-                                                    <td className="border border-gray-300  bg-white px-4 py-2">{request.email}</td>
-                                                    <td className="border border-gray-300  bg-white px-4 py-2"><button onClick={() => void approveRequest(request.userId)} className="bg-indigo-500 me-2 py-1 px-2 text-white">Approve</button><button className="bg-red-500 py-1 px-2 text-white">Reject</button></td>
+                                                    <td className="border border-gray-300 text-sm bg-white px-4 py-2">{request.firstName}</td>
+                                                    <td className="border border-gray-300 text-sm  bg-white px-4 py-2">{request.lastName}</td>
+                                                    <td className="border border-gray-300 text-sm  bg-white px-4 py-2">{request.email}</td>
+                                                    <td className="border border-gray-300 text-sm  bg-white px-4 py-2"><button onClick={() => void approveRequest(request.userId)} className="bg-indigo-500 me-2 py-1 px-2 text-white hover:bg-indigo-600 hover:shadow-md hover-effect">Approve</button><button className="bg-red-500 hover:bg-red-600 hover:shadow-md hover-effect py-1 px-2 text-white">Reject</button></td>
 
 
                                                 </tr>
@@ -126,6 +129,7 @@ function Request({ updateState,showNotification, instructorId }) {
                                 </div>
 
                             </div>
+                        </div>
                         </div>
                         {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
                     </div>

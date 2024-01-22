@@ -125,12 +125,15 @@ function Profile({ updateState, showNotification,instructorId }) {
 
     return (
         <div className="app">
-            {loading ? <Loader /> : (
-                <div className="data-container">
+            {loading ? <div className="flex ps-48 items-center justify-center h-screen">
+                <div className="w-16 h-16  border-4 border-dashed rounded-full animate-spin border-violet-400"></div>
+            </div>
+                : (
+                <div className="data-container fade-in">
                     <div className={`className="h-screen w-screen flex justify-center items-center  ${showNotification ? ' blurrr' : ' '}`}>
 
                         <div className="h-screen w-screen flex justify-end ">
-                            <div className=" ps-12 w-10/12 h-5/6">
+                            <div className=" px-3 ps-5 w-10/12 h-5/6">
                                 <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
                                     <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100">
                                         <li className="text-black flex items-center">
@@ -142,11 +145,11 @@ function Profile({ updateState, showNotification,instructorId }) {
                                         </li>
 
                                     </ol>
-                                    <h3 className="font-bold text-3xl">Profile</h3>
+                                    <h3 className="font-bold text-2xl">Profile</h3>
 
                                 </nav>
                                 <div className="container p-2 mx-auto sm:p-4 text-black ">
-                                    <section className="p-6 -ms-5 ">
+                                    <section className="px-6 -ms-5 ">
                                         <form noValidate="" onSubmit={handleSubmit} className="container flex flex-col mx-auto space-y-12">
                                             <fieldset className="grid grid-cols-4 gap-6 p-6 rounded-md shadow-sm dark:bg-gray-900  bg-white">
                                                 <div className="space-y-2 col-span-full lg:col-span-1">

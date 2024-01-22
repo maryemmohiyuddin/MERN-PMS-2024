@@ -46,22 +46,22 @@ navigate("/")
     
     return (
         
-        <div className={`bg-white  shadow-md rounded-full flex fixed top-12 right-14  ${showNotification ? 'blurrr' : ' '}`}>
+        <div className={`bg-white navbarr shadow-md rounded-full flex fixed top-12 right-12  ${showNotification ? 'blurrr' : ' '}`}>
             {showDropdown && (
-                <div className="absolute  top-12 right-0 mt-2 w-36 bg-white rounded-md shadow-lg z-10">
+                <div className="absolute fade-in top-12 right-0 mt-2 w-36 bg-white rounded-md shadow-lg z-10">
                     <ul>
-                        <li className="hover:bg-gray-100 py-2 px-4 cursor-pointer">Privacy Policy</li>
+                        <li className="hover:bg-gray-100 hover-effect py-2 px-4 cursor-pointer">Privacy Policy</li>
 
-                        <li className="hover:bg-gray-100 py-2 px-4 cursor-pointer">Settings</li>
+                        <li className="hover:bg-gray-100 hover-effect py-2 px-4 cursor-pointer">Settings</li>
 
-                        <li onClick={handleLogout} className="p-3 cursor-pointer text-red-500">
+                        <li onClick={handleLogout} className="hover:bg-gray-100 hover-effect py-2 px-4 cursor-pointer text-red-400">
                             Logout
                         </li>                        {/* Add more dropdown options here as needed */}
                     </ul>
                 </div>
             )}
 
-            <div className='md:flex py-0 px-5 w-12/12'>
+            <div className='md:flex py-0 px-3 w-12/12'>
                 <div className='cursor-pointer flex items-center 
       text-gray-800'>
 
@@ -84,12 +84,12 @@ navigate("/")
                             </span>
                             <input type="search" name="Search" placeholder="Search..." className=" bg-gray-100 w-32 py-2 pl-10 text-sm rounded-full sm:w-auto focus:outline-none dark:bg-gray-800 dark:text-gray-100 focus:dark:bg-gray-900 focus:dark:border-violet-400" />
                         </div>
-                    </fieldset></li>
-                    <li className='p-3 cursor-pointer' onClick={() => {
+                    </fieldset></li >
+                    <li className='p-3 cursor-pointer hover:text-white rounded-md hover-effect hover:bg-indigo-500 ' onClick={() => {
                         updateState("PROFILE");
                     }}>
                         <CgProfile  /></li>
-                    <li className='p-3 cursor-pointer' onClick={() => {
+                    <li className='p-3 cursor-pointer  hover:text-white rounded-md hover-effect hover:bg-indigo-500 ' onClick={() => {
                         notificationState.notificationState(true);
                         setHasNewNotification(false);
 
@@ -98,11 +98,11 @@ navigate("/")
                         {hasNewNotifications && <div className="notification-indicator"></div>}
 
                     </li>
-                    <li className='p-3 cursor-pointer'><FiMessageSquare />
+                    <li className='p-3 cursor-pointer  hover:text-white rounded-md hover-effect hover:bg-indigo-500 '><FiMessageSquare />
                     </li>
 
-                    <li onClick={() => setShowDropdown(!showDropdown)} className='p-3  cursor-pointer'>                        <img
-                        src="https://source.unsplash.com/100x100/?portrait" alt="" className="w-8 h-8 rounded-full" />
+                    <li onClick={() => setShowDropdown(!showDropdown)} className='p-3 pe-0 cursor-pointer'>                        <img
+                        src="https://source.unsplash.com/100x100/?portrait" alt="" className="w-8 h-8 hover:shadow-md rounded-full" />
                     </li>
                 </ul>
             </div>

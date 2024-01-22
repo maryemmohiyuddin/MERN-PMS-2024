@@ -5,6 +5,7 @@ import axios from 'axios';
 
 function Notification({ notificationState, instructorId ,updateState,setActiveItem }) {
     const [requests, setRequests] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     // Run this effect once when the component mounts
     useEffect(() => {
@@ -21,22 +22,30 @@ function Notification({ notificationState, instructorId ,updateState,setActiveIt
                 setRequests(data.response);
             } catch (error) {
                 console.error("Error fetching requests:", error);
-            }
+            } finally {
+                // Set loading to false once data is fetched (whether successful or not)
+                setTimeout(() => {
+                    setLoading(false);
+                },500);            }
         };
         getAllRequests();
     }, [instructorId]);
-
     return (
         <>
-            <div className="bg-white notification h-screen w-1/5 z-100 absolute right-0">
-                <div className="flex justify-between items-center m-5">
-                    <h4 className="font-semibold text-xl">Notifications</h4>
-                    <button className='bg-white' onClick={() => notificationState.notificationState(false)}>
+           
+            <div className="bg-white notification h-screen w-1/5 z-100 absolute right-0 shadow-xl">
+                <div className="flex justify-between  bg-indigo-500 items-center p-3 ps-5 text-white">
+                    <h4 className="font-semibold">Notifications</h4>
+                    <button className=' bg-indigo-500' onClick={() => notificationState.notificationState(false)}>
                         <FaTimes />
                     </button>
                 </div>
                 <hr />
-                <div className="  h-full">
+                {loading ? <div className="flex items-center justify-center h-screen">
+                    <div className="w-16 h-16  border-4 border-dashed rounded-full animate-spin border-violet-400"></div>
+                </div>
+                    : (
+                <div className=" fade-in h-full text-sm">
                     {requests.length === 0 ? (
                         <p>No new requests</p>
                     ) : (
@@ -74,6 +83,8 @@ function Notification({ notificationState, instructorId ,updateState,setActiveIt
                         </ul>
                     )}
                 </div>
+                    )}
+
             </div>
         </>
     );

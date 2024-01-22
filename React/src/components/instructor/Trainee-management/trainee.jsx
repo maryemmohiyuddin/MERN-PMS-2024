@@ -142,9 +142,11 @@ function Trainee({updateState,showNotification,instructorId}) {
 
     return (
         <div className="app">
-            {loading ? <Loader /> : (
-                <div className="data-container">
-                    <div className={`className="h-screen w-screen flex  justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
+            {loading ? <div className="flex ps-48 items-center justify-center h-screen">
+                <div className="w-16 h-16  border-4 border-dashed rounded-full animate-spin border-violet-400"></div>
+            </div>
+                : (                <div className="data-container">
+                    <div className={`className="h-screen fade-in w-screen flex  justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
                         {isEditModalOpen && (
                             <div className={` modal-container flex items-center justify-center z-100`}>
 <div className="absolute bg-black opacity-50" onClick={() => { setEditModalOpen(false); }}></div>
@@ -203,8 +205,8 @@ function Trainee({updateState,showNotification,instructorId}) {
                                         {/* ... other fields */}
                                     </div>
                                     <div className="flex justify-end mt-6">
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleEditAction}>Close</button>
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2" onClick={() => { handleEditAction(); update(editData); }}>Save</button>
+                                        <button className="px-6 py-2 hover:bg-gray-300 hover:shadow-sm hover-effect rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleEditAction}>Close</button>
+                                        <button className="px-6 py-2 hover:bg-indigo-600 hover:shadow-md hover-effect rounded-sm shadow-sm bg-indigo-500 text-white ml-2" onClick={() => { handleEditAction(); update(editData); }}>Save</button>
                                     </div>
                                 </div>
                             </div>
@@ -220,11 +222,11 @@ function Trainee({updateState,showNotification,instructorId}) {
                                     <div className="flex flex-col justify-end gap-3 mt-6 sm:flex-row">
                                         {Trainees.map((trainee, index) => (
                                             <div key={index}> {selectedTraineeId === trainee.userId ? (
-                                                <button className="px-6 py-2 mr-5 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseModal}>Close</button>
+                                                <button className="px-6 hover:bg-gray-300 hover:shadow-sm hover-effect py-2 mr-5 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseModal}>Close</button>
 
                                             ) : null}
                                                 {selectedTraineeId === trainee.userId ? (
-                                                    <button className="px-6 py-2 rounded-sm shadow-sm bg-red-500 text-white" onClick={() => { handleCloseModal(); blockUser(trainee.userId); }}>Block</button>
+                                                    <button className="px-6 py-2 hover:bg-red-600 hover:shadow-md hover-effect rounded-sm shadow-sm bg-red-500 text-white" onClick={() => { handleCloseModal(); blockUser(trainee.userId); }}>Block</button>
                                                 ) : null}
                                             </div>
                                         ))}
@@ -235,7 +237,7 @@ function Trainee({updateState,showNotification,instructorId}) {
                             </div>
                         )}
                         <div className={`h-screen w-screen flex justify-end ${contentClassName}`}>
-                            <div className=" ps-12 w-10/12 h-5/6">
+                            <div className=" px-3 ps-8 w-10/12 h-5/6">
                                 <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
                                     <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100">
                                         <li className="text-black flex items-center">
@@ -247,12 +249,12 @@ function Trainee({updateState,showNotification,instructorId}) {
                                         </li>
 
                                     </ol>
-                                    <h3 className="font-bold text-3xl">Trainees</h3>
+                                    <h3 className="font-bold text-2xl">Trainees</h3>
 
                                 </nav>
                                 <div className="container p-2 mx-auto sm:p-4 text-black ">
-                                    <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">All Trainees:</h4>
-                                    <div className="overflow-x-auto shadow-md w-11/12 bg-white ">
+                                    <h4 className="font-semibold text-md mb-2  ">All Trainees</h4>
+                                    <div className="overflow-x-auto shadow-md me-5 bg-white ">
                                         <table className="w-full  text-sm border-collapse">                                  <colgroup>
                                             <col />
                                             <col />
@@ -293,10 +295,10 @@ function Trainee({updateState,showNotification,instructorId}) {
 
                                                         <td className="p-3 border border-gray-300">
 
-                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer" onClick={() => handleEditClick(trainee)}>                                                <span>Edit</span>
+                                                            <span className="px-3 py-2 hover:bg-indigo-600 hover:shadow-md hover-effect text-white rounded-md bg-indigo-500 cursor-pointer" onClick={() => handleEditClick(trainee)}>                                                <span>Edit</span>
 
                                                             </span>  <span
-                                                                className="px-3 py-2 text-white rounded-md bg-red-500 cursor-pointer"
+                                                                className="px-3 py-2 hover:bg-red-600 hover:shadow-md hover-effect text-white rounded-md bg-red-500 cursor-pointer"
                                                                 onClick={() => handleBlockClick(trainee)} // Pass the trainee object here
                                                             >
                                                                 <span>Block</span>

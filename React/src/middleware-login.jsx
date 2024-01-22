@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-function ProtectedRoute(children) {
-  const{Component}=children
+function ProtectedRouteLogin( children ) {
+  const { Component } = children;
   const navigate = useNavigate();
 
   const checkSession = async () => {
@@ -14,22 +14,13 @@ function ProtectedRoute(children) {
       const { data } = await axios.get("http://localhost:3000/auth/getsession", {
         withCredentials: true,
       });
-      console.log("Session data:", data);
-
-      // Check if the user is logged in based on the session data
+      console.log("Session data here:", data);
       if (data.error) {
-        console.log("heyy");
-        // Clear the session cookie if the user is not logged in
         Cookies.remove("session");
-        navigate("/");
-      } else {
-        // Set the session cookie if the user is logged in
-        Cookies.set("session", "loggedIn");
       }
     } catch (error) {
       console.error("Error checking session:", error);
       // Clear the session cookie in case of an error
-      Cookies.remove("session");
       // navigate("/");
     }
   };
@@ -39,7 +30,12 @@ function ProtectedRoute(children) {
 
     // Redirect to the login page if the session cookie is not set
     if (!Cookies.get("session")) {
-      navigate("/");
+      console.log("Redirecting");
+      navigate("/"); // Redirect to the login page
+    }
+    else{
+      console.log("heree")
+      navigate("/instructor")
     }
   };
 
@@ -47,22 +43,15 @@ function ProtectedRoute(children) {
     handleCheckAndRedirect();
   }, []); // Empty dependency array to mimic componentDidMount
 
-  return(
+  // Render the entire page along with the Component
+  return (
     <div>
-    <Component />
+      {/* Your full page content here */}
+      {/* <h1>Welcome to Your App</h1> */}
+      {/* Render the Component if the condition is met */}
+      {!Cookies.get("session") && <Component />}
     </div>
-  )
+  );
+}
 
-//   // Redirect to the login page if the session cookie is not set
-//   console.log("cookie", Cookies);
-//   // Render the instructor layout if the session cookie is set
-//    isAuthenticated ? <children /> : null;
-//   console.log("com",children)
-// }
-
-// ProtectedRoute.propTypes = {
-//   children: PropTypes.node.isRequired,
-
-  };
-
-export default ProtectedRoute;
+export default ProtectedRouteLogin;

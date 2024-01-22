@@ -46,8 +46,8 @@ function InstructorLayout() {
     const navigate = useNavigate();
 
     if (!authCookie) {
-        console.error("The 'auth' cookie is not set.");
-        alert('Cookies expired. Redirecting to login page...');
+        // console.error("The 'auth' cookie is not set.");
+        // alert('Cookies expired. Redirecting to login page...');
         navigate('/');
         return;
     }
@@ -56,8 +56,8 @@ function InstructorLayout() {
     const instructorId = userIdMatch ? userIdMatch[1] : null;
 
     if (!instructorId) {
-        console.error('Failed to extract userId from the auth cookie.');
-        alert('Cookies expired or malformed. Redirecting to login page...');
+        // console.error('Failed to extract userId from the auth cookie.');
+        // alert('Cookies expired or malformed. Redirecting to login page...');
         navigate('/');
     }
     useEffect(() => {
@@ -91,13 +91,14 @@ function InstructorLayout() {
                 {/* Add the following line to print the dataFromChild value */}
             
                 {component == 'PROFILE' && <Profile updateState={updateState} showNotification={showNotification} instructorId={instructorId}/>}
-                {component == 'DASHBOARD' && (
-                    <Dashboard updateState={updateState} showNotification={showNotification} instructorId={instructorId} />
+                {component === 'DASHBOARD' && (
+                    <Dashboard className={`fade-in ${component === 'DASHBOARD' ? 'active' : ''}`} updateState={updateState} showNotification={showNotification} instructorId={instructorId} />
+                )} 
+                {component === 'STACKS' && <Stack className={`fade-in ${component === 'STACKS' ? 'active' : ''}`} updateState={updateState} showNotification={showNotification} instructorId={instructorId} />}
+                {component === 'PROJECTS' && (
+                    <Project className={`fade-in ${component === 'PROJECTS' ? 'active' : ''}`} updateState={updateState} showNotification={showNotification} instructorId={instructorId} />
                 )}
-                {component == 'STACKS' && <Stack updateState={updateState} showNotification={showNotification} instructorId={instructorId} />}
-                {component == 'PROJECTS' && (
-                    <Project updateState={updateState} showNotification={showNotification} instructorId={instructorId} />
-                )}
+
                 {component == 'TEAMS' && <Team updateState={updateState} showNotification={showNotification} instructorId={instructorId} />}
                 {component == 'TASKS' && <Task updateState={updateState} showNotification={showNotification} instructorId={instructorId} />}
                 {component == 'TRAINEE' && (

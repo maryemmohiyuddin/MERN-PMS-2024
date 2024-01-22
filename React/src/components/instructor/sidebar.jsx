@@ -15,7 +15,7 @@ function Sidebar( updateState,activeItem,setActiveItem, showNotification, instru
     console.log("updateState   ", updateState, "activeItem", activeItem, "setactiveItem", setActiveItem, "shownotification",showNotification,"instructorId",instructorId)
 
     return (
-        <div className={`bg-indigo-600 h-screen p-3 space-y-2 w-72 dark:bg-gray-900 dark:text-gray-100 fixed ${updateState.showNotification ? 'blurrr' : ' '}`}>
+        <div className={`bg-indigo-600 sidebarr h-screen p-3 space-y-2 w-64 dark:bg-gray-900 dark:text-gray-100 fixed ${updateState.showNotification ? 'blurrr' : ' '}`}>
 
             <div className=" pt-7 space-x-4">
                 <div className=" flex items-center justify-center p-3">
@@ -25,10 +25,10 @@ function Sidebar( updateState,activeItem,setActiveItem, showNotification, instru
             </div>
             <hr />
             <div className=" divide-y dark:divide-gray-700">
-                <ul className="pt-4 pb-4 space-y-1 text-md ps-8 pe-2">
+                <ul className="pt-4 pb-4 space-y-1 text-sm ps-2 hover  pe-2">
                     <li
                         className={
-                            ` ${updateState.activeItem === "DASHBOARD" ? "border-white border-r-4" : ""}`
+                            ` ${updateState.activeItem === "DASHBOARD" ? "border-white bg-indigo-400 rounded-md " : "hover:bg-indigo-500 hover-effect rounded-md"}`
                         }
                         onClick={() => {
                             updateState.setActiveItem("DASHBOARD");
@@ -55,7 +55,7 @@ function Sidebar( updateState,activeItem,setActiveItem, showNotification, instru
 
                     <li
                         className={
-                            ` ${updateState.activeItem === "PROJECTS" ? "white border-r-4 text-white " : ""}`
+                            ` ${updateState.activeItem === "PROJECTS" ? "border-white bg-indigo-400 rounded-md " : "hover:bg-indigo-500 hover-effect rounded-md"}`
                         }
                         onClick={() => {
                             updateState.setActiveItem("PROJECTS");
@@ -81,7 +81,7 @@ function Sidebar( updateState,activeItem,setActiveItem, showNotification, instru
                     </li>
                     <li
                         className={
-                            ` ${updateState.activeItem === "TEAMS" ? "white border-r-4 text-white" : ""}`
+                            ` ${updateState.activeItem === "TEAMS" ? "border-white bg-indigo-400 rounded-md " : "hover:bg-indigo-500 hover-effect rounded-md"}`
                         }
                         onClick={() => {
                             updateState.setActiveItem("TEAMS");
@@ -107,7 +107,7 @@ function Sidebar( updateState,activeItem,setActiveItem, showNotification, instru
                     </li>
                     <li
                         className={
-                            ` ${updateState.activeItem === "TASKS" ? "white border-r-4 text-white" : ""}`
+                            ` ${updateState.activeItem === "TASKS" ? "border-white bg-indigo-400 rounded-md " : "hover:bg-indigo-500 hover-effect rounded-md"}`
                         }
                         onClick={() => {
                             updateState.setActiveItem("TASKS");
@@ -133,7 +133,7 @@ function Sidebar( updateState,activeItem,setActiveItem, showNotification, instru
                     </li>
                     <li
                         className={
-                            ` ${updateState.activeItem === "TRAINEE" ? "white border-r-4 text-white" : ""}`
+                            ` ${updateState.activeItem === "TRAINEE" ? "border-white bg-indigo-400 rounded-md " : "hover:bg-indigo-500 hover-effect rounded-md"}`
                         }
                         onClick={() => {
                             updateState.setActiveItem("TRAINEE");
@@ -159,7 +159,7 @@ function Sidebar( updateState,activeItem,setActiveItem, showNotification, instru
                     </li>
                     <li
                         className={
-                            ` ${updateState.activeItem === "REQUESTS" ? "white border-r-4 text-white" : ""}`
+                            ` ${updateState.activeItem === "REQUESTS" ? "border-white bg-indigo-400 rounded-md " : "hover:bg-indigo-500 hover-effect rounded-md"}`
                         }
                         onClick={() => {
                             updateState.setActiveItem("REQUESTS");

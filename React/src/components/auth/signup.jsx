@@ -86,11 +86,11 @@ function Signup(updateState) {
         <>
             <div className="w-screen bg-light-grey flex justify-center">
                 <div className="h-screen w-form  w-1/4 flex justify-center flex-col ">
-                    <div className=" flex flex-col my-5  border border-gray-200 shadow-md  bg-white p-4 rounded-lg">
+                    <div className=" flex flex-col my-5  fade-in  border border-gray-200 shadow-md  bg-white p-4 rounded-lg">
                         <div className="w-full flex justify-center mb-4 ">
                             <p className="text-black text-2xl font-semibold    ">Signup</p>
                         </div>
-                        <div className="inline-group mb-2 row-container">
+                        <div className="inline-group mb-2 row-container ">
                             <div className="row">
                                 <div className="row-item">
                                     <label className="text-md text-black font-medium mb-1">First Name</label>
@@ -217,7 +217,11 @@ function Signup(updateState) {
                         </p>
                         <div className="w-full p-4 flex justify-center mt-4">
                             <button
-                                className="bg-indigo-500 w-36 cursor-pointer text-white disabled:bg-gray-300"
+                                className={`
+  bg-indigo-500 text-white w-36 cursor-pointer focus:outline-none
+  transition-all duration-300 ease-in-out
+  hover:bg-indigo-600 hover:shadow-md
+ `}
                                
                                 onClick={() => {
                                     void signup();

@@ -387,9 +387,11 @@ function Task({ updateState, showNotification,instructorId }) {
 
     return (
         <div className="app">
-            {loading ? <Loader /> : (
-                <div className="data-container">
-                    <div className={`className="h-screen w-screen flex  justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
+            {loading ? <div className="flex ps-48 items-center justify-center h-screen">
+                <div className="w-16 h-16  border-4 border-dashed rounded-full animate-spin border-violet-400"></div>
+            </div>
+                : (<div className="data-container">
+                    <div className={`className="h-screen  fade-in w-screen flex  justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
                         {isEditModalOpen && (
                             <div className="modal-container  flex items-center justify-center z-100">
                                 <div className="absolute  bg-black opacity-50" onClick={() => setEditModalOpen(false)}></div>
@@ -429,8 +431,8 @@ function Task({ updateState, showNotification,instructorId }) {
 
                                     </div>
                                     <div className="flex justify-end mt-6">
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleEditAction}>Close</button>
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2" onClick={() => { handleEditAction(); update(editData); }}>Add</button>
+                                        <button className="px-6 py-2 hover:bg-gray-300 hover:shadow-sm hover-effect rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleEditAction}>Close</button>
+                                        <button className="px-6 py-2 hover:bg-indigo-600 hover:shadow-md hover-effect rounded-sm shadow-sm bg-indigo-500 text-white ml-2" onClick={() => { handleEditAction(); update(editData); }}>Add</button>
                                     </div>
                                 </div>
                             </div>
@@ -477,8 +479,8 @@ function Task({ updateState, showNotification,instructorId }) {
 
                                     </div>
                                     <div className="flex justify-end mt-6">
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseTeamModal}>Close</button>
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-indigo-500 text-white ml-2"
+                                        <button className="px-6 py-2 hover:bg-gray-300 hover:shadow-dm hover-effect rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseTeamModal}>Close</button>
+                                        <button className="px-6 py-2 hover:bg-indigo-600 hover:shadow-md hover-effect rounded-sm shadow-sm bg-indigo-500 text-white ml-2"
                                             onClick={() => {
 
                                                 handleAddAction();
@@ -499,10 +501,10 @@ function Task({ updateState, showNotification,instructorId }) {
                                         <span className=''>Are you sure you want to delete this team?</span>
                                     </h2>
                                     <div className="flex flex-col justify-end gap-3 mt-6 sm:flex-row">
-                                        <button className="px-6 py-2 mr-5 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseTeamModal}>
+                                        <button className="px-6 py-2 mr-5 hover:bg-gray-300 hover:shadow-sm hover-effect rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseTeamModal}>
                                             Close
                                         </button>
-                                        <button className="px-6 py-2 rounded-sm shadow-sm bg-red-500 text-white" onClick={() => { handleDeleteAction(); deleteTeam(selectedTeamIdForDelete); }}>
+                                        <button className="px-6 py-2 hover:bg-red-600 hover:shadow-md hover-effect rounded-sm shadow-sm bg-red-500 text-white" onClick={() => { handleDeleteAction(); deleteTeam(selectedTeamIdForDelete); }}>
                                             Delete Team
                                         </button>
                                     </div>
@@ -511,7 +513,7 @@ function Task({ updateState, showNotification,instructorId }) {
                         )}
 
                         <div className={`h-screen w-screen flex justify-end ${contentClassName}`}>
-                            <div className=" ps-12 w-10/12 h-5/6">
+                            <div className=" px-3 ps-7 w-10/12 h-5/6">
                                 <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
                                     <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100">
                                         <li className="text-black flex items-center">
@@ -523,11 +525,11 @@ function Task({ updateState, showNotification,instructorId }) {
                                         </li>
 
                                     </ol>
-                                    <h3 className="font-bold text-3xl">Tasks</h3>
+                                    <h3 className="font-bold text-2xl">Tasks</h3>
 
                                 </nav>
                                 <div className="container p-2 mx-auto sm:p-4 text-black">
-                                    <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">Select Projects:</h4>
+                                    <h4 className="font-semibold text-md mb-2  ">Select Project</h4>
 
                                     <div className="flex">
                                         <div className="w-1/4 me-7">
@@ -537,7 +539,7 @@ function Task({ updateState, showNotification,instructorId }) {
                                             {insProjects.map((project, index) => (
                                                 <li
                                                     key={index}
-                                                    className={`list-group-item bg-white text-black cursor-pointer hover:bg-indigo-500 hover:text-white text-sm list-none font-semibold border border-gray-200 p-3 ${project.value === selectedProjectId ? 'selected' : ''}`}
+                                                    className={`list-group-item bg-white text-black cursor-pointer hover:bg-indigo-500 hover:text-white text-sm list-none border border-gray-200 hover-effect p-3 ${project.value === selectedProjectId ? 'selected font-semibold' : ''}`}
                                                     onClick={() => handleProjectClick(project.value)}
                                                 >
                                                     {project.label}
@@ -547,8 +549,8 @@ function Task({ updateState, showNotification,instructorId }) {
 
                                         </div>
 
-                                        <div className='w-4/6'>
-                                            <div className="overflow-x-auto shadow-md w-11/12 bg-white">
+                                        <div className='w-5/6 me-6'>
+                                            <div className="overflow-x-auto shadow-md  bg-white">
                                                 <table className="w-full text-sm border-collapse">
                                                     <thead className="bg-white">
                                                         <tr className="bg-indigo-500 text-sm text-white">
@@ -565,7 +567,7 @@ function Task({ updateState, showNotification,instructorId }) {
                                                                         <div key={index}>{`${team.firstName} ${team.lastName}`}</div>
                                                                     </td>
                                                                     <td className="p-3 border border-gray-300 text-center">
-                                                                        <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer"
+                                                                        <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer hover:bg-indigo-600 hover:shadow-md hover-effect"
                                                                             onClick={() => handleAddClick(team.teamMemberId)}>
                                                                             <span>Assign Task</span>
                                                                         </span>
@@ -588,11 +590,11 @@ function Task({ updateState, showNotification,instructorId }) {
                                     <div className="flex justify-between items-center">
 
 
-                                        <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">All Tasks:</h4>
+                                        <h4 className="font-semibold text-md mb-2 ms-2 mt-5">All Tasks</h4>
 
 
                                     </div>
-                                    <div className="overflow-x-auto shadow-md w-11/12 bg-white">
+                                    <div className="overflow-x-auto shadow-md me-6 mb-10 bg-white">
                                         <table className="w-full text-sm border-collapse">
                                             <colgroup>
                                             </colgroup>
@@ -615,15 +617,19 @@ function Task({ updateState, showNotification,instructorId }) {
                                                         <td className="border border-gray-300 bg-white px-4 py-2">{team.taskDes}</td>
                                                         <td className="border border-gray-300 bg-white px-4 py-2">{team.projectTitle}</td>
                                                         <td className="border border-gray-300 bg-white px-4 py-2">{team.MemberName}</td>
-                                                        <td className="border border-gray-300 text-indigo-600 font-semibold bg-white px-4 py-2">{team.status}</td>
-
+                                                        <td
+                                                            className={`border border-gray-300 px-4 py-2 ${team.status.toLowerCase() === 'pending' ? 'text-red-500' : 'text-indigo-500'
+                                                                }  bg-white`}
+                                                        >
+                                                            {team.status}
+                                                        </td>
 
 
                                                         <td className="p-3 border border-gray-300">
-                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer" onClick={() => handleEditClick(team)}>
+                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 hover:bg-indigo-600 hover:shadow-md hover-effect cursor-pointer" onClick={() => handleEditClick(team)}>
                                                                 <span>Edit</span>
                                                             </span>
-                                                            <span className="px-3 py-2 ms-2 text-white rounded-md bg-red-500 cursor-pointer" onClick={() => handleDeleteClick(team.taskId)}>
+                                                            <span className="px-3 py-2 ms-2 text-white rounded-md hover:bg-red-600 hover:shadow-md hover-effect bg-red-500 cursor-pointer" onClick={() => handleDeleteClick(team.taskId)}>
                                                                 <span>Delete</span>
                                                             </span>
 
