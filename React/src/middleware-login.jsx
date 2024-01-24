@@ -35,7 +35,23 @@ function ProtectedRouteLogin( children ) {
     }
     else{
       console.log("heree")
-      navigate("/instructor")
+      console.log("sessions", Cookies.get("auth"));
+
+      const authCookie = Cookies.get('auth');
+
+      // Use a proper regex to match the role in the authCookie
+      const userRoleMatch = authCookie.match(/"role":"([^"]*)"/);
+
+      // Check if the match is found and extract the role
+      const userRole =  userRoleMatch[1] ;
+
+      console.log("userRole", userRole);
+if(userRole=="instructor"){
+      navigate("/instructor");}
+      else if(userRole=="trainee"){
+  navigate("/trainee");
+      } // Redirect to the login page
+
     }
   };
 

@@ -4,7 +4,7 @@ import Loader from '../loader_component';
 import Select from 'react-select';
 
 function Profile({ updateState, showNotification,instructorId }) {
-    console.log("profile here updateState   ", updateState, "shownotification", showNotification, "instructorId", instructorId)
+    // console.log("profile here updateState   ", updateState, "shownotification", showNotification, "instructorId", instructorId)
 
    
     const STACK = [

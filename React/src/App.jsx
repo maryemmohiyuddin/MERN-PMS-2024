@@ -22,7 +22,7 @@ function App() {
             </Route>
 
             <Route path="instructor" element={
-            
+
                 <ProtectedRoute Component={InstructorLayout} />
 
 
@@ -30,14 +30,14 @@ function App() {
 
             </Route>
 
-            <Route
-                path="trainee"
-                element={
-                    // <ProtectedRoute>
-                    <TraineeLayout />
-                    // </ProtectedRoute>
-                }
-            ></Route>
+            <Route path="trainee" element={
+
+                <ProtectedRoute Component={TraineeLayout} />
+
+
+            }>
+
+            </Route>
         </Routes>
 
 

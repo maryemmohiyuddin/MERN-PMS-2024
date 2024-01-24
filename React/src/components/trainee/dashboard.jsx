@@ -8,14 +8,14 @@ import dayjs from 'dayjs';
 import { useLocation } from "react-router-dom";
 import Cookies from 'js-cookie';
 import axios from "axios";
-import * as ReactTooltip from 'react-tooltip';
 import Loader from "../loader_component";
+import CountUp from 'react-countup';
 
 
-import '../../calendarStyles.css';
 
 
-function Dashboard({ updateState, userId }) {
+
+function Dashboard({ updateState, showNotification, userId }) {
     // Define the events array here
     const [date, setDate] = useState(new Date()); // Initialize with the current date
     const [Teams, setTeams] = useState([]);
@@ -27,7 +27,8 @@ function Dashboard({ updateState, userId }) {
                 params: {
                     userId: userId,
                 },
-            });          console.log("user",data.response);
+            });
+            console.log(data.response);
             setData(data.response);
 
             setLoading(false);
@@ -54,7 +55,7 @@ function Dashboard({ updateState, userId }) {
                 const mappedTeams = response.data.response.map(team => ({
                     ...team,
                     projectTitle: team.project.title,
-                    MemberName: team.user.firstName + team.user.lastName,
+                    MemberName: team.user.firstName + " " + team.user.lastName,
                     taskTitle: team.taskTitle,
                     taskDes: team.taskDes,
                     taskId: team.taskId,
@@ -70,6 +71,11 @@ function Dashboard({ updateState, userId }) {
     };
     const [loading, setLoading] = useState(true);
 
+    const [dropdownVisible, setDropdownVisible] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(null);
+
+    // ... (other functions)
+
     const tileContent = ({ date }) => {
         const eventForDate = events.find(event =>
             dayjs(event.date).isSame(date, 'day')
@@ -77,17 +83,33 @@ function Dashboard({ updateState, userId }) {
 
         if (eventForDate) {
             return (
-                <div>
+                <div className="">
                     <p>{eventForDate.title}</p>
-                    {/* Add the tooltip */}
-                    <ReactTooltip id={`tooltip-${date}`} place="top" effect="solid">
-                        {eventForDate.tooltipContent}
-                    </ReactTooltip>
+                    {/* Conditional rendering based on dropdownVisible state */}
+                    {dropdownVisible && selectedDate && dayjs(date).isSame(selectedDate, 'day') && (
+                        <div className="dropdown-content rounded-xl px-4">
+                            {/* Dropdown options */}
+                            <p>Project Deadline</p>
+                            {/* Add more options as needed */}
+                        </div>
+                    )}
                 </div>
             );
         }
 
         return null;
+    };
+
+    const handleDateClick = (value) => {
+        // Toggle dropdown visibility
+        setDropdownVisible(prevVisible => !prevVisible);
+
+        // Set or clear the selected date based on the current state
+        if (!dropdownVisible) {
+            setSelectedDate(value);
+        } else {
+            setSelectedDate(null);
+        }
     };
     const currentEvent = [
         {
@@ -129,7 +151,7 @@ function Dashboard({ updateState, userId }) {
         }
 
         if (dayjs(date).isSame(new Date(), 'day')) {
-            classes += ' blue-circle tooltip'; // Add a class to indicate the presence of a tooltip
+            classes += ' blue-circle tooltip fade-inn'; // Add a class to indicate the presence of a tooltip
         }
 
         return classes;
@@ -196,20 +218,19 @@ function Dashboard({ updateState, userId }) {
     // ... rest of your Dashboard component code
 
     useEffect(() => {
+        console.log("showNotification value:", showNotification);
+        // Fetch team members
+
         const fetchData = async () => {
             try {
 
                 // Fetch the teams for project ID 1
-
                 // Fetch all teams
                 await getAllTeams();
-
-                // Fetch team members
-                await getAllStatistics();
-                await getUserById();
-
                 // Fetch instructor projects
                 await getInsProjects();
+                getAllStatistics();
+                await getUserById();
 
                 // Set loading to false when all data has been fetched
                 setLoading(false);
@@ -221,104 +242,108 @@ function Dashboard({ updateState, userId }) {
 
         // Wrap fetchData in a setTimeout to ensure it runs after the initial rendering
         setTimeout(fetchData);
-    }, []);
+    }, [showNotification]);
 
 
     return (
-        <div className="app">
+        <div className={`app`}>
 
-            {loading ? <Loader /> : (
-                <div className=" w-screen h-screen flex justify-end overflow-x-hidden scrollbar-hidden">
-                    <div className="ps-8 w-10/12 overflow-y-auto">
-                        <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
-                            <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100 ps-6">
-                                <li className="text-black flex items-center">
-                                    <a rel="noopener noreferrer" href="#" title="Back to homepage" className="text-black text-sm hover:text-black flex items-center hover:underline">Trainee</a>
-                                </li>
-                                <li className="flex items-center space-x-1">
-                                    <span className="dark:text-gray-400 block">/</span>
-                                    <a rel="noopener noreferrer" href="#" className="text-black text-sm hover:text-black flex items-center px-1 capitalize hover:underline">Main Dashboard</a>
-                                </li>
 
-                            </ol>
-                            {/* <h3 className="font-bold text-3xl ps-6">Main Dashboard</h3> */}
-                            <h5 className="font-bold text-3xl  ps-6">Welcome! {data.firstName} {data.lastName}</h5>
+            {loading ? <div className="flex ps-48 items-center justify-center h-screen">
+                <div className="w-16 h-16  border-4 border-dashed rounded-full animate-spin border-violet-400"></div>
+            </div>
+                : (
+                    <div className={`w-screen fade-in h-screen flex justify-end overflow-x-hidden scrollbar-hidden  ${showNotification ? 'blurr -z-50' : ''}`}>
+                        <div className="px-3 w-10/12 overflow-y-auto fade-inn">
+                            <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
+                                <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100 ps-6">
+                                    <li className="text-black flex items-center">
+                                        <a rel="noopener noreferrer" href="#" title="Back to homepage" className="text-black text-sm hover:text-black flex items-center hover:underline">Instructor</a>
+                                    </li>
+                                    <li className="flex items-center space-x-1">
+                                        <span className="dark:text-gray-400 block">/</span>
+                                        <a rel="noopener noreferrer" href="#" className="text-black text-sm hover:text-black flex items-center px-1 capitalize hover:underline">Main Dashboard</a>
+                                    </li>
 
-                        </nav>
+                                </ol>
+                                {/* <h3 className="font-bold text-3xl ps-6">Main Dashboard</h3> */}
+                                <h5 className="font-bold text-2xl  ps-6">Welcome! {data.firstName} {data.lastName}</h5>
 
-                        <section className="py-4 mx-8 dark:bg-gray-800 dark:text-gray-100 ">
+                            </nav>
 
-                            <div className="container grid pb-4 grid-cols-1 gap-6 m-4 mx-auto  md:m-0 md:grid-cols-2 xl:grid-cols-3">
-                                <div className="bg-white  rounded-full flex overflow-hidden shadow-md dark:bg-gray-900 dark:text-gray-100">
-                                    <div className="flex flex-col items-center justify-center  ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
-                                        <GrProjects /> {/* Adjust the font size as needed */}
+                            <section className="py-4 mx-8 dark:bg-gray-800 dark:text-gray-100 ">
+
+                                <div className="container grid pb-4 grid-cols-1 gap-6 m-4 mx-auto  md:m-0 md:grid-cols-2 xl:grid-cols-3">
+                                    <div className="bg-white  rounded-full flex overflow-hidden shadow-md dark:bg-gray-900 dark:text-gray-100">
+                                        <div className="flex flex-col items-center justify-center  ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
+                                            <GrProjects /> {/* Adjust the font size as needed */}
+                                        </div>
+                                        <div className="flex items-center justify-between flex-1 p-3 text-md fade-inn">
+                                            <p className="text-2xl font-semibold"><CountUp start={0} end={statistics?.projectCount || 0} duration={0.9} separator="," /></p>
+                                            <p>Total Projects</p>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center justify-between flex-1 p-3">
-                                        <p className="text-2xl font-semibold">{statistics?.projectCount || 0}</p>
-                                        <p>Total Projects</p>
+
+
+                                    <div className="bg-white shadow-md  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
+                                        <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
+                                            <FaUsers fontSize="18px" className="w-7" />
+
+                                        </div>
+                                        <div className="flex items-center justify-between flex-1 p-3 fade-inn">
+                                            <p className="text-2xl font-semibold"><CountUp start={0} end={statistics?.userCount || 0} duration={0.9} separator="," /></p>
+                                            <p>Total Trainees</p>
+                                        </div>
                                     </div>
-                                </div>
+
+                                    <div className="bg-white shadow-md  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
+                                        <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
+                                            <SiMicrosoftteams fontSize="20px" className="w-7" />
 
 
-                                <div className="bg-white shadow-md  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
-                                    <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
-                                        <FaUsers fontSize="18px" className="w-7" />
 
+
+                                        </div>
+                                        <div className="flex items-center justify-between flex-1 p-3 fade-inn">
+                                            <p className="text-2xl font-semibold"><CountUp start={0} end={statistics?.teamCount || 0} duration={0.9} separator="," /></p>
+                                            <p>Total Teams</p>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center justify-between flex-1 p-3">
-                                        <p className="text-2xl font-semibold">{statistics?.userCount || 0}</p>
-                                        <p>Total Trainees</p>
-                                    </div>
-                                </div>
+                                    <div className="bg-white shadow-md  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
+                                        <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
+                                            <FaTasks className="w-7" fontSize="20px" />
 
-                                <div className="bg-white shadow-md  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
-                                    <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
-                                        <SiMicrosoftteams fontSize="20px" className="w-7" />
-
-
-
-
+                                        </div>
+                                        <div className="flex items-center justify-between flex-1 p-3 fade-inn">
+                                            <p className="text-2xl font-semibold"><CountUp start={0} end={statistics?.asProjects || 0} duration={0.9} separator="," /></p>
+                                            <p>Projects Assigned</p>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center justify-between flex-1 p-3">
-                                        <p className="text-2xl font-semibold">{statistics?.teamCount || 0}</p>
-                                        <p>Total Teams</p>
-                                    </div>
-                                </div>
-                                <div className="bg-white shadow-md  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
-                                    <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
-                                        <FaTasks className="w-7" fontSize="20px" />
+                                    <div className="bg-white shadow-md rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
+                                        <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
+                                            <BsListTask className="w-7" fontSize="22px" />
 
+                                        </div>
+                                        <div className="flex items-center justify-between flex-1 p-3 fade-inn">
+                                            <p className="text-2xl font-semibold"><CountUp start={0} end={statistics?.unasProjects || 0} duration={0.9} separator="," /></p>
+                                            <p>Unassigned Projects</p>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center justify-between flex-1 p-3">
-                                        <p className="text-2xl font-semibold">{statistics?.asProjects || 0}</p>
-                                        <p>Projects Assigned</p>
-                                    </div>
-                                </div>
-                                <div className="bg-white shadow-md rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
-                                    <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
-                                        <BsListTask className="w-7" fontSize="22px" />
-
-                                    </div>
-                                    <div className="flex items-center justify-between flex-1 p-3">
-                                        <p className="text-2xl font-semibold">{statistics?.unasProjects || 0}</p>
-                                        <p>Unassigned Projects</p>
-                                    </div>
-                                </div>
-                                {/* <div className="bg-white shadow-md rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
+                                    {/* <div className="bg-white shadow-md rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
                                 <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
                                     <SiGoogleclassroom className="w-7" fontSize="20px" />
 
                                 </div>
-                                <div className="flex items-center justify-between flex-1 p-3">
+                                <div className="flex items-center justify-between flex-1 p-3 fade-in">
                                     <p className="text-2xl font-semibold">5</p>
                                     <p>Total classes</p>
                                 </div>
                             </div> */}
-                            </div>
+                                </div>
 
 
-                            <div className="flex pt-7"> <div> <h2 className="font-semibold ps-3 pb-3 ">Project Deadlines</h2>
-                                {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <div className="flex pt-7 fade-inn"> <div> <h2 className="font-semibold ps-3 pb-3 ">Project Deadlines</h2>
+                                    {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DemoContainer components={['DateCalendar', 'DateCalendar', 'DateCalendar']}>
                                     <DemoItem label={''}>
                                         <DateCalendar
@@ -332,64 +357,68 @@ function Dashboard({ updateState, userId }) {
                                     </DemoItem>
                                 </DemoContainer>
                             </LocalizationProvider> */}
-                                <Calendar
-                                    className={"shadow-md"}
-                                    onChange={setDate}
-                                    value={date}
-                                    tileClassName={tileClassName}
-                                />
+                                    <Calendar
+                                        className={"shadow-md mt-2"}
+                                        onChange={setDate}
+                                        value={date}
+                                        tileClassName={tileClassName}
+                                        tileContent={tileContent}
+                                        onClickDay={handleDateClick} // Add this onClickDay handler
+                                    // Here you pass tileContent to the Calendar component
+                                    />
 
-                            </div>
 
-                                <div className="ps-10 width">
-                                    <h2 className="font-semibold ps-3 pb-3 ">Task Status</h2>                        <div className=" mt-2   dark:text-gray-100 dark:bg-gray-900">
-                                        <div className="overflow-x-auto shadow-md bg-white">
-                                            <table className="w-full text-sm border-collapse">
-                                                <colgroup>
-                                                </colgroup>
-                                                <thead className="bg-white">
-                                                    <tr className="bg-indigo-500 text-sm text-white">
-                                                        <th className="p-3 border border-gray-300">Task Name</th>
-                                                        <th className="p-3 border border-gray-300">Task Description</th>
-                                                        <th className="p-3 border border-gray-300">Project Name</th>
-                                                        <th className="p-3 border border-gray-300">Member Name</th>
-                                                        <th className="p-3 border border-gray-300">Status</th>
+                                </div>
 
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {Teams.map((team, index) => (
-
-                                                        <tr key={index} className="border-b border-opacity-20 border-gray-700 bg-white">
-                                                            <td className="border border-gray-300 bg-white px-4 py-2"> {team.taskTitle}</td>
-                                                            <td className="border border-gray-300 bg-white px-4 py-2">{team.taskDes}</td>
-                                                            <td className="border border-gray-300 bg-white px-4 py-2">{team.projectTitle}</td>
-                                                            <td className="border border-gray-300 bg-white px-4 py-2">{team.MemberName}</td>
-                                                            {/* Conditionally set the style based on the 'status' value */}
-                                                            <td
-                                                                className={`border border-gray-300 px-4 py-2 ${team.status.toLowerCase() === 'pending' ? 'text-red-400' : 'text-indigo-500'
-                                                                    } font-semibold bg-white`}
-                                                            >
-                                                                {team.status}
-                                                            </td>
+                                    <div className="ps-10 width">
+                                        <h2 className="font-semibold ps-3 pb-3 ">Task Status</h2>                        <div className=" mt-2   dark:text-gray-100 dark:bg-gray-900">
+                                            <div className="overflow-x-auto shadow-md bg-white">
+                                                <table className="w-full text-sm border-collapse">
+                                                    <colgroup>
+                                                    </colgroup>
+                                                    <thead className="bg-white">
+                                                        <tr className="bg-indigo-500 text-sm text-white">
+                                                            <th className="p-3 border border-gray-300">Task Name</th>
+                                                            <th className="p-3 border border-gray-300">Task Description</th>
+                                                            <th className="p-3 border border-gray-300">Project Name</th>
+                                                            <th className="p-3 border border-gray-300">Member Name</th>
+                                                            <th className="p-3 border border-gray-300">Status</th>
 
                                                         </tr>
-                                                    ))}
+                                                    </thead>
+                                                    <tbody>
+                                                        {Teams.map((team, index) => (
 
-                                                </tbody>
-                                            </table>
-                                            {Teams.length === 0 && (
-                                                <p className="text-left mt-4 ms-3 text-red-500">No Team data yet.</p>
-                                            )}
+                                                            <tr key={index} className="border-b border-opacity-20 border-gray-700 bg-white">
+                                                                <td className="border border-gray-300 bg-white px-4 py-2"> {team.taskTitle}</td>
+                                                                <td className="border border-gray-300 bg-white px-4 py-2">{team.taskDes}</td>
+                                                                <td className="border border-gray-300 bg-white px-4 py-2">{team.projectTitle}</td>
+                                                                <td className="border border-gray-300 bg-white px-4 py-2">{team.MemberName}</td>
+                                                                {/* Conditionally set the style based on the 'status' value */}
+                                                                <td
+                                                                    className={`border border-gray-300 px-4 py-2 ${team.status.toLowerCase() === 'pending' ? 'text-red-500' : 'text-indigo-500'
+                                                                        }  bg-white`}
+                                                                >
+                                                                    {team.status}
+                                                                </td>
+
+                                                            </tr>
+                                                        ))}
+
+                                                    </tbody>
+                                                </table>
+                                                {Teams.length === 0 && (
+                                                    <p className="text-left mt-4 ms-3 text-red-500">No Team data yet.</p>
+                                                )}
+                                            </div>
+
                                         </div>
-
                                     </div>
                                 </div>
-                            </div>
-                        </section>
+                            </section>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
         </div>
     );
 }

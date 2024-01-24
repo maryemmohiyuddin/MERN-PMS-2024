@@ -20,7 +20,7 @@ function InstructorLayout() {
     const updateState = (newState) => {
         setComponent(newState);
     };
-    const [hasNewNotifications, setHasNewNotifications] = useState();
+    const [hasNewNotifications, setHasNewNotifications] = useState(true);
     const [lastViewedTimestamp, setLastViewedTimestamp] = useState(null);
 
     const [showNotification, setShowNotification] = useState(false);

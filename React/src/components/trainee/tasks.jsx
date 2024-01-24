@@ -190,13 +190,13 @@ function Tasks(userId) {
 
                                     </div>
 
-                                    <div className="overflow-x-auto shadow-md w-11/12 bg-white">
-                                        <table className="w-full text-sm border-collapse">
+                                    <div className="overflow-x-auto shadow-md bg-white">
+                                        <table className="w-full    text-sm border-collapse">
                                             <colgroup>
                                                 {/* Add any column settings if needed */}
                                             </colgroup>
                                             <thead className="bg-white">
-                                                <tr className="bg-indigo-500 text-sm text-white">
+                                                <tr className="bg-indigo-500  text-white">
                                                     <th className="p-3 border border-gray-300">Task Name</th>
                                                     <th className="p-3 border border-gray-300">Task Description</th>
                                                     <th className="p-3 border border-gray-300">Task Status</th>
@@ -211,8 +211,8 @@ function Tasks(userId) {
                                             <tbody>
                                                 {assignedProjects.map((project, index) => (
 
-                                                    <tr key={index} className="border-b border-opacity-20 border-gray-700 bg-white">
-                                                        <td className="p-3 border border-gray-300 font-semibold">
+                                                    <tr key={index}  className="border-gray-700 bg-white">
+                                                        <td className="p-3 border border-gray-300">
                                                             <p>{project.title}</p>
                                                         </td>
                                                         <td className="p-3 border border-gray-300">
@@ -222,10 +222,11 @@ function Tasks(userId) {
                                                         <td className="p-3 border font-semibold text-red-500 border-gray-300">
                                                             <p>{project.status}</p>
                                                         </td>
-                                                        <td className="p-3 border font-semibold text-red-500 border-gray-300">
-                                                           <div>
-                                                                <button>Change status</button>
-                                                            </div> 
+                                                        <td className="p-3 border border-gray-300 text-center ">
+                                                            <span className="px-3 py-2 text-white rounded-md bg-indigo-500 cursor-pointer hover:bg-indigo-600 hover:shadow-md hover-effect"
+                                                                >
+                                                                <span>Change Status</span>
+                                                            </span>
                                                         </td>
                                                     </tr>
                                                 ))}
