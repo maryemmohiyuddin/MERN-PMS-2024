@@ -2,14 +2,25 @@ const { models } = require("./index");
 
 
 module.exports = {
-    login: async (email) => {
+    login: async (body) => {
+        let user; // Declare user outside the if-else block
+
         try {
-            const user = await models.Users.findOne({
-                where: {
-                    email: email,
-                },
-            });
-            console.log("this user",user.dataValues)
+            if (body.role == "trainee") {
+                user = await models.Trainees.findOne({
+                    where: {
+                        email: body.email,
+                    },
+                });
+            } else {
+                user = await models.Instructors.findOne({
+                    where: {
+                        email: body.email,
+                    },
+                });
+            }
+
+            console.log("this user", user.dataValues);
 
             return {
                 response: user,
@@ -20,6 +31,7 @@ module.exports = {
             };
         }
     },
+
 
     logout:async (body) => {
         try {
@@ -79,13 +91,26 @@ module.exports = {
         };
 
     },
-    getSession: async (userId) => {
+    getSession: async (request) => {
         try {
-            const session = await models.Sessions.findOne({
+            console.log("model",request.instructorId)
+            console.log("model trainee", request.traineeId)
+
+            let session;
+            if(request.instructorId){
+             session = await models.Sessions.findOne({
                 where: {
-                    userId: userId,
+                    instructorId: request.instructorId,
                 },
             });
+        }
+           else if (request.traineeId) {
+                session = await models.Sessions.findOne({
+                    where: {
+                        traineeId: request.traineeId,
+                    },
+                });
+            }
 
             return {
                 response: session,

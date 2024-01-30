@@ -2,14 +2,14 @@ const { models } = require("./index");
 const { Op } = require("sequelize");
 
 module.exports = {
-    createUser: async (body, userId) => {
+    submitRequest: async (body, requestId) => {
         try {
-            const user = await models.Trainees.create({
+            const request = await models.Requests.create({
                 ...body,
-              traineeId:  userId
+                requestId
             })
             return {
-                response: user,
+                response: request,
             };
 
 
@@ -20,15 +20,16 @@ module.exports = {
         }
 
     },
-    getUserByemail: async (email) => {
+    getRequest: async (query) => {
         try {
-            const user = await models.Trainees.findOne({
+            const request = await models.Requests.findOne({
                 where: {
-                    email: email,
+                    traineeId: query.traineeId,
+                    status: query.status
                 }
             })
             return {
-                response: user,
+                response: request,
             };
 
 
@@ -114,8 +115,8 @@ module.exports = {
 
                     instructorId: query.instructorId,
                     role: query.role,
-                    isBlocked:false,
-                    isApproved:true
+                    isBlocked: false,
+                    isApproved: true
 
                 }
 
@@ -204,19 +205,36 @@ module.exports = {
         }
 
     },
-    updateUser: async (body) => {
+    updateRequest: async (body) => {
         try {
-            
-            const user = await models.Users.update({
-                ...body
-            }, {
-                where: {
+            // const request = await models.Requests.update({
+            //     status: "Approved"
+            // }, {
+            //     where: {
+            //         traineeId: body.traineeId,
+            //         instructorId: body.instructorId
+            //     }
+            // })
+            // console.log("status", request)
+            if (body.status == "Approved") {
+                const [rowCount, [updatedUser]] = await models.Trainees.update(
+                    {
+                        instructorId:body.instructorId            
+                            },
+                    {
+                        where: {
+                            traineeId: body.traineeId,
+                        },
+                        returning: true, // Add this option to return the updated rows
+                    }
+                );
 
-                    userId: body.userId,
+                console.log("Number of rows affected:", rowCount);
+                console.log("Updated User:", updatedUser);
                 }
-            })
+
             return {
-                response: user,
+                response: request,
             };
 
 
@@ -285,22 +303,45 @@ module.exports = {
             };
         }
     },
-
     getAllRequests: async (query) => {
         try {
-            const user = await models.Users.findAll({
+            const requests = await models.Requests.findAll({
                 where: {
-                    isRequested: true,
-                    isApproved: false,
-                    isBlocked: false,
-                    instructorId: query.instructorId
+                    instructorId: query.instructorId,
+                    status: "Pending"
                 },
                 attributes: {
                     exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
                 },
             });
+
+            // Initialize an array to store user details
+            const userDetails = [];
+
+            // Loop through each request and fetch user details
+            for (const request of requests) {
+                const user = await models.Trainees.findOne({
+                    where: {
+                        traineeId: request.traineeId,
+                        isBlocked: false
+                    },
+                    attributes: ["firstName", "lastName", "email"], // Include the attributes you need
+                });
+
+                // If user is found, push their details to the array
+                if (user) {
+                    userDetails.push({
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+
+                        email: user.email,
+                        traineeId: request.traineeId,
+                    });
+                }
+            }
+
             return {
-                response: user,
+                response: userDetails,
             };
         } catch (error) {
             return {
@@ -308,4 +349,6 @@ module.exports = {
             };
         }
     },
+
+
 };

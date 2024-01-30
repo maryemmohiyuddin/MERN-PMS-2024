@@ -2,14 +2,15 @@ const { models } = require("./index");
 const { Op } = require("sequelize");
 
 module.exports = {
-    createUser: async (body, userId) => {
+    createInstructor: async (body, instructorId) => {
         try {
-            const user = await models.Trainees.create({
+            console.log(instructorId)
+            const instructor = await models.Instructors.create({
                 ...body,
-              traineeId:  userId
+                instructorId
             })
             return {
-                response: user,
+                response: instructor,
             };
 
 
@@ -20,15 +21,15 @@ module.exports = {
         }
 
     },
-    getUserByemail: async (email) => {
+    getInstructorByemail: async (email) => {
         try {
-            const user = await models.Trainees.findOne({
+            const instructor = await models.Instructors.findOne({
                 where: {
                     email: email,
                 }
             })
             return {
-                response: user,
+                response: instructor,
             };
 
 
@@ -41,7 +42,7 @@ module.exports = {
     },
     getUserByUserId: async (userId) => {
         try {
-            const user = await models.Trainees.findOne({
+            const user = await models.Instructors.findOne({
                 where: {
                     userId: userId,
                 }
@@ -59,70 +60,15 @@ module.exports = {
 
     },
 
-    getUserById: async (query) => {
+    getInsById: async (query) => {
         try {
-            const user = await models.Users.findOne({
+            const instructor = await models.Instructors.findOne({
                 where: {
-                    userId: query.userId,
-                }
-            })
-            return {
-                response: user,
-            };
-
-
-        } catch (error) {
-            return {
-                error: error,
-            };
-        }
-
-    },
-    getAllUsers: async (query) => {
-        try {
-            // console.log("model", offset, query)
-
-            const users = await models.Users.findAll({
-                // attributes : ["firstName", "lastName", "role", "email"]
-                attributes: {
-                    exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
-                },
-                // where: [
-                //     {
-                //         ...(query.firstName
-                //             ? { firstName: { [Op.substring]: query.firstName } }
-                //             : true),
-                //     },
-                //     {
-                //         ...(query.lastName
-                //             ? { lastName: { [Op.substring]: query.lastName } }
-                //             : true),
-                //     },
-                //     {
-                //         ...(query.email
-                //             ? { email: { [Op.substring]: query.email } }
-                //             : true),
-                //     },
-                //     {
-                //         ...(query.role ? { role: { [Op.in]: [query.role] } } : true),
-                //     },
-                // ],
-                // order: [[query.sortValue, query.sortOrder]],
-                // offset: offset,
-                // limit: query.limit,
-                where: {
-
                     instructorId: query.instructorId,
-                    role: query.role,
-                    isBlocked:false,
-                    isApproved:true
-
                 }
-
-
             })
             return {
-                response: users,
+                response: instructor,
             };
 
 
@@ -133,61 +79,44 @@ module.exports = {
         }
 
     },
+   
     getAllInstructors: async (query) => {
         try {
-            // console.log("model", offset, query)
+            const notIncluding = await models.Requests.findAll({
+                where: {
+                    traineeId: query.traineeId,
+                    status: "Rejected",
+                },
+                attributes: ["instructorId"],
+            });
 
-            const users = await models.Users.findAll({
-                // attributes : ["firstName", "lastName", "role", "email"]
+            const notIncludingIds = notIncluding.map(item => item.instructorId);
+
+            const allInstructors = await models.Instructors.findAll({
                 attributes: {
                     exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
                 },
-                // where: [
-                //     {
-                //         ...(query.firstName
-                //             ? { firstName: { [Op.substring]: query.firstName } }
-                //             : true),
-                //     },
-                //     {
-                //         ...(query.lastName
-                //             ? { lastName: { [Op.substring]: query.lastName } }
-                //             : true),
-                //     },
-                //     {
-                //         ...(query.email
-                //             ? { email: { [Op.substring]: query.email } }
-                //             : true),
-                //     },
-                //     {
-                //         ...(query.role ? { role: { [Op.in]: [query.role] } } : true),
-                //     },
-                // ],
-                // order: [[query.sortValue, query.sortOrder]],
-                // offset: offset,
-                // limit: query.limit,
-                where: {
+            });
 
-                    role: query.role
+            // Filter out instructors with IDs present in notIncludingIds
+            const filteredInstructors = allInstructors.filter(instructor =>
+                !notIncludingIds.includes(instructor.instructorId)
+            );
 
-                }
-
-
-            })
+console.log("checl",filteredInstructors)
             return {
-                response: users,
+                response: filteredInstructors,
             };
-
-
         } catch (error) {
             return {
                 error: error,
             };
         }
-
     },
+
     deleteUser: async (userId) => {
         try {
-            const user = await models.Users.destroy({
+            const user = await models.Instructors.destroy({
                 where: {
                     userId: userId,
                 }
@@ -206,8 +135,7 @@ module.exports = {
     },
     updateUser: async (body) => {
         try {
-            
-            const user = await models.Users.update({
+            const user = await models.Instructors.update({
                 ...body
             }, {
                 where: {
@@ -232,11 +160,9 @@ module.exports = {
 
     getAllStatistics: async (query) => {
         try {
-            const users = await models.Users.findAll({
+            const Instructors = await models.Users.findAll({
                 where: {
                     instructorId: query.instructorId,
-                    isBlocked: false,
-                    isApproved: true
                 }
             });
             const projects = await models.Projects.findAll({
@@ -262,7 +188,7 @@ module.exports = {
                 }
             });
 
-            const userCount = users.length;
+            const userCount = Instructors.length;
             const projectCount = projects.length;
             const teamCount = teams.length;
             const asProjects = assignedProjects.length;
@@ -288,7 +214,7 @@ module.exports = {
 
     getAllRequests: async (query) => {
         try {
-            const user = await models.Users.findAll({
+            const user = await models.Instructors.findAll({
                 where: {
                     isRequested: true,
                     isApproved: false,

@@ -6,11 +6,11 @@ const config = require("../../config/config.json");
 const { v4: uuidV4 } = require("uuid");
 const session = require("./sessions");
 
-class Users extends Model { }
+class Instructors extends Model { }
 
-Users.init(
+Instructors.init(
     {
-        userId: {
+        instructorId: {
             primaryKey: true,
             type: DataTypes.STRING(1000),
         },
@@ -31,46 +31,16 @@ Users.init(
             type: DataTypes.STRING(),
             allowNull: false,
         },
-        role: {
-            type: DataTypes.STRING(),
-            allowNull: false,
-
-        },
-
-        isRequested: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-        },
-        isApproved: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-        },
-        isBlocked: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-        },
-        cohort: {
-            type: DataTypes.STRING(),
-            defaultValue: "Cohort-4 evening",
-
-        },
-        stack: {
-            type: DataTypes.STRING(),
-            defaultValue: "MERN",
-        },
     },
     {
         hooks: {
-            afterCreate: async (Users) => {
-                delete Users.dataValues.password;
-                const token = jwt.sign(Users.dataValues, config.jwt.secret, {
+            afterCreate: async (Instructors) => {
+                delete Instructors.dataValues.password;
+                const token = jwt.sign(Instructors.dataValues, config.jwt.secret, {
                     expiresIn: "1h",
                 });
                 await session.create({
-                    userId: Users.dataValues.userId,
+                    userId: Instructors.dataValues.userId,
                     token,
                     sessionId: uuidV4(),
                 });
@@ -79,8 +49,8 @@ Users.init(
         sequelize,
         timestamps: true,
         paranoid: true,
-        modelName: "users",
+        modelName: "instructors",
     }
 );
 
-module.exports = Users;
+module.exports = Instructors;

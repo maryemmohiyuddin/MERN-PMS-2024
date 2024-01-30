@@ -19,7 +19,7 @@ function Request({ updateState,showNotification, instructorId }) {
 
         const getAllRequests = async () => {
             try {
-                const { data } = await axios.get("http://localhost:3000/user/getAllRequests",{
+                const { data } = await axios.get("http://localhost:3000/request/getAllRequests",{
                     params:{
                         instructorId: instructorId
                     }
@@ -34,7 +34,7 @@ function Request({ updateState,showNotification, instructorId }) {
                         firstName: item.firstName,
                         lastName: item.lastName,
                         email: item.email,
-                        userId: item.userId
+                        traineeId: item.traineeId
                     }));
                     setRequests(formattedRequests);
                 }
@@ -49,22 +49,44 @@ function Request({ updateState,showNotification, instructorId }) {
 
     }, []);
 
-    const approveRequest = async (userId) => {
+    const approveRequest = async (traineeId) => {
         try {
-            await axios.put("http://localhost:3000/user/updateUser", {
+            console.log("appro",traineeId)
+         const {data}=   await axios.put("http://localhost:3000/request/updateRequest", {
 
-                userId,
-                
-                isApproved: true,
+                traineeId:traineeId,
+instructorId:instructorId,
+status:"Approved"
 
 
             });
+console.log(data)
             // If successful, remove the approved request from the frontend
-            setRequests(prevRequests => prevRequests.filter(request => request.userId !== userId));
+            setRequests(prevRequests => prevRequests.filter(request => request.traineeId !== traineeId));
             alert("The request has been approved successfully");
         } catch (error) {
             console.error("Error approving request:", error);
             alert("Failed to approve request. Please try again.");
+        }
+    };
+    const rejectRequest = async (traineeId) => {
+        try {
+            console.log("appro", traineeId)
+            const { data } = await axios.put("http://localhost:3000/request/updateRequest", {
+
+                traineeId: traineeId,
+                instructorId: instructorId,
+                status: "Rejected"
+
+
+            });
+            console.log(data)
+            // If successful, remove the approved request from the frontend
+            setRequests(prevRequests => prevRequests.filter(request => request.traineeId !== traineeId));
+            alert("The request has been rejected successfully");
+        } catch (error) {
+            console.error("Error approving request:", error);
+            alert("Failed to reject request. Please try again.");
         }
     };
 
@@ -116,7 +138,26 @@ function Request({ updateState,showNotification, instructorId }) {
                                                     <td className="border border-gray-300 text-sm bg-white px-4 py-2">{request.firstName}</td>
                                                     <td className="border border-gray-300 text-sm  bg-white px-4 py-2">{request.lastName}</td>
                                                     <td className="border border-gray-300 text-sm  bg-white px-4 py-2">{request.email}</td>
-                                                    <td className="border border-gray-300 text-sm  bg-white px-4 py-2"><button onClick={() => void approveRequest(request.userId)} className="bg-indigo-500 me-2 py-1 px-2 text-white hover:bg-indigo-600 hover:shadow-md hover-effect">Approve</button><button className="bg-red-500 hover:bg-red-600 hover:shadow-md hover-effect py-1 px-2 text-white">Reject</button></td>
+                                                    <td className="border border-gray-300 text-sm  bg-white px-4 py-2">
+                                                        <button
+                                                            onClick={() => {
+                                                                console.log("Trainee ID:", request.traineeId);
+                                                                void approveRequest(request.traineeId);
+                                                            }}
+                                                            className="bg-indigo-500 me-2 py-1 px-2 text-white hover:bg-indigo-600 hover:shadow-md hover-effect"
+                                                        >
+                                                            Approve
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                console.log("Trainee ID:", request.traineeId);
+                                                                void rejectRequest(request.traineeId);
+                                                            }}
+                                                            className="bg-red-500 hover:bg-red-600 hover:shadow-md hover-effect py-1 px-2 text-white"
+                                                        >
+                                                            Reject
+                                                        </button>
+                                                    </td>
 
 
                                                 </tr>

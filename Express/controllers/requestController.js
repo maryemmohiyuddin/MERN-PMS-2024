@@ -1,34 +1,21 @@
-const userService = require("../services/userService");
+const requestService = require("../services/requestService");
 const joi = require("joi");
 
 
 
-const createUserSchema = joi.object().keys({
-    firstName: joi.string().required().min(3).max(20),
-    lastName: joi.string().required().min(3).max(30),
-    email: joi.string().required().email(),
-    cohort: joi.string().required().min(3).max(30),
-    stack: joi.string().required().min(3).max(30),
-    password: joi.string().required()
-        .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
-    confirmPassword: joi.ref("password"),
-
+const submitRequestSchema = joi.object().keys({
+    traineeId: joi.string().required(),
+    instructorId: joi.string().required(),
 })
 
 
 
-const updateUserSchema = joi.object().keys({
-    userId: joi.string().required(),
-    firstName: joi.string().min(3).max(20),
-    lastName: joi.string().min(3).max(30),
-    email: joi.string().email(),
-    cohort: joi.string().min(3).max(30),
-    stack: joi.string().min(3).max(30),
-    role: joi.string().valid("instructor", "trainee"),
-    isApproved: joi.boolean(),
-    isRequested: joi.boolean(),
-    isBlocked: joi.boolean(),
-    instructorId: joi.string()
+const updateRequestSchema = joi.object().keys({
+    traineeId: joi.string().required(),
+    instructorId: joi.string().required(),
+    status: joi.string().valid("Approved", "Rejected"),
+
+
 })
 const updateProfileSchema = joi.object().keys({
     userId: joi.string().required(),
@@ -61,19 +48,19 @@ const getStatisticsSchema = joi.object().keys({
 
 
 module.exports = {
-    createUser: async (req, res) => {
+    submitRequest: async (req, res) => {
         try {
-            const validate = await createUserSchema.validateAsync(req.body);
+            const validate = await submitRequestSchema.validateAsync(req.body);
             console.log("req.body")
-            const user = await userService.createUser(validate);
-            if (user.error) {
+            const request = await requestService.submitRequest(validate);
+            if (request.error) {
                 return res.send({
-                    error: user.error,
+                    error: request.error,
                 });
 
             }
             return res.send({
-                response: user.response,
+                response: request.response,
             });
 
         }
@@ -83,21 +70,45 @@ module.exports = {
             });
         };
     },
-    getAllUsers: async (req, res) => {
+    getRequest: async (req, res) => {
         try {
 
 
             // const validate = await paginationSchema.validateAsync(req.query);
-            const users = await userService.getAllUsers(req.query);
+            const requests = await requestService.getRequest(req.query);
             console.log(req.query)
-            if (users.error) {
+            if (requests.error) {
                 return res.send({
-                    error: users.error,
+                    error: requests.error,
                 });
 
             }
             return res.send({
-                response: users.response,
+                response: requests.response,
+            });
+
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
+    getAllRequests: async (req, res) => {
+        try {
+
+
+            // const validate = await paginationSchema.validateAsync(req.query);
+            const requests = await requestService.getAllRequests(req.query);
+            console.log(req.query)
+            if (requests.error) {
+                return res.send({
+                    error: requests.error,
+                });
+
+            }
+            return res.send({
+                response: requests.response,
             });
 
         }
@@ -113,7 +124,7 @@ module.exports = {
 
 
             const validate = await getByUserIdSchema.validateAsync(req.query);
-            const users = await userService.getUserByUserId(validate);
+            const users = await requestService.getUserByUserId(validate);
             console.log(req.query)
             if (users.error) {
                 return res.send({
@@ -137,7 +148,7 @@ module.exports = {
 
 
             // const validate = await paginationSchema.validateAsync(req.query);
-            const users = await userService.getAllInstructors(req.query);
+            const users = await requestService.getAllInstructors(req.query);
             console.log(req.query)
             if (users.error) {
                 return res.send({
@@ -162,7 +173,7 @@ module.exports = {
             console.log(req.query)
             const validate = await getByUserIdSchema.validateAsync(req.query);
 
-            const user = await userService.deleteUser(validate);
+            const user = await requestService.deleteUser(validate);
             if (user.error) {
                 return res.send({
                     error: user.error,
@@ -180,20 +191,20 @@ module.exports = {
             });
         };
     },
-    updateUser: async (req, res) => {
+    updateRequest: async (req, res) => {
         try {
-            const validate = await updateUserSchema.validateAsync(req.body);
+            const validate = await updateRequestSchema.validateAsync(req.body);
 
-            const user = await userService.updateUser(validate);
-            console.log("user", user)
-            if (user.error) {
+            const request = await requestService.updateRequest(validate);
+            console.log("request", request)
+            if (request.error) {
                 return res.send({
-                    error: user.error,
+                    error: request.error,
                 });
 
             }
             return res.send({
-                response: user.response,
+                response: request.response,
             });
 
         }
@@ -207,7 +218,7 @@ module.exports = {
         try {
             const validate = await updateProfileSchema.validateAsync(req.body);
 
-            const user = await userService.updateUser(validate);
+            const user = await requestService.updateUser(validate);
             console.log("user", user)
             if (user.error) {
                 return res.send({
@@ -230,8 +241,8 @@ module.exports = {
         try {
 
 
-            const users = await userService.getAllRequests(req.query);
-console.log("query",req.query)
+            const users = await requestService.getAllRequests(req.query);
+            console.log("query", req.query)
             if (users.error) {
                 return res.send({
                     error: users.error,
@@ -252,9 +263,9 @@ console.log("query",req.query)
     getAllStatistics: async (req, res) => {
         try {
 
-            const validate = await  getStatisticsSchema.validateAsync(req.query);
+            const validate = await getStatisticsSchema.validateAsync(req.query);
 
-            const statistics = await userService.getAllStatistics(validate);
+            const statistics = await requestService.getAllStatistics(validate);
             console.log("query", req.query)
             if (statistics.error) {
                 return res.send({

@@ -9,6 +9,14 @@ var userRouter = require("./routes/userRouter");
 var projectRouter = require("./routes/projectRouter");
 var teamRouter = require("./routes/teamRouter");
 var taskRouter = require("./routes/taskRouter");
+var instructorRouter = require("./routes/instructorRouter");
+var requestRouter = require("./routes/requestRouter");
+
+
+
+
+
+
 
 
 
@@ -33,6 +41,10 @@ app.use("/user", userRouter);
 app.use("/project", projectRouter);
 app.use("/team", teamRouter);
 app.use("/task", taskRouter);
+app.use("/instructor", instructorRouter);
+app.use("/request", requestRouter);
+
+
 
 
 

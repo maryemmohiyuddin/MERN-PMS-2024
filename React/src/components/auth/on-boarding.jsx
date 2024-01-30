@@ -17,10 +17,11 @@ function OnBoarding() {
 
   const getAllInstructors = async () => {
     const { data } = await axios.get(
-      "http://localhost:3000/user/getAllInstructors", {
-      params: {
-        role: "instructor"
-      }
+      "http://localhost:3000/instructor/getAllInstructors", {
+        params:{
+          traineeId:userId
+        }
+     
     }
     );
     console.log("data", data.response)
@@ -32,7 +33,7 @@ function OnBoarding() {
       data.response.map((item) => {
         INSTRUCTORS.push({
           label: item.firstName + " " + item.lastName,
-          value: item.userId,
+          value: item.instructorId,
         });
       });
 
@@ -41,10 +42,9 @@ function OnBoarding() {
   };
 
   const onboarding = async () => {
-    const { data } = await axios.put("http://localhost:3000/user/updateUser", {
+    const { data } = await axios.post("http://localhost:3000/request/submitRequest", {
       instructorId: instructor,
-      userId,
-      isRequested: true
+      traineeId: userId,
     });
 
     console.log("data ", data);
@@ -75,12 +75,15 @@ function OnBoarding() {
               className="bg-white  rounded-lg mb-2 focus:outline-none text-black font-medium"
               isSearchable={true}
               options={instructors}
-              onChange={(e) => {
-                setInstructor(e.value);
+              onChange={(selectedOption) => {
+                console.log(selectedOption); // Log the selectedOption
+                setInstructor(selectedOption.value);
               }}
               isDisabled={false}
               placeholder="Select Role"
             />
+
+
 
             <div className="w-full p-4 flex justify-center mt-4">
               <button

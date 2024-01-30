@@ -1,49 +1,100 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 
 function Login(updateState) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); // Added loading state
+  const [Role, setRole] = useState("");
 
-  const login = async () => {
-    setLoading(true); // Set loading to true when login starts
+  const [loading, setLoading] = useState(false); // Added loading state
+  const ROLE = [
+    {
+      value: "trainee",
+      label: "Trainee",
+    },
+    {
+      value: "instructor",
+      label: "Instructor",
+    },
+  ]; const login = async () => {
+    setLoading(true);
 
     try {
-      const { data } = await axios.post(
-        "http://localhost:3000/auth/login",
-        {
-          email,
-          password,
-        },
-        {
+      const { data } = await axios.post("http://localhost:3000/auth/login", {
+        email,
+        password,
+        role: Role, // Include the selected role in the request
+      },
+      {
           withCredentials: true,
         }
+      
       );
 
-      console.log("login", data.response);
+      console.log("login", data.response.traineeId);
+      let traineeId = data.response.traineeId;
+let PendingRequest;
+      let ApprovedRequest;
+
+      if(traineeId){
+        console.log(traineeId)
+      const Pending = await axios.get("http://localhost:3000/request/getRequest", {
+      
+      params:
+      {traineeId:traineeId,
+      status:"Pending"
+      } // Include the selected role in the request
+      }
+    
+      );
+      console.log("request data",Pending.data)
+
+         PendingRequest= Pending.data.response;
+   
+      const Approved = await axios.get("http://localhost:3000/request/getRequest", {
+
+          params:
+          {
+            traineeId: traineeId,
+            status: "Approved"
+          } // Include the selected role in the request
+        }
+
+        );
+      ApprovedRequest=Approved.data.response
+
+      
+      }
+
       if (data.error) {
         alert("Invalid Credentials");
-      } else if (data.response.role === "instructor") {
+      }
+     else if (PendingRequest) {
+        alert("You have already requested. Wait for your approval");
+
+      }
+      else if (ApprovedRequest) {
+       navigate("/trainee")
+      }
+
+      else if (data.response.instructorId) {
         navigate("/instructor");
       } else if (data.response.isBlocked === true) {
         alert("You are blocked");
-      } else if (data.response.isApproved === true) {
-        navigate("trainee");
-      } else if (data.response.isRequested === true) {
-        alert("Your request has been sent but not approved yet");
       } else {
-        navigate("onBoarding", { state: { userId: data.response.userId } });
+        navigate("onBoarding", { state: { userId: data.response.traineeId } });
       }
     } catch (error) {
       console.error("Login error:", error);
       alert("An error occurred during login");
     } finally {
-      setLoading(false); // Set loading to false regardless of success or failure
+      setLoading(false);
     }
   };
+
   return (
     <>
       <div className="w-screen h-screen   bg-light-grey flex justify-center">
@@ -74,6 +125,17 @@ function Login(updateState) {
               onChange={(e) => {
                 setPassword(e.target.value);
               }}
+            />
+            <label className="text-md text-black font-medium mb-1">Role</label>
+            <Select
+              className="bg-gray-50 rounded-lg mb-2 focus:outline-none text-black font-medium"
+              isSearchable={true}
+              options={ROLE}  // Use ROLE array instead of Role
+              onChange={(selectedOption) => {
+                setRole(selectedOption.value);  // Update the selected role in the state
+              }}
+              isDisabled={false}
+              placeholder="Select Role"
             />
 
             <p className="text-md text-gray-400  mt-2">

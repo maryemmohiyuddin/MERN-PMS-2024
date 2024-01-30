@@ -5,6 +5,7 @@ const loginSchema = joi.object().keys({
     email: joi.string().required().email().min(3).max(100),
     password: joi.string().required()
         .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+    role: joi.string().required().valid("instructor", "trainee"),
 
 
 });
@@ -31,6 +32,8 @@ module.exports = {
                     error: loginResponse.error,
                 });
             }
+
+            console.log("Cookie Value:", loginResponse.response); // Log the cookie value
 
             res.cookie("auth", loginResponse.response, {
                 maxAge: 60 * 60 * 1000,
@@ -129,20 +132,27 @@ module.exports = {
     },
     getSession: async (req, res) => {
         try {
-            const userId = req.cookies.auth.userId;
-            const session = await authService.getSession(userId);
+            console.log("Cookies:", req.cookies);
+
+         
+
+      
+            const session = await authService.getSession(req.cookies.auth);
+
             if (session.error) {
-                res.send({
+                return res.send({
                     error: session.error,
                 });
             }
-            res.send({
+
+            return res.send({
                 response: session.response,
             });
         } catch (error) {
-            res.send({
+            return res.send({
                 error: error,
             });
         }
     },
+
 }

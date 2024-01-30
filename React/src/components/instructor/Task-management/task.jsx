@@ -251,35 +251,35 @@ function Task({ updateState, showNotification,instructorId }) {
 
     const [memberOptions, setMemberOptions] = useState([]);
 
-    const getTeamMembers = async () => {
-        try {
-            console.log(instructorId)
-            const { data } = await axios.get("http://localhost:3000/team/getAllMembers", {
-                params: {
-                    instructorId: instructorId
-                }
-            });
-            // console.log("r", data.response);
-            setTeamMembers(data.response);
-            setMemberOptions(data.response.map(user => ({
-                value: user.userId,
-                label: `${user.firstName} ${user.lastName}`
-            })
+    // const getTeamMembers = async () => {
+    //     try {
+    //         console.log(instructorId)
+    //         const { data } = await axios.get("http://localhost:3000/team/getAllMembers", {
+    //             params: {
+    //                 instructorId: instructorId
+    //             }
+    //         });
+    //         // console.log("r", data.response);
+    //         setTeamMembers(data.response);
+    //         setMemberOptions(data.response.map(user => ({
+    //             value: user.userId,
+    //             label: `${user.firstName} ${user.lastName}`
+    //         })
 
-            ));
-            const filteredMembers = data.response.filter(user => !selectedUsers.includes(user.userId));
-            setTeamMembers(filteredMembers);
+    //         ));
+    //         const filteredMembers = data.response.filter(user => !selectedUsers.includes(user.userId));
+    //         setTeamMembers(filteredMembers);
 
-            const filteredOptions = filteredMembers.map(user => ({
-                value: user.userId,
-                label: `${user.firstName} ${user.lastName}`
-            }));
-            setMemberOptions(filteredOptions);
+    //         const filteredOptions = filteredMembers.map(user => ({
+    //             value: user.userId,
+    //             label: `${user.firstName} ${user.lastName}`
+    //         }));
+    //         setMemberOptions(filteredOptions);
 
-        } catch (error) {
-            console.error("Error fetching Teams:", error);
-        }
-    };
+    //     } catch (error) {
+    //         console.error("Error fetching Teams:", error);
+    //     }
+    // };
     const getInsProjects = async () => {
         try {
             // console.log(instructorId)
@@ -344,16 +344,17 @@ function Task({ updateState, showNotification,instructorId }) {
  useEffect(() => {
         const fetchData = async () => {
             try {
+                
+                await getInsProjects();
 
                 // Fetch the teams for project ID 1
                 await getTeamByProjectId();
-                await getInsProjects();
-
-                // // Fetch all teams
                 await getAllTeams();
 
+                // // Fetch all teams
+
                 // Fetch team members
-                await getTeamMembers();
+                // await getTeamMembers();
 
                 // Fetch instructor projects
                 setLoading(false)
@@ -366,7 +367,7 @@ function Task({ updateState, showNotification,instructorId }) {
         };
 
         // Wrap fetchData in a setTimeout to ensure it runs after the initial rendering
-        setTimeout(fetchData);
+        fetchData();
     }, []);
 
 

@@ -52,7 +52,7 @@ function InstructorLayout() {
         return;
     }
 
-    const userIdMatch = authCookie.match(/"userId":"([^"]+)"/);
+    const userIdMatch = authCookie.match(/"instructorId":"([^"]+)"/);
     const instructorId = userIdMatch ? userIdMatch[1] : null;
 
     if (!instructorId) {

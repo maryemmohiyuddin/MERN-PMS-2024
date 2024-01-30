@@ -22,15 +22,15 @@ function Dashboard({ updateState, showNotification, instructorId }) {
     const [date, setDate] = useState(new Date()); // Initialize with the current date
     const [Teams, setTeams] = useState([]);
     const [data , setData] = useState([]);
-
+console.log("insid",instructorId)
     const getUserById = async () => {
         try {
-            const { data } = await axios.get('http://localhost:3000/user/getUserByUserId', {
+            const { data } = await axios.get('http://localhost:3000/instructor/getInsById', {
                 params: {
-                    userId: instructorId,
+                    instructorId: instructorId,
                 },
             });
-            console.log(data.response);
+            console.log("user data herr",data.response);
             setData(data.response);
           
             setLoading(false);
@@ -203,7 +203,7 @@ const events=[...eventsFromApi]
     const getAllStatistics = async () => {
         try {
 
-            const { data } = await axios.get("http://localhost:3000/user/getAllStatistics", {
+            const { data } = await axios.get("http://localhost:3000/instructor/getAllStatistics", {
                 params: {
                     instructorId: instructorId,
                 }
@@ -410,7 +410,7 @@ const events=[...eventsFromApi]
                                                 </tbody>
                                             </table>
                                             {Teams.length === 0 && (
-                                                <p className="text-left mt-4 ms-3 text-red-500">No Team data yet.</p>
+                                                <p className="text-left mt-4 ms-3 text-red-500">No Task data yet.</p>
                                             )}
                                         </div>
 

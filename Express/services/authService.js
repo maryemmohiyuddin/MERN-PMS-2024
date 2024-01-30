@@ -9,10 +9,10 @@ const bcrypt = require("bcryptjs")
 module.exports = {
     login: async (body) => {
         try {
-            const user = await authModel.login(body.email);
+            const user = await authModel.login(body);
             if (user.error || !user.response) {
                 return {
-                    error: "invalid credentials",
+                    error: "Invalid credentials",
                 };
             }
 
@@ -23,46 +23,64 @@ module.exports = {
 
             if (!login) {
                 return {
-                    error: "invalid credentials",
+                    error: "Invalid credentials",
                 };
             }
+
+            // Remove password from the response
             delete user.response.dataValues.password;
 
-            const userId = user.response.dataValues.userId;
+            let userId;
+            let userType;
 
-            const session = await sessionModel.getSessionByUserId(userId);
+            if (body.role === "trainee") {
+                userId = user.response.dataValues.traineeId;
+                userType = 'trainee';
+            } else if (body.role === "instructor") {
+                userId = user.response.dataValues.instructorId;
+                userType = 'instructor';
+            } else {
+                return {
+                    error: "Invalid role",
+                };
+            }
+            console.log("id", userId);
+
+            const session = await sessionModel.getSessionByUserId(userId, userType);
 
             if (session.error) {
                 return {
                     error: session.error,
                 };
             }
+            console.log("session", session);
 
-            const deleteSession = await sessionModel.deleteSession(userId);
+            const deleteSession = await sessionModel.deleteSession(userId, userType);
 
             if (deleteSession.error) {
                 return {
                     error: deleteSession.error,
                 };
             }
+            console.log("deleteSession", deleteSession);
 
             const token = jwt.sign(user.response.dataValues, config.jwt.secret, {
                 expiresIn: "1h",
             });
-
+            console.log("token", token);
 
             const sessionId = uuidV4();
             const createSession = await sessionModel.createSession(
                 sessionId,
                 token,
-                userId
+                userId,
+                userType
             );
-            console.log("string", createSession)
-
+            console.log("createSession", createSession);
 
             if (createSession.error || !createSession.response) {
                 return {
-                    error: "invalid user",
+                    error: "Invalid user",
                 };
             }
 
@@ -74,8 +92,6 @@ module.exports = {
             Session.firstName = user.response.dataValues.firstName;
             Session.lastName = user.response.dataValues.lastName;
 
-
-
             return {
                 response: Session,
             };
@@ -85,6 +101,7 @@ module.exports = {
             };
         }
     },
+
     logout: async (body) => {
         try {
             const logoutResponse = await authModel.logout(body);
@@ -169,9 +186,10 @@ module.exports = {
             };
         }
     },
-    getSession: async (userId) => {
+    getSession: async (request) => {
         try {
-            const session = await authModel.getSession(userId);
+            console.log("service",request)
+            const session = await authModel.getSession(request);
             if (session.error || !session.response) {
                 return {
                     error: session.error,
