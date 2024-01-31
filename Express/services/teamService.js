@@ -13,10 +13,10 @@ module.exports = {
             const membersArray = [];
 
             // Loop through the userIds array and create the members
-            for (let userId of body.userId) {
+            for (let traineeId of body.traineeId) {
                 console.log("error")
                 const member = {
-                    userId: userId,
+                    traineeId: traineeId,
                     teamMemberId: uuidv4(),
                     teamId: teamId
                 };
@@ -58,10 +58,10 @@ module.exports = {
             for (let i = 0; i < teams.response.length; i++) {
                 const teamId = teams.response[i].dataValues.teamId;
 
-                const teamLeader = teams.response[i].dataValues.teamLeader;
                 const projectId = teams.response[i].dataValues.projectId;
+console.log("ccc",teamId,projectId)
+                const isTeam = await teamModel.getTeamById( projectId);
 
-                const isTeam = await teamModel.getTeamById(teamLeader, projectId);
                 // console.log("isTeam",isTeam.response)
                 if (!isTeam.response || isTeam.error) {
                     continue; // Skip this team and move to the next one
@@ -70,13 +70,12 @@ module.exports = {
                 // Extract the required information from the response
                 const teamInfo = {
                     teamId: teamId,
-                    leaderName: isTeam.response.userName, // Assuming 'name' is the property name in the response
                     projectTitle: isTeam.response.projectTitle // Assuming 'projectName' is the property name in the response
                 };
 
                 teamResponses.push(teamInfo);
             }
-
+console.log("tt",teamResponses)
             return {
                 response: teamResponses,
             };
@@ -184,7 +183,11 @@ console.log("service",teamMembers)
         try {
 
             const teamMembers = await teamModel.getTeamMembers(query);
+            console.log("3rd query for members", teamMembers)
+
         const MembersName=await teamModel.getMemberById(teamMembers);
+            console.log("4th query for members", MembersName)
+
             if (MembersName.error) {
                 return {
                     error: MembersName.error,

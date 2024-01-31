@@ -209,7 +209,7 @@ const events=[...eventsFromApi]
                 }
             });
 
-            console.log(data.response);
+            console.log("statistics",data.response);
             setStatistics(data.response);
 
         } catch (error) {

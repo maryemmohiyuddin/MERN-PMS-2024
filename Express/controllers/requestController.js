@@ -8,13 +8,26 @@ const submitRequestSchema = joi.object().keys({
     instructorId: joi.string().required(),
 })
 
+const taskRequestSchema = joi.object().keys({
+    traineeId: joi.string().required(),
+    instructorId: joi.string().required(),
+    taskId: joi.string().required(),
+})
+const approveTaskRequestSchema = joi.object().keys({
+    requestId: joi.string().required(),
+    taskId: joi.string().required(),
+    taskStatus: joi.string().required(),
+    requestStatus: joi.string().required(),
 
-
+})
+const approveRequestSchema = joi.object().keys({
+    requestId: joi.string().required(),
+    traineeId: joi.string().required(),
+})
 const updateRequestSchema = joi.object().keys({
     traineeId: joi.string().required(),
     instructorId: joi.string().required(),
     status: joi.string().valid("Approved", "Rejected"),
-
 
 })
 const updateProfileSchema = joi.object().keys({
@@ -61,6 +74,74 @@ module.exports = {
             }
             return res.send({
                 response: request.response,
+            });
+
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
+    taskRequest: async (req, res) => {
+        try {
+            const validate = await taskRequestSchema.validateAsync(req.body);
+            console.log("req.body")
+            const request = await requestService.taskRequest(validate);
+            if (request.error) {
+                return res.send({
+                    error: request.error,
+                });
+
+            }
+            return res.send({
+                response: request.response,
+            });
+
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
+    approveTaskRequest: async (req, res) => {
+        try {
+            const validate = await approveTaskRequestSchema.validateAsync(req.body);
+            console.log("req.body")
+            const request = await requestService.approveTaskRequest(validate);
+            if (request.error) {
+                return res.send({
+                    error: request.error,
+                });
+
+            }
+            return res.send({
+                response: request.response,
+            });
+
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
+    getTaskRequest: async (req, res) => {
+        try {
+
+
+            // const validate = await paginationSchema.validateAsync(req.query);
+            const requests = await requestService.getTaskRequest(req.query);
+            console.log(req.query)
+            if (requests.error) {
+                return res.send({
+                    error: requests.error,
+                });
+
+            }
+            return res.send({
+                response: requests.response,
             });
 
         }

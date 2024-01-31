@@ -20,12 +20,78 @@ module.exports = {
         }
 
     },
+    taskRequest: async (body, requestId) => {
+        try {
+            const request = await models.Requests.create({
+                ...body,
+                requestId
+            })
+            const task = await models.Tasks.update({
+
+                status: "In Request"
+
+
+            },
+                {
+                    where: {
+                        taskId: body.taskId
+                    }
+                })
+            console.log("status", task)
+            return {
+                response: request,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
+    approveTaskRequest: async (body) => {
+        try {
+            const request = await models.Requests.update({
+              status:body.requestStatus
+            },
+            {
+            where:{
+                requestId:body.requestId
+            }
+        }
+            )
+            const task = await models.Tasks.update({
+
+                status: body.taskStatus
+
+
+            },
+                {
+                    where: {
+                        taskId: body.taskId
+                    }
+                })
+            console.log("status", task)
+            return {
+                response: request,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
     getRequest: async (query) => {
         try {
             const request = await models.Requests.findOne({
                 where: {
                     traineeId: query.traineeId,
-                    status: query.status
+                    status: query.status,
+                    taskId: null
                 }
             })
             return {
@@ -37,6 +103,68 @@ module.exports = {
             return {
                 error: error,
             };
+        }
+
+    },
+    getTaskRequest: async (query) => {
+        try {
+            const requests = await models.Requests.findAll({
+                where: {
+                    instructorId: query.instructorId,
+                    status: 'Pending',
+                    taskId: { [Op.ne]: null }
+                }
+            });
+
+            const responseData = [];
+
+            for (let i = 0; i < requests.length; i++) {
+                const request = requests[i];
+
+                const traineeId = request.dataValues.traineeId;
+                const taskId = request.dataValues.taskId;
+
+                const team = await models.TeamMembers.findOne({
+                    where: { traineeId },
+                    attributes: ['teamId']
+                });
+
+                const memberName = await models.Trainees.findOne({
+                    where: { traineeId },
+                    attributes: ['firstName', 'lastName']
+                });
+
+                const taskName = await models.Tasks.findOne({
+                    where: { taskId },
+                    attributes: ['title']
+                });
+
+                const project = await models.Teams.findOne({
+                    where: { teamId: team.dataValues.teamId },
+                    attributes: ['projectId']
+                });
+
+                const projectName = await models.Projects.findOne({
+                    where: { projectId: project.dataValues.projectId },
+                    attributes: ['title']
+                });
+
+                const result = {
+                    requestId: request.dataValues.requestId,
+                    traineeId,
+taskId,                    task: { id: taskId, name: taskName.dataValues.title },
+                    member: { id: traineeId, name: `${memberName.dataValues.firstName} ${memberName.dataValues.lastName}` },
+                    project: { id: project.dataValues.projectId, name: projectName.dataValues.title }
+                };
+
+                responseData.push(result);
+
+                console.log(result);
+            }
+
+            return { response: responseData };
+        } catch (error) {
+            return { error: error };
         }
 
     },
@@ -207,20 +335,21 @@ module.exports = {
     },
     updateRequest: async (body) => {
         try {
-            // const request = await models.Requests.update({
-            //     status: "Approved"
-            // }, {
-            //     where: {
-            //         traineeId: body.traineeId,
-            //         instructorId: body.instructorId
-            //     }
-            // })
-            // console.log("status", request)
+            const request = await models.Requests.update({
+                status: "Approved"
+            }, {
+                where: {
+                    traineeId: body.traineeId,
+                    instructorId: body.instructorId
+                }
+            })
+            console.log("status", request)
             if (body.status == "Approved") {
-                const [rowCount, [updatedUser]] = await models.Trainees.update(
+
+                const response = await models.Trainees.update(
                     {
-                        instructorId:body.instructorId            
-                            },
+                        instuctorId: body.instructorId
+                    },
                     {
                         where: {
                             traineeId: body.traineeId,
@@ -228,10 +357,10 @@ module.exports = {
                         returning: true, // Add this option to return the updated rows
                     }
                 );
-
-                console.log("Number of rows affected:", rowCount);
-                console.log("Updated User:", updatedUser);
-                }
+                console.log('check if update', response);
+                // console.log("Number of rows affected:", rowCount);
+                // console.log("Updated User:", updatedUser);
+            }
 
             return {
                 response: request,
@@ -308,7 +437,8 @@ module.exports = {
             const requests = await models.Requests.findAll({
                 where: {
                     instructorId: query.instructorId,
-                    status: "Pending"
+                    status: "Pending",
+                    taskId:null
                 },
                 attributes: {
                     exclude: ["password", "createdAt", "updatedAt", "deletedAt"],

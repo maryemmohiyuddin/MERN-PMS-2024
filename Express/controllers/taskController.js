@@ -9,7 +9,7 @@ const createTaskSchema = joi.object().keys({
     instructorId: joi.string().required()
 })
 const getTaskByUserIdSchema = joi.object().keys({
-    userId: joi.string().required()
+    traineeId: joi.string().required()
 })
 const getTaskSchema = joi.object().keys({
     instructorId: joi.string().required()

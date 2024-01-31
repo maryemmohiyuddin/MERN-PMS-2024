@@ -22,8 +22,7 @@ module.exports = {
             // Create the team
             const team = await models.Teams.create({
                 teamId,
-                teamLeader: body.leaderId,
-                userId: body.userId,
+                traineeId: body.traineeId,
                 projectId: body.projectId,
                 instructorId: body.instructorId
             });
@@ -38,7 +37,7 @@ module.exports = {
                     membersArray.map(member => ({
                         teamMemberId: member.teamMemberId,
                         teamId: team.teamId,
-                        userId: member.userId,
+                        traineeId: member.traineeId,
                         // ... any other fields
                     }))
 
@@ -67,16 +66,11 @@ module.exports = {
     },
 
 
-    getTeamById: async (teamLeader, projectId) => {
+    getTeamById: async (projectId) => {
         try {
             // Fetch user details from the Users table
             // console.log("teamLeader", teamLeader)
-            const user = await models.Users.findOne({
-                where: {
-                    userId: teamLeader  // Assuming teamLeaderId corresponds to id in the Users table
-                },
-                attributes: ['firstName', 'lastName']  // Specify the attributes you want from the Users table
-            });
+          
 
             // Fetch project details from the Projects table
             const project = await models.Projects.findOne({
@@ -90,7 +84,6 @@ module.exports = {
 
             return {
                 response: {
-                    userName: user ? user.firstName + " " + user.lastName : null,
                     projectTitle: project ? project.title : null
                 }
             };
@@ -109,19 +102,19 @@ module.exports = {
             // Assuming teammembers.response is an array of objects
 
             for (let i = 0; i < teammembers.response.length; i++) {
-                console.log(teammembers.response[i].dataValues.userId)
+                console.log(teammembers.response[i].dataValues.traineeId)
                 // console.log("mmm", member);
 
-                const userDetails = await models.Users.findOne({
+                const userDetails = await models.Trainees.findOne({
                     where: {
-                        userId: teammembers.response[i].dataValues.userId
+                        traineeId: teammembers.response[i].dataValues.traineeId
                     },
                     attributes: ['firstName', 'lastName']
                 });
                 if (userDetails) {
                     console.log(userDetails.firstName)
                     memberDetails.push({
-                        userId: teammembers.response[i].dataValues.userId,
+                        traineeId: teammembers.response[i].dataValues.traineeId,
                         firstName: userDetails.firstName,
                         lastName: userDetails.lastName
                     });
@@ -159,17 +152,17 @@ module.exports = {
                 where: {
                     teamId: Teams.dataValues.teamId
                 },
-                attributes: ['teamMemberId', 'userId']
+                attributes: ['teamMemberId', 'traineeId']
             });
 
             const userResponses = [];
 
             for (let i = 0; i < teamMembers.length; i++) {
-                console.log(teamMembers[i].dataValues.userId);
+                console.log(teamMembers[i].dataValues.traineeId);
 
-                const userMembers = await models.Users.findOne({
+                const userMembers = await models.Trainees.findOne({
                     where: {
-                        userId: teamMembers[i].dataValues.userId
+                        traineeId: teamMembers[i].dataValues.traineeId
                     },
                     attributes: ['firstName', 'lastName']
                 });
@@ -188,7 +181,7 @@ module.exports = {
 
 
             // memberDetails.push({
-            //     userId: teammembers.response[i].dataValues.userId,
+            //     traineeId: teammembers.response[i].dataValues.traineeId,
             //     firstName: userDetails.firstName,
             //     lastName: userDetails.lastName
             // });
@@ -210,47 +203,49 @@ module.exports = {
     ,
     getAllMembers: async (query) => {
         try {
+            console.log("check11", query)
+
             // Step 1: Fetch all trainees from the Users table
-            const trainees = await models.Users.findAll({
+            const trainees = await models.Trainees.findAll({
                 where: {
-                    role: 'trainee',
                     isBlocked: 'false',
-                    isApproved: 'true',
-                    instructorId: query.instructorId
+                    instuctorId: query.instructorId
                 },
                 attributes: {
                     exclude: ["createdAt", "updatedAt", "deletedAt"],
                 }
             });
+            console.log("check2", trainees)
 
             // Step 2: Extract all userIds from the trainees
             const userIds = [];
             for (let i = 0; i < trainees.length; i++) {
-                userIds.push(trainees[i].userId);
+                console.log((trainees[i].traineeId))
+                userIds.push(trainees[i].traineeId);
             }
 
             // Step 3: Fetch all userIds from the teamMembers table
             const teamMembers = await models.TeamMembers.findAll({
                 where: {
-                    userId: userIds
+                    traineeId: userIds
                 },
-                attributes: ['userId']
+                attributes: ['traineeId']
             });
 
             // Step 4: Extract all userIds from the teamMembers
             const teamMemberUserIds = [];
             for (let i = 0; i < teamMembers.length; i++) {
-                teamMemberUserIds.push(teamMembers[i].userId);
+                teamMemberUserIds.push(teamMembers[i].traineeId);
             }
 
             // Step 5: Filter out the trainees whose userId exists in the teamMemberUserIds
             const filteredTrainees = [];
             for (let i = 0; i < trainees.length; i++) {
-                if (!teamMemberUserIds.includes(trainees[i].userId)) {
+                if (!teamMemberUserIds.includes(trainees[i].traineeId)) {
                     filteredTrainees.push(trainees[i]);
                 }
             }
-
+            console.log("check4", filteredTrainees)
             return {
                 response: filteredTrainees,
             };
@@ -268,7 +263,7 @@ module.exports = {
             // Step 1: Fetch teamId for the given userId
             const teamId = await models.TeamMembers.findOne({
                 where: {
-                    userId: query.userId
+                    traineeId: query.traineeId
                 },
                 attributes: ['teamId']
             });
@@ -290,11 +285,11 @@ module.exports = {
 
             // Step 3: Iterate through teamMembers and fetch user information
             for (const teamMember of teamMembers) {
-                const userId = teamMember.dataValues.userId;
+                const traineeId = teamMember.dataValues.traineeId;
 
-                const user = await models.Users.findOne({
+                const user = await models.Trainees.findOne({
                     where: {
-                        userId: userId,
+                        traineeId: traineeId,
                     },
                 });
 
@@ -302,10 +297,10 @@ module.exports = {
                 // Adjust this part based on the actual structure of your Users model
                 if (user) {
                     memberNames.push({
-                        userId: user.dataValues.userId,
+                        traineeId: user.dataValues.traineeId,
                         userName: `${user.dataValues.firstName} ${user.dataValues.lastName}`,
-                        cohort:user.dataValues.cohort,
-                        stack:user.dataValues.stack
+                        cohort: user.dataValues.cohort,
+                        stack: user.dataValues.stack
                         // ... other properties you want to include
                     });
                 }
@@ -330,7 +325,7 @@ module.exports = {
                 where: {
                     teamId: query.teamId
                 },
-                attributes: ['userId', 'teamMemberId']
+                attributes: ['traineeId', 'teamMemberId']
             });
             console.log("model", teamMembers)
             return {
@@ -344,7 +339,7 @@ module.exports = {
         }
     },
 
-    deleteTeam: async (teamId) => {
+    deleteTeam: async (teamId) => { 
         try {
             // Fetch the team before destroying it to access its projectId
             const team = await models.Teams.findOne({

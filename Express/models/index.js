@@ -80,8 +80,11 @@ Requests.belongsTo(Instructors, { foreignKey: 'instructorId', onDelete: "CASCADE
 Trainees.hasMany(Requests, { foreignKey: 'traineeId', onDelete: "CASCADE" });
 Requests.belongsTo(Trainees, { foreignKey: 'traineeId', onDelete: "CASCADE" });
 
-Instructors.hasMany(Trainees, { foreignKey: 'instuctorId' });
-Trainees.belongsTo(Instructors, { foreignKey: 'instuctorId' });
+Tasks.hasMany(Requests, { foreignKey: 'taskId', onDelete: "CASCADE" });
+Requests.belongsTo(Tasks, { foreignKey: 'taskId', onDelete: "CASCADE" });
+
+Instructors.hasMany(Trainees, { foreignKey: 'instuctorId', onDelete: "CASCADE" });
+Trainees.belongsTo(Instructors, { foreignKey: 'instuctorId', onDelete: "CASCADE" });
 const db = {};
 
 db.sequelize = sequelize;

@@ -51,11 +51,11 @@ function Layout() {
         return;
     }
 
-    const userIdMatch = authCookie.match(/"userId":"([^"]+)"/);
-    const userId = userIdMatch ? userIdMatch[1] : null;
+    const traineeIdMatch = authCookie.match(/"traineeId":"([^"]+)"/);
+    const traineeId = traineeIdMatch ? traineeIdMatch[1] : null;
 
-    if (!userId) {
-        // console.error('Failed to extract userId from the auth cookie.');
+    if (!traineeId) {
+        // console.error('Failed to extract traineeId from the auth cookie.');
         // alert('Cookies expired or malformed. Redirecting to login page...');
         navigate('/');
     }
@@ -65,7 +65,7 @@ function Layout() {
             try {
                 const { data } = await axios.get("http://localhost:3000/project/getUserProjects", {
                     params: {
-                        userId: userId
+                        traineeId: traineeId
                     }
                 });
                 console.log("data here", data.response);
@@ -77,7 +77,7 @@ function Layout() {
             }
         };
         getAllRequests();
-    }, [userId]);
+    }, [traineeId]);
     return (
         <>
             <div className="bg-light-grey h-screen w-screen overflow-x-hidden">
@@ -85,24 +85,24 @@ function Layout() {
       {!isLogin && <Signup updateState={updateState} />} */}
                
                
-                <Nav updateState={updateState} setHasNewNotification={setHasNewNotifications} notificationState={notificationState} instructorId={userId} showNotification={showNotification} hasNewNotifications={hasNewNotifications} lastViewedTimestamp={lastViewedTimestamp} // Pass timestamp to Nav component
+                <Nav updateState={updateState} setHasNewNotification={setHasNewNotifications} notificationState={notificationState} instructorId={traineeId} showNotification={showNotification} hasNewNotifications={hasNewNotifications} lastViewedTimestamp={lastViewedTimestamp} // Pass timestamp to Nav component
                 />
 
-                <Sidebar updateState={updateState} activeItem={activeItem} setActiveItem={setActiveItem} showNotification={showNotification} userId={userId} />
-                {showNotification && <Notification notificationState={notificationState} userId={userId} updateState={updateState} setActiveItem={setActiveItem} />}
+                <Sidebar updateState={updateState} activeItem={activeItem} setActiveItem={setActiveItem} showNotification={showNotification} traineeId={traineeId} />
+                {showNotification && <Notification notificationState={notificationState} traineeId={traineeId} updateState={updateState} setActiveItem={setActiveItem} />}
 
                 {/* Add the following line to print the dataFromChild value */}
 
-                {component == 'PROFILE' && <Profile updateState={updateState} showNotification={showNotification} userId={userId} />}
+                {component == 'PROFILE' && <Profile updateState={updateState} showNotification={showNotification} traineeId={traineeId} />}
                 {component === 'DASHBOARD' && (
-                    <Dashboard className={`fade-in ${component === 'DASHBOARD' ? 'active' : ''}`} updateState={updateState} showNotification={showNotification} userId={userId} />
+                    <Dashboard className={`fade-in ${component === 'DASHBOARD' ? 'active' : ''}`} updateState={updateState} showNotification={showNotification} traineeId={traineeId} />
                 )}
-                {component === 'PROJECTDETAILS' && <ProjectDetails className={`fade-in ${component === 'PROJECTDETAILS' ? 'active' : ''}`} updateState={updateState} showNotification={showNotification} userId={userId} />}
+                {component === 'PROJECTDETAILS' && <ProjectDetails className={`fade-in ${component === 'PROJECTDETAILS' ? 'active' : ''}`} updateState={updateState} showNotification={showNotification} traineeId={traineeId} />}
                 {component === 'TASKS' && (
-                    <Tasks className={`fade-in ${component === 'TASKS' ? 'active' : ''}`} updateState={updateState} showNotification={showNotification} userId={userId} />
+                    <Tasks className={`fade-in ${component === 'TASKS' ? 'active' : ''}`} updateState={updateState} showNotification={showNotification} traineeId={traineeId} />
                 )}
 
-                {component == 'PROGRESSANALYTICS' && <ProgressAnalytics updateState={updateState} showNotification={showNotification} userId={userId} />}
+                {component == 'PROGRESSANALYTICS' && <ProgressAnalytics updateState={updateState} showNotification={showNotification} traineeId={traineeId} />}
                 
             </div>
             {/*  */}

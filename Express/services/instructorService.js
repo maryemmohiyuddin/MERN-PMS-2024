@@ -109,24 +109,25 @@ module.exports = {
 
     updateUser: async (body) => {
         try {
-            const isUser = await instructorModel.getUserByUserId(body.userId);
-            console.log("isUser", isUser)
-            if (!isUser.response || isUser.error) {
+            console.log("body here", body)
+            const isInstructor = await instructorModel.getUserByUserId(body.instructorId);
+            console.log("isInstructor", isInstructor)
+            if (!isInstructor.response || isInstructor.error) {
                 return {
                     error: "user does not exist",
                 }
             }
 
 
-            const user = await instructorModel.updateUser(body);
+            const instructor = await instructorModel.updateUser(body);
 
-            if (user.error) {
+            if (instructor.error) {
                 return {
-                    error: user.error,
+                    error: instructor.error,
                 }
             }
             return {
-                response: user.response,
+                response: instructor.response,
             }
 
 
@@ -168,6 +169,25 @@ module.exports = {
 
             return {
                 response: user.response,
+            };
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
+
+    getUserByUserId: async (query) => {
+        try {
+            const instructor = await instructorModel.getUserByUserId(query.instructorId);
+            if (!instructor.response || instructor.error) {
+                return {
+                    error: "instructor does not exist",
+                };
+            }
+
+            return {
+                response: instructor.response,
             };
         } catch (error) {
             return {

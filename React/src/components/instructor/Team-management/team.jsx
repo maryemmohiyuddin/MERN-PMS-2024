@@ -10,8 +10,8 @@ import Select from "react-select";
 
 
 
-function Team({ updateState,showNotification,instructorId }) {
-   
+function Team({ updateState, showNotification, instructorId }) {
+
     const [selectedTeamId, setSelectedTeamId] = useState(null);
 
     const [isViewModalOpen, setViewModalOpen] = useState(false);
@@ -43,10 +43,10 @@ function Team({ updateState,showNotification,instructorId }) {
     const [isLoadingView, setIsLoadingView] = useState(false);
 
     const handleViewClick = async (teamId) => {
-                try {
+        try {
             // Set loading to true when initiating the API call
-                    setIsLoadingView(true);
-                    setDimmed(true)
+            setIsLoadingView(true);
+            setDimmed(true)
 
             // Call the getMembers API
             const response = await axios.get("http://localhost:3000/team/getTeamMembers", {
@@ -54,10 +54,12 @@ function Team({ updateState,showNotification,instructorId }) {
                     teamId: teamId
                 }
             });
-                    await new Promise(resolve => setTimeout(resolve, 2000));
 
-                    // Once the data is loaded or operation is complete, open the modal
-                    setIsLoadingView(false);
+            console.log("teamms",response)
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Once the data is loaded or operation is complete, open the modal
+            setIsLoadingView(false);
             // Update the state with the fetched data
             setViewData(response.data.response);
 
@@ -88,7 +90,8 @@ function Team({ updateState,showNotification,instructorId }) {
         // Check if all team members are selected
         const isAllMembersSelected = localSelectedTeamMembers.every(member => member !== null);
 
-        if (!isAllMembersSelected || teamLeader === null || selectedProjectId === null) {
+        if (!isAllMembersSelected 
+             || selectedProjectId === null) {
             // Show an error message or handle incomplete selection
             console.error("Please select all team members, team leader, and project");
             return;
@@ -99,8 +102,7 @@ function Team({ updateState,showNotification,instructorId }) {
 
         // Continue with the add action
         create({
-            userId: uniqueSelectedMembers,
-            leaderId: teamLeader,
+            traineeId: uniqueSelectedMembers,
             projectId: selectedProjectId,
             instructorId: instructorId
         });
@@ -122,7 +124,7 @@ function Team({ updateState,showNotification,instructorId }) {
     const [Projects, setProjects] = useState([]);
 
 
-    // Extract the userId value using substr and indexOf
+    // Extract the traineeId value using substr and indexOf
 
 
 
@@ -150,10 +152,10 @@ function Team({ updateState,showNotification,instructorId }) {
     };
 
 
-    
+
 
     const [currentTeam, setCurrentTeam] = useState(null);
-   
+
     const contentClassName = isDimmed ? 'dimmed' : '';
     const [Teams, setTeams] = useState([]);
 
@@ -204,14 +206,13 @@ function Team({ updateState,showNotification,instructorId }) {
     const create = async () => {
         try {
             const requestData = {
-                userId: selectedTeamMembers.filter(member => member !== null),
-                leaderId: teamLeader,
+                traineeId: selectedTeamMembers.filter(member => member !== null),
                 projectId: selectedProjectId,
                 instructorId: instructorId
             };
 
             const { data } = await axios.post("http://localhost:3000/team/createTeam", requestData);
-            console.log(data.response);
+            console.log("create",data);
 
             // Increment the counter
             setCreateTeamCounter(prevCounter => prevCounter + 1);
@@ -237,7 +238,7 @@ function Team({ updateState,showNotification,instructorId }) {
             });
 
             if (response && response.data && Array.isArray(response.data.response)) {
-                console.log("response",response)
+                console.log("response", response)
                 console.log("response,data", response.data)
                 console.log("response.data.response", response.data.response)
 
@@ -245,11 +246,10 @@ function Team({ updateState,showNotification,instructorId }) {
                 const mappedTeams = response.data.response.map(team => ({
                     ...team,
                     // Convert IDs to names if needed
-                    teamId:team.teamId,
-                    leaderName: team.leaderName, // Replace with actual conversion logic
-                    projectTitle: team.projectTitle 
-                     // Replace with actual conversion logic
-                }));console.log("mapped",mappedTeams)
+                    teamId: team.teamId,
+                    projectTitle: team.projectTitle
+                    // Replace with actual conversion logic
+                })); console.log("mapped", mappedTeams)
                 // Update the Teams state with the fetched and mapped data
                 setTeams(mappedTeams);
                 setLoading(false);
@@ -277,16 +277,16 @@ function Team({ updateState,showNotification,instructorId }) {
             setTeamMembers(data.response);
             // Assuming data.response is the array you mentioned
             setMemberOptions(data.response.map(user => ({
-                value: user.userId,
+                value: user.traineeId,
                 label: `${user.firstName} ${user.lastName}`
             })
 
             ));
-            const filteredMembers = data.response.filter(user => !selectedUsers.includes(user.userId));
+            const filteredMembers = data.response.filter(user => !selectedUsers.includes(user.traineeId));
             setTeamMembers(filteredMembers);
 
             const filteredOptions = filteredMembers.map(user => ({
-                value: user.userId,
+                value: user.traineeId,
                 label: `${user.firstName} ${user.lastName}`
             }));
             setMemberOptions(filteredOptions);
@@ -303,7 +303,7 @@ function Team({ updateState,showNotification,instructorId }) {
             const { data } = await axios.get("http://localhost:3000/project/getInsProjects", {
                 params: {
                     instructorId: instructorId,
-                    projectTag:'Unassigned'
+                    projectTag: 'Unassigned'
                 }
             });
             console.log("ree", data.response);
@@ -319,29 +319,29 @@ function Team({ updateState,showNotification,instructorId }) {
             console.error("Error fetching Teams:", error);
             setLoading(false);
         }
-    }; 
+    };
 
     const getMembers = async (teamId) => {
         try {
-            console.log("teamId",teamId)
+            console.log("teamId", teamId)
             const { data } = await axios.get("http://localhost:3000/team/getTeamMembers", {
                 params: {
                     teamId: teamId
                 }
             });
             console.log("hey", data.response);
- 
+
         } catch (error) {
             console.error("Error fetching Teams:", error);
             setLoading(false);
         }
-    }; 
+    };
     const deleteTeam = async (teamId) => {
         try {
             console.log("teamid", teamId);
             const { data } = await axios.delete("http://localhost:3000/team/deleteTeam", {
-                params:{
-                teamId: teamId
+                params: {
+                    teamId: teamId
                 }
             });
             console.log("Response:", data);
@@ -358,17 +358,17 @@ function Team({ updateState,showNotification,instructorId }) {
         setTeamLeader(selectedOption ? selectedOption.value : null);
     };
 
-   
-        // Update the memberOptions for all dropdowns
 
-   
+    // Update the memberOptions for all dropdowns
+
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-        await getAllTeams();
-        await getTeamMembers();
-        await getInsProjects();
+                await getAllTeams();
+                await getTeamMembers();
+                await getInsProjects();
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -387,7 +387,7 @@ function Team({ updateState,showNotification,instructorId }) {
             {loading ? <div className="flex ps-48 items-center justify-center h-screen">
                 <div className="w-16 h-16  border-4 border-dashed rounded-full animate-spin border-violet-400"></div>
             </div>
-                : (                <div className="data-container">
+                : (<div className="data-container">
                     <div className={`h-screen w-screen fade-in flex justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
                         {isLoadingView && (
                             <div className="modal-container flex items-center justify-center z-100">
@@ -398,7 +398,7 @@ function Team({ updateState,showNotification,instructorId }) {
                             </div>
                         )}
                         {isViewModalOpen && (
-                            
+
                             <div className="modal-container flex items-center justify-center z-100">
                                 <div className="flex flex-col w-form gap-2 p-6 rounded-md shadow-md bg-white opacity-100 text-black">
                                     <h2 className="text-xl font-semibold text-center leading tracking">
@@ -441,7 +441,7 @@ function Team({ updateState,showNotification,instructorId }) {
                                         {/* Here you can have your edit form fields */}
                                         {/* For example: */}
                                         {[...Array(4)].map((_, index) => (
-                <div key={index}>
+                                            <div key={index}>
                                                 <label htmlFor={`teammember-${index}`}>{`${index + 1}st Team Member`}</label><br />
 
                                                 <Select
@@ -457,17 +457,17 @@ function Team({ updateState,showNotification,instructorId }) {
 
 
 
-                                         </div>
-                                        ))} <label htmlFor="teammember">Select team Leader</label><br />
+                                            </div>
+                                        ))} 
 
-                                        <Select
+                                        {/* <Select
                                             className="bg-white rounded-lg mb-2 focus:outline-none text-black font-medium"
                                             isSearchable={true}
                                             isDisabled={false}
                                             placeholder="Select team leader"
                                             options={memberOptions.filter(option => localSelectedTeamMembers.includes(option.value))}
                                             onChange={(selectedOption) => handleTeamLeaderSelect(selectedOption)}
-                                        />
+                                        /> */}
                                         <label htmlFor="project">Select Project</label><br />
                                         <Select
                                             className="bg-white  rounded-lg mb-2 focus:outline-none text-black font-medium"
@@ -489,7 +489,6 @@ function Team({ updateState,showNotification,instructorId }) {
                                             className="px-6 py-2  hover:bg-indigo-600 hover:shadow-md hover-effect rounded-sm shadow-sm bg-indigo-500 text-white ml-2"
                                             onClick={() => {
                                                 console.log("Selected Team Members:", selectedTeamMembers.filter(member => member !== null));
-                                                console.log("Team Leader ID:", teamLeader);
                                                 console.log("Selected Project ID:", selectedProjectId);
                                                 console.log("Instructor ID:", instructorId);
                                                 handleAddAction();
@@ -604,7 +603,7 @@ function Team({ updateState,showNotification,instructorId }) {
 
                     </div>
                 </div>
-            )}
+                )}
         </div>
     );
 }

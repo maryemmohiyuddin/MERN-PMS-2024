@@ -27,10 +27,10 @@ const getByProjectIdSchema = joi.object().keys({
 })
 const InsProjectSchema = joi.object().keys({
     instructorId: joi.string().required(),
-    projectTag:joi.string().required()
+    projectTag: joi.string().required()
 })
 const UserProjectSchema = joi.object().keys({
-    userId: joi.string().required(),
+    traineeId: joi.string().required(),
 })
 
 module.exports = {
@@ -139,10 +139,10 @@ module.exports = {
 
             const validate = await UserProjectSchema.validateAsync(req.query);
             const projects = await projectService.getUserProject(validate);
-            console.log("controller",projects)
+            console.log("controller", projects)
 
             console.log(validate)
-            
+
             return res.send({
                 response: projects,
             });

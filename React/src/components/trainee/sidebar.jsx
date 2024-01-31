@@ -99,7 +99,7 @@ function Sidebar(updateState, activeItem, setActiveItem, showNotification, instr
                             <span className="ps-2 font-sans"> Tasks</span>
                         </a>
                     </li>
-                    <li
+                    {/* <li
                         className={
                             ` ${updateState.activeItem === "PROGRESSANALYTICS" ? "border-white bg-indigo-400 rounded-md " : "hover:bg-indigo-500 hover-effect rounded-md"}`
                         }
@@ -123,7 +123,7 @@ function Sidebar(updateState, activeItem, setActiveItem, showNotification, instr
 
                             <span className="ps-2  font-sans">Progress Analytics</span>
                         </a>
-                    </li>
+                    </li> */}
 
                 </ul>
             </div >

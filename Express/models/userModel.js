@@ -6,7 +6,7 @@ module.exports = {
         try {
             const user = await models.Trainees.create({
                 ...body,
-              traineeId:  userId
+                traineeId: userId
             })
             return {
                 response: user,
@@ -39,11 +39,11 @@ module.exports = {
         }
 
     },
-    getUserByUserId: async (userId) => {
+    getUserByUserId: async (traineeId) => {
         try {
             const user = await models.Trainees.findOne({
                 where: {
-                    userId: userId,
+                    traineeId: traineeId,
                 }
             })
             return {
@@ -61,9 +61,9 @@ module.exports = {
 
     getUserById: async (query) => {
         try {
-            const user = await models.Users.findOne({
+            const user = await models.Trainees.findOne({
                 where: {
-                    userId: query.userId,
+                    traineeId: query.traineeId,
                 }
             })
             return {
@@ -82,7 +82,7 @@ module.exports = {
         try {
             // console.log("model", offset, query)
 
-            const users = await models.Users.findAll({
+            const users = await models.Trainees.findAll({
                 // attributes : ["firstName", "lastName", "role", "email"]
                 attributes: {
                     exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
@@ -112,10 +112,9 @@ module.exports = {
                 // limit: query.limit,
                 where: {
 
-                    instructorId: query.instructorId,
-                    role: query.role,
-                    isBlocked:false,
-                    isApproved:true
+                    instuctorId: query.instructorId,
+
+
 
                 }
 
@@ -206,13 +205,13 @@ module.exports = {
     },
     updateUser: async (body) => {
         try {
-            
-            const user = await models.Users.update({
+
+            const user = await models.Trainees.update({
                 ...body
             }, {
                 where: {
 
-                    userId: body.userId,
+                    traineeId: body.traineeId,
                 }
             })
             return {
@@ -232,51 +231,104 @@ module.exports = {
 
     getAllStatistics: async (query) => {
         try {
-            const users = await models.Users.findAll({
-                where: {
-                    instructorId: query.instructorId,
-                    isBlocked: false,
-                    isApproved: true
-                }
-            });
-            const projects = await models.Projects.findAll({
-                where: {
-                    instructorId: query.instructorId
-                }
-            });
-            const assignedProjects = await models.Projects.findAll({
-                where: {
-                    projectTag: 'Assigned',
-                    instructorId: query.instructorId
-                }
-            });
-            const unassignedProjects = await models.Projects.findAll({
-                where: {
-                    projectTag: 'Unassigned',
-                    instructorId: query.instructorId
-                }
-            });
-            const teams = await models.Teams.findAll({
-                where: {
-                    instructorId: query.instructorId
-                }
-            });
+            console.log("check")
 
-            const userCount = users.length;
-            const projectCount = projects.length;
-            const teamCount = teams.length;
-            const asProjects = assignedProjects.length;
-            const unasProjects = unassignedProjects.length;
+            const teamMember = await models.TeamMembers.findOne({
+                where: {
+                  traineeId  : query.traineeId,
+                  
+                },
+                attribute:['teamMemberId']
+            });
+            console.log("check",teamMember)
 
+            const tasks = await models.Tasks.findAll({
+                where: {
+                    teamMemberId: teamMember.dataValues.teamMemberId,
+
+                }
+            });
+            console.log("check",tasks)
+
+            const pendingTasks = await models.Tasks.findAll({
+                where: {
+                    teamMemberId: teamMember.dataValues.teamMemberId,
+                    status:'Pending'
+                }
+
+            });
+            console.log("check",pendingTasks)
+
+            const completedTasks = await models.Tasks.findAll({
+                where: {
+                    teamMemberId: teamMember.dataValues.teamMemberId,
+                    status: 'Completed'
+                }
+
+            });
+            console.log("check",completedTasks)
+
+            const instructor = await models.Trainees.findOne({
+                where: {
+                    traineeId: query.traineeId
+                },
+                attributes:[
+                    'instuctorId'
+                ]
+            });
+            console.log("check",instructor)
+
+            const instructorName = await models.Instructors.findOne({
+                where: {
+                    instructorId: instructor.dataValues.instuctorId
+                },
+                attributes: [
+                    'firstName','lastName'
+                ]
+            });
+            console.log("check",instructorName)
+
+            const team = await models.TeamMembers.findOne({
+                where: {
+                    teamMemberId: teamMember.dataValues.teamMemberId,
+                    
+                },
+                attributes:['teamId']
+            });
+            console.log("check",team)
+            const projectId = await models.Teams.findOne({
+                where: {
+                    teamId: team.dataValues.teamId,
+                },
+                attributes: ['projectId']
+            });
+            console.log("check", projectId)
+
+            const projects = await models.Projects.findOne({
+                where: {
+                    projectId: projectId.dataValues.projectId,
+                },
+                attributes:['title']
+            });
+            console.log("check",projects)
+
+
+            const taskCount = tasks.length;
+            const pendingTasksCount = pendingTasks.length;
+            const completedTasksCount = completedTasks.length;
+            const instructorsName = instructorName.dataValues.firstName+" "+instructorName.dataValues.lastName;
+            const projectName = projects.dataValues.title;
+
+            console.log("taskCount",taskCount)
 
             return {
                 response: {
 
-                    userCount,
-                    projectCount,
-                    teamCount,
-                    asProjects,
-                    unasProjects
+                    taskCount,
+                    pendingTasksCount,
+                    completedTasksCount,
+                    instructorsName,
+                    projectName
                 },
             };
         } catch (error) {

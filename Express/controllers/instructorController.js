@@ -29,13 +29,11 @@ const updateUserSchema = joi.object().keys({
     instructorId: joi.string()
 })
 const updateProfileSchema = joi.object().keys({
-    userId: joi.string().required(),
+    instructorId: joi.string().required(),
     firstName: joi.string().min(3).max(20),
     lastName: joi.string().min(3).max(30),
     email: joi.string().email(),
-    cohort: joi.string().min(3).max(30),
-    stack: joi.string().min(3).max(30),
-    role: joi.string().valid("instructor", "trainee"),
+  
 })
 // const paginationSchema = joi.object().keys({
 //     pageNo: joi.number().greater(0).default(1),
@@ -64,6 +62,30 @@ module.exports = {
             const validate = await createInstructorSchema.validateAsync(req.body);
             console.log("req.body")
             const instructor = await instructorService.createInstructor(validate);
+            if (instructor.error) {
+                return res.send({
+                    error: instructor.error,
+                });
+
+            }
+            return res.send({
+                response: instructor.response,
+            });
+
+        }
+        catch (error) {
+            return res.send({
+                error: error
+            });
+        };
+    },
+    getUserByUserId: async (req, res) => {
+        try {
+
+
+            // const validate = await getByUserIdSchema.validateAsync(req.query);
+            const instructor = await instructorService.getUserByUserId(req.query);
+            console.log(req.query)
             if (instructor.error) {
                 return res.send({
                     error: instructor.error,
@@ -206,16 +228,16 @@ module.exports = {
         try {
             const validate = await updateProfileSchema.validateAsync(req.body);
 
-            const user = await instructorService.updateUser(validate);
-            console.log("user", user)
-            if (user.error) {
+            const instructor = await instructorService.updateUser(validate);
+            console.log("instructor", instructor)
+            if (instructor.error) {
                 return res.send({
-                    error: user.error,
+                    error: instructor.error,
                 });
 
             }
             return res.send({
-                response: user.response,
+                response: instructor.response,
             });
 
         }

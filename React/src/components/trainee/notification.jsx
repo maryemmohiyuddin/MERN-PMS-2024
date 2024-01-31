@@ -3,7 +3,7 @@ import { IoIosNotifications } from 'react-icons/io';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-function Notification({ notificationState, userId ,updateState,setActiveItem }) {
+function Notification({ notificationState, traineeId ,updateState,setActiveItem }) {
     const [requests, setRequests] = useState([]);
     const [Data, setData] = useState([]);
 
@@ -20,7 +20,7 @@ function Notification({ notificationState, userId ,updateState,setActiveItem }) 
             try {
                 const { data: tasksData } = await axios.get("http://localhost:3000/task/getTaskByUserId", {
                     params: {
-                        userId: userId
+                        traineeId: traineeId
                     }
                 });
 
@@ -37,7 +37,7 @@ function Notification({ notificationState, userId ,updateState,setActiveItem }) 
             try {
                 const { data: projectsData } = await axios.get("http://localhost:3000/project/getUserProjects", {
                     params: {
-                        userId: userId
+                        traineeId: traineeId
                     }
                 });
 
@@ -73,7 +73,7 @@ function Notification({ notificationState, userId ,updateState,setActiveItem }) 
         // Call both API functions
         getAllRequests();
         getAllTasks();
-    }, [userId]);
+    }, [traineeId]);
     return (
         <>
            

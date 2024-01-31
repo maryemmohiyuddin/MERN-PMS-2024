@@ -18,20 +18,17 @@ const createUserSchema = joi.object().keys({
 
 
 const updateUserSchema = joi.object().keys({
-    userId: joi.string().required(),
+    traineeId: joi.string().required(),
     firstName: joi.string().min(3).max(20),
     lastName: joi.string().min(3).max(30),
     email: joi.string().email(),
     cohort: joi.string().min(3).max(30),
     stack: joi.string().min(3).max(30),
-    role: joi.string().valid("instructor", "trainee"),
-    isApproved: joi.boolean(),
-    isRequested: joi.boolean(),
     isBlocked: joi.boolean(),
     instructorId: joi.string()
 })
 const updateProfileSchema = joi.object().keys({
-    userId: joi.string().required(),
+    traineeId: joi.string().required(),
     firstName: joi.string().min(3).max(20),
     lastName: joi.string().min(3).max(30),
     email: joi.string().email(),
@@ -53,10 +50,10 @@ const updateProfileSchema = joi.object().keys({
 
 // })
 const getByUserIdSchema = joi.object().keys({
-    userId: joi.string().required(),
+    traineeId: joi.string().required(),
 })
 const getStatisticsSchema = joi.object().keys({
-    instructorId: joi.string().required(),
+    traineeId: joi.string().required(),
 })
 
 
@@ -108,7 +105,7 @@ module.exports = {
         };
     },
 
-    getUserByUserId: async (req, res) => {
+   getUserByUserId: async (req, res) => {
         try {
 
 

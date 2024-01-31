@@ -32,6 +32,7 @@ Projects.init({
     },
     status: {
         type: DataTypes.STRING(),
+        defaultValue: "Pending"
 
     },
 },

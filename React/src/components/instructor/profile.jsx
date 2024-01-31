@@ -47,17 +47,15 @@ function Profile({ updateState, showNotification,instructorId }) {
         firstName: '',
         lastName: '',
         email: '',
-        role: '',
-        cohort: '', // Initialize cohort as null if it's a Select component
-        stack: '', // Initialize stack as null if it's a Select component
+      
     });
     const [isUpdating, setIsUpdating] = useState(false);
 
     const getUserById = async () => {
         try {
-            const { data } = await axios.get('http://localhost:3000/user/getUserByUserId', {
+            const { data } = await axios.get('http://localhost:3000/instructor/getUserByUserId', {
                 params: {
-                    userId: instructorId,
+                    instructorId: instructorId,
                 },
             });
             console.log(data.response);
@@ -66,9 +64,7 @@ function Profile({ updateState, showNotification,instructorId }) {
                 firstName: data.response.firstName,
                 lastName: data.response.lastName,
                 email: data.response.email,
-                role: data.response.role,
-                cohort: data.response.cohort,
-                stack: data.response.stack,
+               
             });
             setLoading(false);
         } catch (error) {
@@ -99,14 +95,12 @@ function Profile({ updateState, showNotification,instructorId }) {
 
     const update = async (body) => {
         try {
-            const { data } = await axios.put('http://localhost:3000/user/updateProfile', {
-                userId:instructorId,
+            const { data } = await axios.put('http://localhost:3000/instructor/updateProfile', {
+                instructorId:instructorId,
                 firstName: body.firstName,
                 lastName: body.lastName,
                 email: body.email,
-                role: body.role,
-                cohort: body.cohort ? body.cohort.value : null,
-                stack: body.stack ? body.stack.value : null,
+               
             });
 
             console.log('this is body', body);
@@ -184,41 +178,7 @@ function Profile({ updateState, showNotification,instructorId }) {
                                                             disabled
                                                             type="email" placeholder="Email" className="w-full rounded-md focus:outline-none   bg-gray-100 p-2  dark:border-gray-700 dark:text-gray-900" />
                                                     </div>
-                                                    <div className="col-span-full">
-                                                        <label for="address" className="text-sm">Role</label>
-                                                        <input
-                                                            defaultValue={data.role}
-                                                            disabled
-                                                            id="address" type="text" placeholder="" className="w-full rounded-md focus:outline-none   bg-gray-100 p-2  dark:border-gray-700 dark:text-gray-900" />
-                                                    </div>
-                                                    <div className="col-span-full sm:col-span-2">
-                                                        <label for="cohort" className="text-sm">Cohort</label>
-                                                        <Select
-                                                            className="bg-gray-50 rounded-lg mb-2 focus:outline-none text-black text-sm"
-                                                            defaultValue={{ value: data.cohort, label: data.cohort }}
-                                                            isSearchable={true}
-                                                            options={COHORT}
-                                                            onChange={(selectedOption) => handleChange('cohort', selectedOption)}
-                                                            isDisabled={false}
-                                                            placeholder="Select Cohort"
-                                                        />
 
-                                                    </div>
-                                                    <div className="col-span-full sm:col-span-2">
-                                                        <label for="stack" className="text-sm">Stack</label>
-                                                        <Select
-                                                            className="bg-gray-50  rounded-lg mb-2 focus:outline-none text-black text-sm"
-                                                            defaultValue={{ value: data.stack, label: data.stack }} // Assuming data.stack is the stack value
-                                                            onChange={(selectedOption) => handleChange('stack', selectedOption)}
-
-                                                            isSearchable={true}
-                                                            options={STACK}
-
-                                                            isDisabled={false}
-                                                            placeholder="Select Stack"
-                                                        />      </div>
-
-                                                    <br /><br />
                                                     <div className='flex mt-20 justify-end items-end w-full'>
                                                         <button
                                                             type="submit"

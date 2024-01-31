@@ -21,7 +21,7 @@ function Trainee({updateState,showNotification,instructorId}) {
     const handleCloseModal = () => {
         setModalOpen(false);
         setDimmed(false);
-        setIsClosing(true); // Set the closing state to trigger the animation
+        // setIsClosing(true); // Set the closing state to trigger the animation
 
     };
 
@@ -51,7 +51,7 @@ function Trainee({updateState,showNotification,instructorId}) {
 
     const update = async (updatedData) => {
         try {
-
+console.log("updated",updatedData)
             const { data } = await axios.put("http://localhost:3000/user/updateUser", updatedData);
             console.log(data);
 
@@ -98,7 +98,7 @@ function Trainee({updateState,showNotification,instructorId}) {
                         email: item.email,
                         cohort: item.cohort,
                         stack: item.stack,
-                        userId: item.userId
+                        traineeId: item.traineeId
                     }));
                     setTrainees(formattedTrainees);
                 }
@@ -113,7 +113,7 @@ function Trainee({updateState,showNotification,instructorId}) {
     const blockUser = async (trainee) => {
         try {
             const { data } = await axios.put("http://localhost:3000/user/updateUser", {
-                userId: trainee,
+                traineeId: trainee,
                 isBlocked: true
             });
             console.log(data.response)
@@ -125,7 +125,7 @@ function Trainee({updateState,showNotification,instructorId}) {
 
 
     const handleBlockClick = (trainee) => {
-        setSelectedTraineeId(trainee.userId);
+        setSelectedTraineeId(trainee.traineeId);
         setModalOpen(true);
         setDimmed(true);
     };
@@ -221,12 +221,12 @@ function Trainee({updateState,showNotification,instructorId}) {
                                     <p className="flex-1 dark:text-gray-400">By blocking this user, they will no longer be able to interact with you or view your content.</p>
                                     <div className="flex flex-col justify-end gap-3 mt-6 sm:flex-row">
                                         {Trainees.map((trainee, index) => (
-                                            <div key={index}> {selectedTraineeId === trainee.userId ? (
+                                            <div key={index}> {selectedTraineeId === trainee.traineeId ? (
                                                 <button className="px-6 hover:bg-gray-300 hover:shadow-sm hover-effect py-2 mr-5 rounded-sm shadow-sm bg-gray-200 text-black" onClick={handleCloseModal}>Close</button>
 
                                             ) : null}
-                                                {selectedTraineeId === trainee.userId ? (
-                                                    <button className="px-6 py-2 hover:bg-red-600 hover:shadow-md hover-effect rounded-sm shadow-sm bg-red-500 text-white" onClick={() => { handleCloseModal(); blockUser(trainee.userId); }}>Block</button>
+                                                {selectedTraineeId === trainee.traineeId ? (
+                                                    <button className="px-6 py-2 hover:bg-red-600 hover:shadow-md hover-effect rounded-sm shadow-sm bg-red-500 text-white" onClick={() => { handleCloseModal(); blockUser(trainee.traineeId); }}>Block</button>
                                                 ) : null}
                                             </div>
                                         ))}

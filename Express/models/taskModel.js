@@ -39,12 +39,12 @@ module.exports = {
                     where: {
                         teamMemberId: item.teamMemberId,
                     },
-                    attributes: ["userId"],
+                    attributes: ["traineeId"],
                 });
 
-                const user = await models.Users.findOne({
+                const user = await models.Trainees.findOne({
                     where: {
-                        userId: teamMember.userId,
+                        traineeId: teamMember.traineeId,
                     },
                     attributes: ["firstName", "lastName"],
 
@@ -138,7 +138,7 @@ module.exports = {
         try {
             const memberId = await models.TeamMembers.findOne({
                 where: {
-                    userId: query.userId,
+                    traineeId: query.traineeId,
                 },
                 attributes: ["teamMemberId"],
 

@@ -3,8 +3,8 @@ import axios from 'axios';
 import Loader from '../loader_component';
 import Select from 'react-select';
 
-function Profile({ updateState, showNotification, userId }) {
-    console.log("profile here updateState   ", updateState, "shownotification", showNotification, "userId", userId)
+function Profile({ updateState, showNotification, traineeId }) {
+    console.log("profile here updateState   ", updateState, "shownotification", showNotification, "userId", traineeId)
 
 
     const STACK = [
@@ -57,7 +57,7 @@ function Profile({ updateState, showNotification, userId }) {
         try {
             const { data } = await axios.get('http://localhost:3000/user/getUserByUserId', {
                 params: {
-                    userId: userId,
+                    traineeId: traineeId,
                 },
             });
             console.log(data.response);
@@ -100,7 +100,7 @@ function Profile({ updateState, showNotification, userId }) {
     const update = async (body) => {
         try {
             const { data } = await axios.put('http://localhost:3000/user/updateProfile', {
-                userId: userId,
+                traineeId: traineeId,
                 firstName: body.firstName,
                 lastName: body.lastName,
                 email: body.email,
@@ -137,7 +137,7 @@ function Profile({ updateState, showNotification, userId }) {
                                     <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
                                         <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100">
                                             <li className="text-black flex items-center">
-                                                <a rel="noopener noreferrer" href="#" title="Back to homepage" className="text-black text-sm hover:text-black flex items-center hover:underline">Instructor</a>
+                                                <a rel="noopener noreferrer" href="#" title="Back to homepage" className="text-black text-sm hover:text-black flex items-center hover:underline">Trainee</a>
                                             </li>
                                             <li className="flex items-center space-x-1">
                                                 <span className="dark:text-gray-400">/</span>

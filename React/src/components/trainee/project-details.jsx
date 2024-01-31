@@ -8,7 +8,7 @@ import Select from "react-select";
 import Loader from '../loader_component';
 
 
-function Project(userId) {
+function Project({updateState, showNotification, traineeId}) {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
     const [editData, setEditData] = useState({});
     const [isAddModalOpen, setAddModalOpen] = useState(false);
@@ -77,10 +77,10 @@ function Project(userId) {
 
     const getAllProjects = async () => {
         try {
-            console.log("userId", userId.userId);
+            console.log("userId", traineeId.traineeId);
             const { data } = await axios.get("http://localhost:3000/project/getUserProjects", {
                 params: {
-                    userId: userId.userId
+                    traineeId: traineeId
                 }
             });
             setData(data);
@@ -138,10 +138,10 @@ function Project(userId) {
 
     const getUserMembers = async () => {
         try {
-            console.log("userId", userId.userId);
+            console.log("userId", traineeId.traineeId);
             const { data } = await axios.get("http://localhost:3000/team/getUserMembers", {
                 params: {
-                    userId: userId.userId
+                    traineeId: traineeId
                 }
             });
             setData(data);
@@ -214,37 +214,40 @@ function Project(userId) {
 
     return (
         <div className="app">
-            {loading ? <Loader /> : (
-                <div className="data-container">
-                    <div className='className="h-screen w-screen flex justify-center items-center my-8"'>
+            {loading ? <div className="flex ps-48 items-center justify-center h-screen">
+                <div className="w-16 h-16  border-4 border-dashed rounded-full animate-spin border-violet-400"></div>
+            </div>
+                : (                <div className="data-container">
+                    <div className={`w-screen fade-in h-screen flex justify-end overflow-x-hidden scrollbar-hidden  ${showNotification ? 'blurr -z-50' : ''}`}>
 
 
-                        <div className={`h-screen w-screen flex justify-end ${contentClassName}`}>
-                            <div className=" ps-12 w-10/12 h-5/6">
+                        <div className={`w-screen fade-in h-screen flex justify-end overflow-x-hidden scrollbar-hidden  ${showNotification ? 'blurr -z-50' : ''}`}>
+                            <div className="px-3 w-10/12 overflow-y-auto fade-inn">
                                 <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
-                                    <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100">
+                                    <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100 ps-6">
                                         <li className="text-black flex items-center">
                                             <a rel="noopener noreferrer" href="#" title="Back to homepage" className="text-black text-sm hover:text-black flex items-center hover:underline">Trainee</a>
                                         </li>
                                         <li className="flex items-center space-x-1">
-                                            <span className="dark:text-gray-400">/</span>
+                                            <span className="dark:text-gray-400 block">/</span>
                                             <a rel="noopener noreferrer" href="#" className="text-black text-sm hover:text-black flex items-center px-1 capitalize hover:underline">Project Details</a>
                                         </li>
 
                                     </ol>
-                                    <h3 className="font-bold text-3xl">Project Details</h3>
+                                    {/* <h3 className="font-bold text-3xl ps-6">Main Dashboard</h3> */}
+                                    <h5 className="font-bold text-2xl  ps-6">Project Details</h5>
 
                                 </nav>
-
-                                <div className="container p-2 mx-auto sm:p-4 text-black" >
-                                    <div className="flex justify-between items-center">
+<div className='mx-8 py-3'>
+                                <div className="container text-black" >
+                                    <div className="flex  justify-between items-center">
                                         <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">Project:</h4>
 
 
 
                                     </div>
 
-                                    <div className="overflow-x-auto shadow-md w-11/12 bg-white">
+                                    <div className="overflow-x-auto shadow-md  bg-white">
                                         <table className="w-full text-sm border-collapse">
                                             <colgroup>
                                                 {/* Add any column settings if needed */}
@@ -255,7 +258,6 @@ function Project(userId) {
                                                     <th className="p-3 border border-gray-300">Description</th>
                                                     <th className="p-3 border border-gray-300">Starting Date</th>
                                                     <th className="p-3 border border-gray-300">Ending Date</th>
-                                                    <th className="p-3 border border-gray-300">Project Leader</th>
                                                     <th className="p-3 border border-gray-300">Project Instructor</th>
                                                     <th className="p-3 border border-gray-300">Status</th>
 
@@ -280,13 +282,11 @@ function Project(userId) {
                                                         <td className="p-3 border border-gray-300">
                                                             <p>{project.endingDate}</p>
                                                         </td>
-                                                        <td className="p-3 border border-gray-300 font-semibold">
-                                                            <p>{project.leaderName}</p>
-                                                        </td>
-                                                        <td className="p-3 border border-gray-300 font-semibold">
+                                                       
+                                                        <td className="p-3 border border-gray-300 ">
                                                             <p>{project.instructorName}</p>
                                                         </td>
-                                                        <td className="p-3 border font-semibold text-red-500 border-gray-300">
+                                                        <td className="p-3 border  text-red-500 border-gray-300">
                                                             <p>{project.status}</p>
                                                         </td>
                                                     </tr>
@@ -300,7 +300,7 @@ function Project(userId) {
 
                                 </div>
 
-                                <div className="container p-2 mx-auto sm:p-4 text-black" >
+                                <div className="py-4 ms container text-black" >
                                     <div className="flex justify-between items-center">
                                         <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">All Members:</h4>
 
@@ -308,7 +308,7 @@ function Project(userId) {
 
                                     </div>
 
-                                    <div className="overflow-x-auto shadow-md w-11/12 bg-white">
+                                    <div className="overflow-x-auto shadow-md  bg-white">
                                         <table className="w-full text-sm border-collapse">
                                             <colgroup>
                                                 {/* Add any column settings if needed */}
@@ -348,7 +348,7 @@ function Project(userId) {
 
                             </div>
                         </div>
-
+                        </div>
                     </div>
                 </div>
             )}

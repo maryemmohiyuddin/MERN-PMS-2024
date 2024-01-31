@@ -4,9 +4,8 @@ const joi = require("joi");
 
 
 const createTeamSchema = joi.object().keys({
-    leaderId: joi.string().required(),
     projectId: joi.string().required(),
-    userId: joi.array().items(joi.string().uuid()).required(),
+    traineeId: joi.array().items(joi.string().uuid()).required(),
     instructorId: joi.string().required(),
     status: joi.string().valid("Pending", "Completed"),
 
@@ -162,7 +161,7 @@ module.exports = {
             console.log("check2", validate)
 
             const members = await teamService.getTeamByProjectId(validate);
-            // console.log("check3", members)
+            console.log("check3", members)
             if (members.error) {
                 return res.send({
                     error: members.error,
@@ -182,7 +181,10 @@ module.exports = {
     getTeamMembers: async (req, res) => {
         try {
             const validate = await getByTeamIdSchema.validateAsync(req.query);
+            console.log("query for members",validate)
             const members = await teamService.getTeamMembers(validate);
+            console.log("2nd query for members", members)
+
             if (members.error) {
                 return res.send({
                     error: members.error,

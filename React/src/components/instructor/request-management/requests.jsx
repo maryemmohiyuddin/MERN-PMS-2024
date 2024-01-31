@@ -5,22 +5,24 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../../loader_component";
 import Cookies from "js-cookie";
 
-function Request({ updateState,showNotification, instructorId }) {
+function Request({ updateState, showNotification, instructorId }) {
 
     const [Requests, setRequests] = useState([]);
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [taskRequests, setTaskRequests] = useState([]);
+    const [traineeRequests, setTraineeRequests] = useState([]);
 
     // Run this effect once when the component mounts
     useEffect(() => {
-        
 
-            console.log("instructorid",instructorId); // This will log the userId value
+
+        console.log("instructorid", instructorId); // This will log the userId value
 
         const getAllRequests = async () => {
             try {
-                const { data } = await axios.get("http://localhost:3000/request/getAllRequests",{
-                    params:{
+                const { data } = await axios.get("http://localhost:3000/request/getAllRequests", {
+                    params: {
                         instructorId: instructorId
                     }
                 });
@@ -45,22 +47,58 @@ function Request({ updateState,showNotification, instructorId }) {
 
             }
         };
-        getAllRequests(1);
+        const getTaskRequests = async () => {
+            try {
+                const { data } = await axios.get("http://localhost:3000/request/getTaskRequest", {
+                    params: {
+                        instructorId: instructorId
+                    }
+                });
+                console.log(data.response)
+                setTaskRequests(data.response || []);
+            } catch (error) {
+                console.error("Error fetching task requests:", error);
+            }
+        };
 
-    }, []);
+        const fetchData = async () => {
+            setLoading(true);
+            await Promise.all([getAllRequests(), getTaskRequests()]);
+            setLoading(false);
+        };
 
-    const approveRequest = async (traineeId) => {
+        fetchData();
+    }, [instructorId]);
+
+    const approveTask = async (taskId, requestId) => {
         try {
-            console.log("appro",traineeId)
-         const {data}=   await axios.put("http://localhost:3000/request/updateRequest", {
-
-                traineeId:traineeId,
-instructorId:instructorId,
-status:"Approved"
+            console.log("appro", taskId, requestId)
+            const { data } = await axios.put("http://localhost:3000/request/approveTaskRequest", {
+                requestId,
+                taskId,
+                taskStatus: "Completed",
+                requestStatus: "Approved"
 
 
             });
-console.log(data)
+            console.log(data)
+            // If successful, remove the approved request from the frontend
+            setTaskRequests(prevRequests => prevRequests.filter(request => request.requestId !== requestId));
+            alert("The request has been approved successfully");
+        } catch (error) {
+            console.error("Error approving request:", error);
+            alert("Failed to approve request. Please try again.");
+        }
+    };
+    const approveRequest = async (traineeId) => {
+        try {
+            const { data } = await axios.put("http://localhost:3000/request/updateRequest", {
+                traineeId,
+                instructorId: instructorId,
+                status: "Approved"
+
+            });
+            console.log(data)
             // If successful, remove the approved request from the frontend
             setRequests(prevRequests => prevRequests.filter(request => request.traineeId !== traineeId));
             alert("The request has been approved successfully");
@@ -71,26 +109,41 @@ console.log(data)
     };
     const rejectRequest = async (traineeId) => {
         try {
-            console.log("appro", traineeId)
             const { data } = await axios.put("http://localhost:3000/request/updateRequest", {
-
-                traineeId: traineeId,
+                traineeId,
                 instructorId: instructorId,
                 status: "Rejected"
-
 
             });
             console.log(data)
             // If successful, remove the approved request from the frontend
             setRequests(prevRequests => prevRequests.filter(request => request.traineeId !== traineeId));
+            alert("The request has been approved successfully");
+        } catch (error) {
+            console.error("Error approving request:", error);
+            alert("Failed to approve request. Please try again.");
+        }
+    };
+    const rejectTask = async (taskId, requestId) => {
+        try {
+            console.log("appro", taskId, requestId)
+            const { data } = await axios.put("http://localhost:3000/request/approveTaskRequest", {
+                requestId,
+                taskId,
+                taskStatus: "Pending",
+                requestStatus: "Rejected"
+
+
+            });
+            console.log(data)
+            // If successful, remove the approved request from the frontend
+            setTaskRequests(prevRequests => prevRequests.filter(request => request.requestId !== requestId));
             alert("The request has been rejected successfully");
         } catch (error) {
             console.error("Error approving request:", error);
-            alert("Failed to reject request. Please try again.");
+            alert("Failed to approve request. Please try again.");
         }
     };
-
-
 
     return (
         <>
@@ -99,7 +152,7 @@ console.log(data)
                     <div className="w-16 h-16  border-4 border-dashed rounded-full animate-spin border-violet-400"></div>
                 </div>
                     : (<div className="data-container">
-                            <div className={`className="h-screen fade-in w-screen flex  justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
+                        <div className={`className="h-screen fade-in w-screen flex  justify-end ${showNotification ? 'blurr -z-50' : ''}`}>
 
                             <div className=" px-3 ps-8 w-10/12 h-5/6">
                                 <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
@@ -119,62 +172,111 @@ console.log(data)
                                 <div className="container p-2 mx-auto sm:p-4 text-black ">
                                     <h4 className="font-semibold text-md mb-2  ">All Trainees</h4>
                                     <div className="overflow-x-auto shadow-md me-5 bg-white ">
-                                        <table className="w-full  text-sm border-collapse">           
-                                        <thead className="bg-white">
-                                            <tr className="bg-indigo-500 text-sm text-white">
-                                                <th className="border border-gray-300 px-4 py-2">First Name</th>
-                                                <th className="border border-gray-300 px-4 py-2">Last Name</th>
-                                                <th className="border border-gray-300 px-4 py-2">Email</th>
-                                                <th className="border border-gray-300 px-4 py-2">Action</th>
+                                        <table className="w-full  text-sm border-collapse">
+                                            <thead className="bg-white">
+                                                <tr className="bg-indigo-500 text-sm text-white">
+                                                    <th className="border border-gray-300 px-4 py-2">First Name</th>
+                                                    <th className="border border-gray-300 px-4 py-2">Last Name</th>
+                                                    <th className="border border-gray-300 px-4 py-2">Email</th>
+                                                    <th className="border border-gray-300 px-4 py-2">Action</th>
 
-
-
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {Requests.map((request, index) => (
-
-                                                <tr key={index} >
-                                                    <td className="border border-gray-300 text-sm bg-white px-4 py-2">{request.firstName}</td>
-                                                    <td className="border border-gray-300 text-sm  bg-white px-4 py-2">{request.lastName}</td>
-                                                    <td className="border border-gray-300 text-sm  bg-white px-4 py-2">{request.email}</td>
-                                                    <td className="border border-gray-300 text-sm  bg-white px-4 py-2">
-                                                        <button
-                                                            onClick={() => {
-                                                                console.log("Trainee ID:", request.traineeId);
-                                                                void approveRequest(request.traineeId);
-                                                            }}
-                                                            className="bg-indigo-500 me-2 py-1 px-2 text-white hover:bg-indigo-600 hover:shadow-md hover-effect"
-                                                        >
-                                                            Approve
-                                                        </button>
-                                                        <button
-                                                            onClick={() => {
-                                                                console.log("Trainee ID:", request.traineeId);
-                                                                void rejectRequest(request.traineeId);
-                                                            }}
-                                                            className="bg-red-500 hover:bg-red-600 hover:shadow-md hover-effect py-1 px-2 text-white"
-                                                        >
-                                                            Reject
-                                                        </button>
-                                                    </td>
 
 
                                                 </tr>
-                                            ))}
-                                        </tbody>
-                                        {Requests.length === 0 && (
-                                            <p className="text-left mt-4 ms-3 text-sm  text-red-500">No request data yet.</p>
-                                        )}
-                                    </table>
-                                </div>
+                                            </thead>
+                                            <tbody>
+                                                {Requests.map((request, index) => (
 
+                                                    <tr key={index} >
+                                                        <td className="border border-gray-300 text-sm bg-white px-4 py-2">{request.firstName}</td>
+                                                        <td className="border border-gray-300 text-sm  bg-white px-4 py-2">{request.lastName}</td>
+                                                        <td className="border border-gray-300 text-sm  bg-white px-4 py-2">{request.email}</td>
+                                                        <td className="border border-gray-300 text-sm  bg-white px-4 py-2">
+                                                            <button
+                                                                onClick={() => {
+                                                                    console.log("Trainee ID:", request.traineeId);
+                                                                    void approveRequest(request.traineeId);
+                                                                }}
+                                                                className="bg-indigo-500 me-2 py-1 px-2 text-white hover:bg-indigo-600 hover:shadow-md hover-effect"
+                                                            >
+                                                                Approve
+                                                            </button>
+                                                            <button
+                                                                onClick={() => {
+                                                                    console.log("Trainee ID:", request.traineeId);
+                                                                    void rejectRequest(request.traineeId);
+                                                                }}
+                                                                className="bg-red-500 hover:bg-red-600 hover:shadow-md hover-effect py-1 px-2 text-white"
+                                                            >
+                                                                Reject
+                                                            </button>
+                                                        </td>
+
+
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                            {Requests.length === 0 && (
+                                                <p className="text-left mt-4 ms-3 text-sm  text-red-500">No request data yet.</p>
+                                            )}
+                                        </table>
+                                    </div>
+                                    <div className="container p-2 mx-auto sm:p-4 text-black ">
+                                        <h4 className="font-semibold text-md mb-2  ">All Tasks</h4>
+                                        <div className="overflow-x-auto shadow-md me-5 bg-white ">
+                                            <table className="w-full  text-sm border-collapse">
+                                                <thead className="bg-white">
+                                                    <tr className="bg-indigo-500 text-sm text-white">
+                                                        <th className="border border-gray-300 px-4 py-2">First Name</th>
+                                                        <th className="border border-gray-300 px-4 py-2">Last Name</th>
+                                                        <th className="border border-gray-300 px-4 py-2">Email</th>
+                                                        <th className="border border-gray-300 px-4 py-2">Action</th>
+
+
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {taskRequests.map((request, index) => (
+                                                        <tr key={index}>
+                                                            <td className="border border-gray-300 text-sm bg-white px-4 py-2">{request.member.name}</td>
+                                                            <td className="border border-gray-300 text-sm bg-white px-4 py-2">{request.project.name}</td>
+                                                            <td className="border border-gray-300 text-sm bg-white px-4 py-2">{request.task.name}</td>
+                                                            <td className="border border-gray-300 text-sm bg-white px-4 py-2">
+                                                                <button
+                                                                    onClick={() => {
+                                                                        console.log("Trainee ID:", request.taskId, request.requestId);
+                                                                        void approveTask(request.taskId, request.requestId);
+                                                                    }}
+                                                                    className="bg-indigo-500 me-2 py-1 px-2 x   text-white hover:bg-indigo-600 hover:shadow-md hover-effect"
+                                                                >
+                                                                    Approve
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => {
+                                                                        console.log("Trainee ID:", request.taskId, request.requestId);
+                                                                        void rejectTask(request.taskId, request.requestId);
+                                                                    }}
+                                                                    className="bg-red-500 hover:bg-red-600 hover:shadow-md hover-effect py-1 px-2 text-white"
+                                                                >
+                                                                    Reject
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                                {taskRequests.length === 0 && (
+                                                    <p className="text-left mt-4 ms-3 text-sm  text-red-500">No task request data yet.</p>
+                                                )}
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
                         </div>
                         {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
                     </div>
-                )}
+                    )}
             </div>
         </>
     );

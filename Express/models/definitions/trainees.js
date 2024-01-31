@@ -43,7 +43,6 @@
         },
         {
             // ... other configurations
-
             sequelize,
             timestamps: true,
             paranoid: true,

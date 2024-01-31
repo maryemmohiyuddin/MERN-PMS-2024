@@ -13,7 +13,7 @@ function Notification({ notificationState, instructorId ,updateState,setActiveIt
 
         const getAllRequests = async () => {
             try {
-                const { data } = await axios.get("http://localhost:3000/user/getAllRequests", {
+                const { data } = await axios.get("http://localhost:3000/request/getAllRequests", {
                     params: {
                         instructorId: instructorId
                     }

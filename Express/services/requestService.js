@@ -28,11 +28,75 @@ module.exports = {
             };
         }
     },
+    taskRequest: async (body) => {
+        try {
+            const requestId = uuidv4();
+            const request = await requestModel.taskRequest(body, requestId);
+
+            if (request.error) {
+                return {
+                    error: request.error,
+                }
+            }
+            return {
+                response: request.response,
+            }
+
+        }
+
+        catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
+    approveTaskRequest: async (body) => {
+        try {
+            const request = await requestModel.approveTaskRequest(body);
+
+            if (request.error) {
+                return {
+                    error: request.error,
+                }
+            }
+            return {
+                response: request.response,
+            }
+
+        }
+
+        catch (error) {
+            return {
+                error: error,
+            };
+        }
+    },
     getRequest: async (query) => {
         try {
             // const offset = (query.pageNo - 1) * query.limit;
             // console.log(offset)
             const requests = await requestModel.getRequest(query);
+            if (requests.error) {
+                return {
+                    error: requests.error,
+                }
+            } return {
+                response: requests.response,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
+    getTaskRequest: async (query) => {
+        try {
+            // const offset = (query.pageNo - 1) * query.limit;
+            // console.log(offset)
+            const requests = await requestModel.getTaskRequest(query);
             if (requests.error) {
                 return {
                     error: requests.error,

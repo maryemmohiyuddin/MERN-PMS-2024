@@ -15,7 +15,7 @@ import CountUp from 'react-countup';
 
 
 
-function Dashboard({ updateState, showNotification, userId }) {
+function Dashboard({ updateState, showNotification, traineeId }) {
     // Define the events array here
     const [date, setDate] = useState(new Date()); // Initialize with the current date
     const [Teams, setTeams] = useState([]);
@@ -25,7 +25,7 @@ function Dashboard({ updateState, showNotification, userId }) {
         try {
             const { data } = await axios.get('http://localhost:3000/user/getUserByUserId', {
                 params: {
-                    userId: userId,
+                    traineeId: traineeId,
                 },
             });
             console.log(data.response);
@@ -40,12 +40,12 @@ function Dashboard({ updateState, showNotification, userId }) {
 
     const getAllTeams = async () => {
         try {
-
-            const response = await axios.get("http://localhost:3000/task/getAllTasks", {
+            const response = await axios.get("http://localhost:3000/task/getTaskByUserId", {
                 params: {
-                    userId: userId
+                    traineeId: traineeId
                 }
-            });
+            });   
+            console.log("res",response.data)
 
             if (response && response.data && Array.isArray(response.data.response)) {
                 // console.log("response", response)
@@ -54,10 +54,9 @@ function Dashboard({ updateState, showNotification, userId }) {
 
                 const mappedTeams = response.data.response.map(team => ({
                     ...team,
-                    projectTitle: team.project.title,
-                    MemberName: team.user.firstName + " " + team.user.lastName,
-                    taskTitle: team.taskTitle,
-                    taskDes: team.taskDes,
+                    taskTitle: team.title,
+                    taskDes: team.description,
+                   
                     taskId: team.taskId,
                     status: team.status
                 }));
@@ -166,7 +165,7 @@ function Dashboard({ updateState, showNotification, userId }) {
             // console.log(userId)
             const { data } = await axios.get("http://localhost:3000/project/getInsProjects", {
                 params: {
-                    userId: userId,
+                    traineeId: traineeId,
                     projectTag: 'Assigned'
 
                 }
@@ -203,11 +202,11 @@ function Dashboard({ updateState, showNotification, userId }) {
 
             const { data } = await axios.get("http://localhost:3000/user/getAllStatistics", {
                 params: {
-                    userId: userId,
+                    traineeId: traineeId,
                 }
             });
 
-            console.log(data.response);
+            console.log("statistics",data.response);
             setStatistics(data.response);
 
         } catch (error) {
@@ -258,7 +257,7 @@ function Dashboard({ updateState, showNotification, userId }) {
                             <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
                                 <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100 ps-6">
                                     <li className="text-black flex items-center">
-                                        <a rel="noopener noreferrer" href="#" title="Back to homepage" className="text-black text-sm hover:text-black flex items-center hover:underline">Instructor</a>
+                                        <a rel="noopener noreferrer" href="#" title="Back to homepage" className="text-black text-sm hover:text-black flex items-center hover:underline">Trainee</a>
                                     </li>
                                     <li className="flex items-center space-x-1">
                                         <span className="dark:text-gray-400 block">/</span>
@@ -279,8 +278,8 @@ function Dashboard({ updateState, showNotification, userId }) {
                                             <GrProjects /> {/* Adjust the font size as needed */}
                                         </div>
                                         <div className="flex items-center justify-between flex-1 p-3 text-md fade-inn">
-                                            <p className="text-2xl font-semibold"><CountUp start={0} end={statistics?.projectCount || 0} duration={0.9} separator="," /></p>
-                                            <p>Total Projects</p>
+                                            <p className="text-2xl font-semibold"><CountUp start={0} end={statistics?.taskCount || 0} duration={0.9} separator="," /></p>
+                                            <p>Total Tasks</p>
                                         </div>
                                     </div>
 
@@ -291,8 +290,8 @@ function Dashboard({ updateState, showNotification, userId }) {
 
                                         </div>
                                         <div className="flex items-center justify-between flex-1 p-3 fade-inn">
-                                            <p className="text-2xl font-semibold"><CountUp start={0} end={statistics?.userCount || 0} duration={0.9} separator="," /></p>
-                                            <p>Total Trainees</p>
+                                            <p className="text-2xl font-semibold"><CountUp start={0} end={statistics?.pendingTasksCount || 0} duration={0.9} separator="," /></p>
+                                            <p>Pending Tasks</p>
                                         </div>
                                     </div>
 
@@ -305,18 +304,18 @@ function Dashboard({ updateState, showNotification, userId }) {
 
                                         </div>
                                         <div className="flex items-center justify-between flex-1 p-3 fade-inn">
-                                            <p className="text-2xl font-semibold"><CountUp start={0} end={statistics?.teamCount || 0} duration={0.9} separator="," /></p>
-                                            <p>Total Teams</p>
+                                            <p className="text-2xl font-semibold"><CountUp start={0} end={statistics?.completedTasksCount || 0} duration={0.9} separator="," /></p>
+                                            <p>Completed Tasks</p>
                                         </div>
                                     </div>
-                                    <div className="bg-white shadow-md  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
+                                    {/* <div className="bg-white shadow-md  rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
                                         <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
                                             <FaTasks className="w-7" fontSize="20px" />
 
                                         </div>
                                         <div className="flex items-center justify-between flex-1 p-3 fade-inn">
-                                            <p className="text-2xl font-semibold"><CountUp start={0} end={statistics?.asProjects || 0} duration={0.9} separator="," /></p>
-                                            <p>Projects Assigned</p>
+                                            <p className="text-lg font-semibold"><p>{statistics?.instructorsName}</p></p>
+                                            <p>Instructor Name</p>
                                         </div>
                                     </div>
                                     <div className="bg-white shadow-md rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
@@ -325,10 +324,10 @@ function Dashboard({ updateState, showNotification, userId }) {
 
                                         </div>
                                         <div className="flex items-center justify-between flex-1 p-3 fade-inn">
-                                            <p className="text-2xl font-semibold"><CountUp start={0} end={statistics?.unasProjects || 0} duration={0.9} separator="," /></p>
-                                            <p>Unassigned Projects</p>
+                                            <p className="text-lg font-semibold"><p>{statistics?.projectName}</p></p>
+                                            <p>Project Name</p>
                                         </div>
-                                    </div>
+                                    </div> */}
                                     {/* <div className="bg-white shadow-md rounded-full flex overflow-hidden dark:bg-gray-900 dark:text-gray-100">
                                 <div className="flex flex-col items-center justify-center ml-3 mt-3 h-8 w-8 rounded-full bg-indigo-500 text-white dark:text-gray-800">
                                     <SiGoogleclassroom className="w-7" fontSize="20px" />
@@ -380,8 +379,6 @@ function Dashboard({ updateState, showNotification, userId }) {
                                                         <tr className="bg-indigo-500 text-sm text-white">
                                                             <th className="p-3 border border-gray-300">Task Name</th>
                                                             <th className="p-3 border border-gray-300">Task Description</th>
-                                                            <th className="p-3 border border-gray-300">Project Name</th>
-                                                            <th className="p-3 border border-gray-300">Member Name</th>
                                                             <th className="p-3 border border-gray-300">Status</th>
 
                                                         </tr>
@@ -392,8 +389,6 @@ function Dashboard({ updateState, showNotification, userId }) {
                                                             <tr key={index} className="border-b border-opacity-20 border-gray-700 bg-white">
                                                                 <td className="border border-gray-300 bg-white px-4 py-2"> {team.taskTitle}</td>
                                                                 <td className="border border-gray-300 bg-white px-4 py-2">{team.taskDes}</td>
-                                                                <td className="border border-gray-300 bg-white px-4 py-2">{team.projectTitle}</td>
-                                                                <td className="border border-gray-300 bg-white px-4 py-2">{team.MemberName}</td>
                                                                 {/* Conditionally set the style based on the 'status' value */}
                                                                 <td
                                                                     className={`border border-gray-300 px-4 py-2 ${team.status.toLowerCase() === 'pending' ? 'text-red-500' : 'text-indigo-500'

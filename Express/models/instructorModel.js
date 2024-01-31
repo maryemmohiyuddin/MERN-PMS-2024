@@ -40,15 +40,69 @@ module.exports = {
         }
 
     },
-    getUserByUserId: async (userId) => {
+
+    getUserByUserId: async (traineeId) => {
         try {
-            const user = await models.Instructors.findOne({
+            const user = await models.Trainees.findOne({
                 where: {
-                    userId: userId,
+                    traineeId: traineeId,
                 }
             })
             return {
                 response: user,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
+
+    getAllUsers: async (query) => {
+        try {
+            // console.log("model", offset, query)
+
+            const users = await models.Users.findAll({
+                // attributes : ["firstName", "lastName", "role", "email"]
+                attributes: {
+                    exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
+                },
+
+                where: {
+
+                    instructorId: query.instructorId,
+                    role: query.role,
+                    isBlocked: false,
+                    isApproved: true
+
+                }
+
+
+            })
+            return {
+                response: users,
+            };
+
+
+        } catch (error) {
+            return {
+                error: error,
+            };
+        }
+
+    },
+    getUserByUserId: async (instructorId) => {
+        try {
+            const instructor = await models.Instructors.findOne({
+                where: {
+                    instructorId: instructorId,
+                }
+            })
+            return {
+                response: instructor,
             };
 
 
@@ -79,7 +133,7 @@ module.exports = {
         }
 
     },
-   
+
     getAllInstructors: async (query) => {
         try {
             const notIncluding = await models.Requests.findAll({
@@ -103,7 +157,7 @@ module.exports = {
                 !notIncludingIds.includes(instructor.instructorId)
             );
 
-console.log("checl",filteredInstructors)
+            console.log("checl", filteredInstructors)
             return {
                 response: filteredInstructors,
             };
@@ -135,16 +189,16 @@ console.log("checl",filteredInstructors)
     },
     updateUser: async (body) => {
         try {
-            const user = await models.Instructors.update({
+            const instructor = await models.Instructors.update({
                 ...body
             }, {
                 where: {
 
-                    userId: body.userId,
+                    instructorId: body.instructorId,
                 }
             })
             return {
-                response: user,
+                response: instructor,
             };
 
 
@@ -160,33 +214,43 @@ console.log("checl",filteredInstructors)
 
     getAllStatistics: async (query) => {
         try {
-            const Instructors = await models.Users.findAll({
+            console.log("check1")
+            const Instructors = await models.Trainees.findAll({
                 where: {
-                    instructorId: query.instructorId,
+                    instuctorId: query.instructorId,
                 }
             });
+            console.log("inst",Instructors)
             const projects = await models.Projects.findAll({
                 where: {
                     instructorId: query.instructorId
                 }
             });
+            console.log("inst", projects)
+
             const assignedProjects = await models.Projects.findAll({
                 where: {
                     projectTag: 'Assigned',
                     instructorId: query.instructorId
                 }
             });
+            console.log("inst", assignedProjects)
+
             const unassignedProjects = await models.Projects.findAll({
                 where: {
                     projectTag: 'Unassigned',
                     instructorId: query.instructorId
                 }
             });
+            console.log("inst", unassignedProjects)
+
             const teams = await models.Teams.findAll({
                 where: {
                     instructorId: query.instructorId
                 }
             });
+
+            console.log("inst", teams)
 
             const userCount = Instructors.length;
             const projectCount = projects.length;
