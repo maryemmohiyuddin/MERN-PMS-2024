@@ -247,7 +247,8 @@ function Team({ updateState, showNotification, instructorId }) {
                     ...team,
                     // Convert IDs to names if needed
                     teamId: team.teamId,
-                    projectTitle: team.projectTitle
+                    projectTitle: team.projectTitle,
+                    membersLength:team.memberslength
                     // Replace with actual conversion logic
                 })); console.log("mapped", mappedTeams)
                 // Update the Teams state with the fetched and mapped data
@@ -463,7 +464,7 @@ function Team({ updateState, showNotification, instructorId }) {
                                         {/* <Select
                                             className="bg-white rounded-lg mb-2 focus:outline-none text-black font-medium"
                                             isSearchable={true}
-                                            isDisabled={false}
+                                            isDisabled={false}  
                                             placeholder="Select team leader"
                                             options={memberOptions.filter(option => localSelectedTeamMembers.includes(option.value))}
                                             onChange={(selectedOption) => handleTeamLeaderSelect(selectedOption)}
@@ -559,7 +560,8 @@ function Team({ updateState, showNotification, instructorId }) {
                                             </colgroup>
                                             <thead className="bg-white">
                                                 <tr className="bg-indigo-500 text-sm text-white">
-                                                    <th className="p-3 border border-gray-300">Team Leader</th>
+                                                    <th className="p-3 border border-gray-300">Number of Members</th>
+
                                                     <th className="p-3 border border-gray-300">Project Title</th>
                                                     <th className="p-3 border border-gray-300">Action</th>
                                                 </tr>
@@ -568,8 +570,9 @@ function Team({ updateState, showNotification, instructorId }) {
                                                 {Teams.map((team, index) => (
 
                                                     <tr key={index} className="border-b border-opacity-20 border-gray-700 bg-white">
-                                                        <td className="border border-gray-300 bg-white px-4 py-2"> {team.leaderName}</td>
-                                                        <td className="border border-gray-300 bg-white px-4 py-2">{team.projectTitle}</td>
+                                                        <td className="border border-gray-300 bg-white px-4 py-2">{team.membersLength}</td>
+                                                        <td className="border border-gray-300 bg-white px-4 py-2"> {team.projectTitle}</td>
+                                                    
                                                         <td className="p-3 border border-gray-300">
                                                             <span className="px-3 py-2 text-white rounded-md  hover:bg-indigo-600 hover:shadow-md hover-effect bg-indigo-500 cursor-pointer" onClick={() => handleViewClick(team.teamId)}>
                                                                 <span>View</span>

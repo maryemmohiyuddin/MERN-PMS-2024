@@ -221,7 +221,7 @@ function Request({ updateState, showNotification, instructorId }) {
                                             )}
                                         </table>
                                     </div>
-                                    <div className="container p-2 mx-auto sm:p-4 text-black ">
+                                    <div className="container py-7 text-black ">
                                         <h4 className="font-semibold text-md mb-2  ">All Tasks</h4>
                                         <div className="overflow-x-auto shadow-md me-5 bg-white ">
                                             <table className="w-full  text-sm border-collapse">

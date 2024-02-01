@@ -191,27 +191,27 @@ function Tasks({updateState, showNotification, traineeId}) {
                 : (
                     <div className="data-container">
 
-                    <div className={`w-screen fade-in h-screen flex justify-end overflow-x-hidden scrollbar-hidden  ${showNotification ? 'blurr -z-50' : ''}`}>
+                        <div className={`w-screen fade-in h-screen flex justify-end overflow-x-hidden scrollbar-hidden  ${showNotification ? 'blurr -z-50' : ''}`}>
 
 
-                        <div className={`h-screen w-screen flex justify-end ${contentClassName}`}>
-                            <div className=" ps-12 w-10/12 h-5/6">
-                                <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
-                                    <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100">
-                                        <li className="text-black flex items-center">
-                                            <a rel="noopener noreferrer" href="#" title="Back to homepage" className="text-black text-sm hover:text-black flex items-center hover:underline">Trainee</a>
-                                        </li>
-                                        <li className="flex items-center space-x-1">
-                                            <span className="dark:text-gray-400">/</span>
-                                            <a rel="noopener noreferrer" href="#" className="text-black text-sm hover:text-black flex items-center px-1 capitalize hover:underline">Task Details</a>
-                                        </li>
+                            <div className={`w-screen fade-in h-screen flex justify-end overflow-x-hidden scrollbar-hidden  ${showNotification ? 'blurr -z-50' : ''}`}>
+                                <div className="px-3 w-10/12 overflow-y-auto fade-inn">
+                                    <nav aria-label="breadcrumb" className="text-black w-full p-4 dark:bg-gray-800 dark:text-gray-100">
+                                        <ol className="text-black mt-6 flex h-8 space-x-2 dark:text-gray-100 ps-6">
+                                            <li className="text-black flex items-center">
+                                                <a rel="noopener noreferrer" href="#" title="Back to homepage" className="text-black text-sm hover:text-black flex items-center hover:underline">Trainee</a>
+                                            </li>
+                                            <li className="flex items-center space-x-1">
+                                                <span className="dark:text-gray-400 block">/</span>
+                                                <a rel="noopener noreferrer" href="#" className="text-black text-sm hover:text-black flex items-center px-1 capitalize hover:underline">Task Details</a>
+                                            </li>
 
-                                    </ol>
-                                    <h3 className="font-bold text-3xl">Task Details</h3>
+                                        </ol>
+                                        {/* <h3 className="font-bold text-3xl ps-6">Main Dashboard</h3> */}
+                                        <h5 className="font-bold text-2xl  ps-6">Task Details</h5>
 
-                                </nav>
-
-                                <div className="container p-2 mx-auto sm:p-4 text-black" >
+                                    </nav>
+                                    <div className='mx-8 py-3'>
                                     <div className="flex justify-between items-center">
                                         <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">Tasks</h4>
 
@@ -269,7 +269,7 @@ function Tasks({updateState, showNotification, traineeId}) {
                                     </div>
                                 </div>
 
-                                <div className="container p-2 mx-auto sm:p-4 text-black" >
+                                    <div className='mx-8 py-3'>
                                     <div className="flex justify-between items-center">
                                         <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">Tasks In Request</h4>
 
@@ -317,7 +317,7 @@ function Tasks({updateState, showNotification, traineeId}) {
                                     </div>
 
                                 </div>
-                                <div className="container p-2 mx-auto sm:p-4 text-black" >
+                                    <div className='mx-8 py-3 mb-10'>
                                     <div className="flex justify-between items-center">
                                         <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">Completed Tasks</h4>
 

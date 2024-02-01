@@ -56,9 +56,12 @@ module.exports = {
             const teamResponses = [];
             console.log("length", teams.response.length)
             for (let i = 0; i < teams.response.length; i++) {
-                const teamId = teams.response[i].dataValues.teamId;
+                const teamId = teams.response[i].team.dataValues.teamId;
+                const memberslength = teams.response[i].membersLength
+                ;
 
-                const projectId = teams.response[i].dataValues.projectId;
+                console.log("if its fetching",teams.response[i].team.dataValues.teamId)
+                const projectId = teams.response[i].team.dataValues.projectId;
 console.log("ccc",teamId,projectId)
                 const isTeam = await teamModel.getTeamById( projectId);
 
@@ -70,7 +73,9 @@ console.log("ccc",teamId,projectId)
                 // Extract the required information from the response
                 const teamInfo = {
                     teamId: teamId,
-                    projectTitle: isTeam.response.projectTitle // Assuming 'projectName' is the property name in the response
+                    projectTitle: isTeam.response.projectTitle,
+                    memberslength:memberslength
+                     // Assuming 'projectName' is the property name in the response
                 };
 
                 teamResponses.push(teamInfo);

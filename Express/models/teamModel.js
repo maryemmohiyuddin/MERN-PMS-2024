@@ -70,7 +70,7 @@ module.exports = {
         try {
             // Fetch user details from the Users table
             // console.log("teamLeader", teamLeader)
-          
+
 
             // Fetch project details from the Projects table
             const project = await models.Projects.findOne({
@@ -339,7 +339,7 @@ module.exports = {
         }
     },
 
-    deleteTeam: async (teamId) => { 
+    deleteTeam: async (teamId) => {
         try {
             // Fetch the team before destroying it to access its projectId
             const team = await models.Teams.findOne({
@@ -383,32 +383,46 @@ module.exports = {
 
     getAllTeams: async (query) => {
         try {
-            // console.log("model", offset, query)
-
             const teams = await models.Teams.findAll({
-                // attributes : ["firstName", "lastName", "role", "email"]
                 attributes: {
                     exclude: ["createdAt", "updatedAt", "deletedAt"],
                 },
                 where: {
                     instructorId: query.instructorId
                 }
+            });
 
-            })
+            const teamData = [];
 
+            for (let i = 0; i < teams.length; i++) {
+                const teamId = teams[i].teamId;
 
+                const members = await models.TeamMembers.findAll({
+                    attributes: {
+                        exclude: ["createdAt", "updatedAt", "deletedAt"],
+                    },
+                    where: {
+                        teamId: teamId
+                    }
+                });
 
-
+                teamData.push({
+                    team: teams[i],
+                    membersLength: members.length
+                });
+            }
+            console.log("teamdata", teamData)
             return {
-                response: teams,
+                response: teamData,
             };
-
-
         } catch (error) {
             return {
                 error: error,
             };
         }
 
+
     },
+
+
 };

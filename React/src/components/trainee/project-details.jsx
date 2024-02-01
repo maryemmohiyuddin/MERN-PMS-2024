@@ -241,7 +241,7 @@ function Project({updateState, showNotification, traineeId}) {
 <div className='mx-8 py-3'>
                                 <div className="container text-black" >
                                     <div className="flex  justify-between items-center">
-                                        <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">Project:</h4>
+                                        <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">Project</h4>
 
 
 
@@ -302,7 +302,7 @@ function Project({updateState, showNotification, traineeId}) {
 
                                 <div className="py-4 ms container text-black" >
                                     <div className="flex justify-between items-center">
-                                        <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">All Members:</h4>
+                                        <h4 className="font-semibold text-lg mb-4 ms-2 mt-5">All Members</h4>
 
 
 
